@@ -171,6 +171,11 @@ Do not use TODO as a substitute for:
 
 ## Engineering
 
+- [>] Native atomic project-file adapter for Windows/Tauri.
+  - Scheduled inside M1.4.
+  - Must satisfy the `ProjectTextStore.writeAtomic()` contract without a delete-then-rename window that can lose the previous good file.
+  - Add Save/Open UI only after the adapter is verified.
+
 - [ ] Commit and enforce a pnpm lockfile for fully reproducible dependency installs.
   - Current CI intentionally uses `--frozen-lockfile=false` because no lockfile is committed yet.
   - Do before public/beta packaging.
