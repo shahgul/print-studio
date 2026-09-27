@@ -7,12 +7,7 @@
 
 export { Item } from './item';
 export { Orientation, StandardMedia, getStandardMediaSize } from './media';
-export {
-  Placement,
-  PlacementStatus,
-  getPlacementBounds,
-  validatePlacement,
-} from './placement';
+export { Placement, PlacementStatus, getPlacementBounds, validatePlacement } from './placement';
 export type { PlacementValidationResult } from './placement';
 export { Project } from './project';
 export { Sheet, Side, SideKind } from './sheet';
