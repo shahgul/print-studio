@@ -105,11 +105,43 @@ h1 {
   gap: 8px;
 }
 
+.checkpoint {
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid #ddddda;
+}
+
+.muted-checkpoint {
+  margin-top: 36px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+
+.source-kind {
+  padding: 7px 10px;
+  border: 1px solid #d9d9d3;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .truth-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
-  margin-top: 48px;
+  margin-top: 18px;
 }
 
 .truth-grid article,
@@ -200,11 +232,16 @@ h1 {
   }
 
   button,
+  .source-kind,
   .truth-grid article,
   .file-path,
   .status {
     border-color: #35352f;
     background: #191917;
+  }
+
+  .checkpoint {
+    border-color: #35352f;
   }
 
   button:hover:not(:disabled) {

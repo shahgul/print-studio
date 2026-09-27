@@ -16,7 +16,8 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "@print-studio/project-file": "workspace:*",
-    "@tauri-apps/plugin-dialog": "^2.0.0"
+    "@tauri-apps/plugin-dialog": "^2.0.0",
+    "@print-studio/document-import": "workspace:*"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",

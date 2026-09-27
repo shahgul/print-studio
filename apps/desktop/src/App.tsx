@@ -1,8 +1,11 @@
-import { open, save } from '@tauri-apps/plugin-dialog';
+import { importSourceBytes } from '@print-studio/document-import';
+import { type Source } from '@print-studio/domain';
 import { ProjectPersistence } from '@print-studio/project-file';
+import { open, save } from '@tauri-apps/plugin-dialog';
 import { useMemo, useState } from 'react';
 
 import { createTauriProjectTextStore, ensureProjectExtension } from './project-io';
+import { createTauriSourceBytesReader } from './source-io';
 import { createStarterProject } from './starter-project';
 
 const PROJECT_FILTER = [
@@ -12,11 +15,51 @@ const PROJECT_FILTER = [
   },
 ];
 
+const SOURCE_FILTER = [
+  {
+    name: 'Supported documents',
+    extensions: ['pdf', 'png', 'jpg', 'jpeg'],
+  },
+];
+
+function fileNameFromPath(path: string): string {
+  return path.split(/[\\/]/).pop() || path;
+}
+
+function formatPhysicalSize(source: Source): string {
+  const size = source.pages[0]?.physicalSize;
+  if (!size) {
+    return 'Unknown — no trusted DPI';
+  }
+
+  return `${size.width.toMillimetres().toFixed(2)} × ${size.height.toMillimetres().toFixed(2)} mm`;
+}
+
+function formatRaster(source: Source): string {
+  const raster = source.pages[0]?.raster;
+  if (!raster) {
+    return 'Vector/PDF page';
+  }
+
+  return `${raster.pixelWidth} × ${raster.pixelHeight} px`;
+}
+
+function formatDensity(source: Source): string {
+  const density = source.pages[0]?.raster?.densityDpi;
+  if (!density) {
+    return 'Not declared';
+  }
+
+  return `${density.x.toFixed(2)} × ${density.y.toFixed(2)} DPI`;
+}
+
 export function App() {
   const persistence = useMemo(() => new ProjectPersistence(createTauriProjectTextStore()), []);
+  const sourceReader = useMemo(() => createTauriSourceBytesReader(), []);
   const [project, setProject] = useState(createStarterProject);
   const [projectPath, setProjectPath] = useState<string | null>(null);
-  const [status, setStatus] = useState('Starter project is in memory and has not been saved yet.');
+  const [source, setSource] = useState<Source | null>(null);
+  const [status, setStatus] = useState('M1.5 is ready to inspect a real PNG, JPEG, or PDF.');
   const [isBusy, setIsBusy] = useState(false);
 
   const sheet = project.sheets[0];
@@ -65,7 +108,7 @@ export function App() {
     }
   }
 
-  async function handleOpen() {
+  async function handleOpenProject() {
     setIsBusy(true);
     try {
       const selected = await open({
@@ -88,23 +131,59 @@ export function App() {
     }
   }
 
+  async function handleImportSource() {
+    setIsBusy(true);
+    try {
+      const selected = await open({
+        title: 'Import PDF or Image',
+        multiple: false,
+        directory: false,
+        filters: SOURCE_FILTER,
+      });
+
+      if (typeof selected !== 'string') {
+        return;
+      }
+
+      const bytes = await sourceReader.read(selected);
+      const imported = await importSourceBytes({
+        sourceId: crypto.randomUUID(),
+        displayName: fileNameFromPath(selected),
+        filePath: selected,
+        bytes,
+      });
+
+      setSource(imported);
+      setStatus(
+        `Imported ${imported.displayName}: ${imported.pages.length} page(s), ${imported.byteLength.toLocaleString()} bytes.`,
+      );
+    } catch (error) {
+      setStatus(`Import failed: ${String(error)}`);
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
   return (
     <main className="shell">
       <section className="project-panel" aria-labelledby="app-title">
         <div className="project-heading">
           <div>
-            <p className="eyebrow">Print Studio · M1.4 test surface</p>
-            <h1 id="app-title">Save physical truth.</h1>
+            <p className="eyebrow">Print Studio · M1.5 source import</p>
+            <h1 id="app-title">Inspect the source.</h1>
             <p className="lede">
-              This temporary screen verifies that exact physical geometry survives a real Windows
-              save, application restart, and reopen before we build source import and the full sheet
-              canvas.
+              Import a real PNG, JPEG, or PDF. Print Studio reads the file signature, fingerprints
+              the exact bytes, and reports intrinsic metadata without inventing physical dimensions
+              when an image has no trustworthy DPI.
             </p>
           </div>
 
-          <div className="actions" aria-label="Project file actions">
-            <button type="button" onClick={handleOpen} disabled={isBusy}>
-              Open…
+          <div className="actions" aria-label="Source and project actions">
+            <button type="button" onClick={handleImportSource} disabled={isBusy}>
+              Import…
+            </button>
+            <button type="button" onClick={handleOpenProject} disabled={isBusy}>
+              Open Project…
             </button>
             <button type="button" onClick={handleSave} disabled={isBusy}>
               Save
@@ -115,41 +194,83 @@ export function App() {
           </div>
         </div>
 
-        <div className="truth-grid">
-          <article>
-            <span>Project</span>
-            <strong>{project.id}</strong>
-          </article>
-          <article>
-            <span>Sheet</span>
-            <strong>
-              {sheet
-                ? `${sheet.definition.size.width.toMillimetres()} × ${sheet.definition.size.height.toMillimetres()} mm`
-                : '—'}
-            </strong>
-          </article>
-          <article>
-            <span>Item</span>
-            <strong>
-              {item
-                ? `${item.size.width.toMillimetres()} × ${item.size.height.toMillimetres()} mm`
-                : '—'}
-            </strong>
-          </article>
-          <article>
-            <span>Position</span>
-            <strong>
-              {placement
-                ? `${placement.origin.x.toMillimetres()}, ${placement.origin.y.toMillimetres()} mm`
-                : '—'}
-            </strong>
-          </article>
-        </div>
+        <section className="checkpoint" aria-labelledby="source-heading">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Current source</p>
+              <h2 id="source-heading">{source?.displayName ?? 'Nothing imported yet'}</h2>
+            </div>
+            <span className="source-kind">{source?.kind ?? '—'}</span>
+          </div>
 
-        <div className="file-path">
-          <span>Current file</span>
-          <code>{projectPath ?? 'Not saved yet'}</code>
-        </div>
+          <div className="truth-grid">
+            <article>
+              <span>Pages / frames</span>
+              <strong>{source?.pages.length ?? '—'}</strong>
+            </article>
+            <article>
+              <span>Intrinsic pixels</span>
+              <strong>{source ? formatRaster(source) : '—'}</strong>
+            </article>
+            <article>
+              <span>Declared density</span>
+              <strong>{source ? formatDensity(source) : '—'}</strong>
+            </article>
+            <article>
+              <span>Physical size · page 1</span>
+              <strong>{source ? formatPhysicalSize(source) : '—'}</strong>
+            </article>
+          </div>
+
+          <div className="file-path">
+            <span>Fingerprint</span>
+            <code>{source ? `SHA-256 · ${source.fingerprint.value}` : '—'}</code>
+          </div>
+          <div className="file-path">
+            <span>Source file</span>
+            <code>{source?.filePath ?? 'Choose Import… to inspect a real file'}</code>
+          </div>
+        </section>
+
+        <section className="checkpoint muted-checkpoint" aria-labelledby="project-heading">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">M1.4 regression</p>
+              <h2 id="project-heading">Physical project remains intact.</h2>
+            </div>
+          </div>
+
+          <div className="truth-grid">
+            <article>
+              <span>Project</span>
+              <strong>{project.id}</strong>
+            </article>
+            <article>
+              <span>Sheet</span>
+              <strong>
+                {sheet
+                  ? `${sheet.definition.size.width.toMillimetres()} × ${sheet.definition.size.height.toMillimetres()} mm`
+                  : '—'}
+              </strong>
+            </article>
+            <article>
+              <span>Item</span>
+              <strong>
+                {item
+                  ? `${item.size.width.toMillimetres()} × ${item.size.height.toMillimetres()} mm`
+                  : '—'}
+              </strong>
+            </article>
+            <article>
+              <span>Position</span>
+              <strong>
+                {placement
+                  ? `${placement.origin.x.toMillimetres()}, ${placement.origin.y.toMillimetres()} mm`
+                  : '—'}
+              </strong>
+            </article>
+          </div>
+        </section>
 
         <div className="status" role="status" aria-live="polite">
           <span className="status-dot" aria-hidden="true" />
@@ -157,8 +278,9 @@ export function App() {
         </div>
 
         <p className="test-note">
-          Windows test: save this starter project, close Print Studio, run it again, choose Open,
-          and confirm the values above remain A4 210 × 297 mm, item 50 × 50 mm, position 20, 30 mm.
+          M1.5 checkpoint: import one real photo and one real PDF. Verify pixels/page count, physical
+          size where known, and that an image without trustworthy DPI explicitly says its physical
+          size is unknown.
         </p>
       </section>
     </main>
