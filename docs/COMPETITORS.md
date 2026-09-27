@@ -20,6 +20,47 @@ Current products cluster into several “islands”:
 
 The opportunity is not that no printing software exists. The opportunity is to create a coherent bridge from beginner physical intent to advanced production.
 
+## OS and printer-vendor interfaces
+
+Examples:
+- Windows built-in picture/document print flows;
+- macOS Preview/system print panel;
+- HP Smart and equivalent Canon/Epson/Brother utilities.
+
+### Strengths
+- free/default;
+- device setup and vendor-specific capabilities;
+- broad familiarity;
+- system-level compatibility.
+
+### Gap/opportunity
+Users frequently cross from content apps into a second layer of OS/vendor terminology. These tools are generally oriented around “configure this print job” rather than arbitrary mixed physical layout, explainable optimization, reusable production intent, and cross-vendor calibration.
+
+### Lesson
+Print Studio must be valuable even before replacing the driver: first replace the confusing decision layer, then progressively control the transport.
+
+## BookletCreator
+
+A narrow specialist competitor.
+
+Current price:
+- **$19.95 one-time/lifetime license**;
+- free version supports booklets up to 16 pages.
+
+Strengths:
+- simple PDF → booklet workflow;
+- page ordering;
+- duplex/manual-duplex options;
+- custom paper;
+- page ranges;
+- split large documents into multiple booklets.
+
+### Gap/opportunity
+Its narrowness is the point: one painful print operation can sustain a paid utility when the UX is straightforward.
+
+### Lesson
+Small focused workflows have real willingness to pay; our free/paid strategy should not assume only large professional suites monetize.
+
 ## Adobe Acrobat Reader / Acrobat Pro
 
 ### Strengths
