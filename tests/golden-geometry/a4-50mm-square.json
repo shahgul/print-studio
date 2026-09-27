@@ -1,0 +1,21 @@
+{
+  "id": "golden-a4-50mm-square",
+  "sheet": {
+    "media": "A4",
+    "orientation": "PORTRAIT",
+    "widthMm": 210,
+    "heightMm": 297,
+    "layoutMarginMm": 10
+  },
+  "item": {
+    "id": "square-50mm",
+    "widthMm": 50,
+    "heightMm": 50
+  },
+  "placement": {
+    "id": "placement-square-50mm",
+    "xMm": 20,
+    "yMm": 30,
+    "rotationDegrees": 0
+  }
+}
