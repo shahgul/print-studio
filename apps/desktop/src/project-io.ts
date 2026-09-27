@@ -1,5 +1,5 @@
 import { invoke } from '@tauri-apps/api/core';
-import type { ProjectTextStore } from '@print-studio/project-file';
+import type { ProjectRecoveryStore } from '@print-studio/project-file';
 
 export const PROJECT_FILE_EXTENSION = '.printstudio';
 
@@ -13,7 +13,7 @@ export function ensureProjectExtension(path: string): string {
 
 export function createTauriProjectTextStore(
   invokeCommand: InvokeCommand = (command, args) => invoke(command, args),
-): ProjectTextStore {
+): ProjectRecoveryStore {
   return {
     async read(path: string): Promise<string> {
       const result = await invokeCommand('read_project_text', { path });
@@ -30,6 +30,10 @@ export function createTauriProjectTextStore(
         path,
         content: projectContent,
       });
+    },
+
+    async remove(path: string): Promise<void> {
+      await invokeCommand('remove_project_text', { path });
     },
   };
 }
