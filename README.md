@@ -120,6 +120,14 @@ But the product rule is:
 - Local processing is preferred; cloud features require a concrete benefit and explicit privacy story.
 - Do not promise physical precision beyond what printer calibration and hardware tolerances support.
 
+## Running on Windows
+
+For the current development build, clone the repository and double-click:
+
+`run.bat`
+
+The launcher verifies Node.js, pnpm, and Rust/Cargo, installs npm dependencies on first run, and starts the Tauri desktop app.
+
 ## Current status
 
 **Blueprint complete; Month 1 scaffold initialized.**
