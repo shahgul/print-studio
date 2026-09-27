@@ -27,6 +27,7 @@ casual user
 ## Evidence of willingness to pay
 
 Current examples:
+- BookletCreator $19.95 one-time/lifetime for a narrow booklet workflow;
 - priPrinter Standard €24.95 / Professional €64.95;
 - FinePrint workstation price $100;
 - PDF Press $12/month or $120/year;
