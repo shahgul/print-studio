@@ -2,7 +2,7 @@
 
 > **Living inbox for Print Studio ideas, discoveries, follow-ups, and important unscheduled work.**
 
-Last updated: 27 September 2026.
+Last updated: 28 September 2026.
 
 This file is intentionally an **inbox**, not the execution plan.
 
@@ -170,6 +170,10 @@ Do not use TODO as a substitute for:
 - [ ] Validate a free tier that is genuinely useful without giving away all recurring/automation value.
 
 ## Engineering
+
+- [x] Manual Windows persistence checkpoint passed.
+  - Save As → close app → reopen → Open preserved exact A4/item/position geometry.
+  - Subsequent Save successfully exercised replacement of the existing `.printstudio` file.
 
 - [x] Native atomic project-file adapter for Windows/Tauri.
   - Implemented inside M1.4.

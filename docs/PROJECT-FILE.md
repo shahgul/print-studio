@@ -232,3 +232,30 @@ When sources are added, the schema must support:
 - migration from earlier source-less projects.
 
 Do not invent source persistence before the source domain exists.
+
+
+## Manual Windows verification
+
+The first real desktop persistence checkpoint passed on **28 September 2026**.
+
+Verified workflow:
+
+```text
+starter A4 project
+   ↓
+Save As .printstudio
+   ↓
+close application
+   ↓
+restart Print Studio
+   ↓
+Open saved project
+   ↓
+A4 = 210 × 297 mm
+item = 50 × 50 mm
+position = 20 × 30 mm
+   ↓
+Save existing file again
+```
+
+The reopened project preserved the expected canonical physical geometry, and the second Save exercised replacement of the existing project file through the native atomic storage path.

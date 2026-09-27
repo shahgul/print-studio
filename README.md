@@ -131,7 +131,7 @@ For the current development build, clone the repository and double-click:
 
 The launcher verifies Node.js, pnpm, and Rust/Cargo, synchronizes workspace dependencies, and starts the Tauri desktop app.
 
-### Current manual test checkpoint
+### Current manual test checkpoint — passed
 
 The M1.4 persistence test surface is ready on Windows:
 
@@ -145,7 +145,7 @@ The M1.4 persistence test surface is ready on Windows:
 8. confirm the exact same physical values
 9. choose **Save** to exercise atomic replacement of the existing file
 
-This is intentionally a temporary test surface. PDF/image import and the real physical-sheet canvas arrive in the following milestones.
+This checkpoint passed on Windows: the saved `.printstudio` project reopened with A4 = **210 × 297 mm**, item = **50 × 50 mm**, and position = **20, 30 mm** unchanged, and a subsequent Save successfully replaced the existing project. This is intentionally a temporary test surface. PDF/image import and the real physical-sheet canvas arrive in the following milestones.
 
 ## Current status
 

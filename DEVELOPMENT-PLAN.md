@@ -2,7 +2,7 @@
 
 > **Living engineering execution plan for Print Studio.**
 
-Last updated: 27 September 2026.
+Last updated: 28 September 2026.
 
 This file is the canonical day-to-day development tracker. It answers:
 
@@ -220,11 +220,11 @@ without depending on screen pixels or a PDF library.
 - [x] Add 16 MiB safety bound for the current source-less project format.
 - [x] Add Windows-native CI job with `cargo fmt --check` + Rust tests.
 - [x] Add temporary M1.4 desktop test surface with Open / Save / Save As.
-- [ ] Manual Windows checkpoint: save → close app → reopen → Open → verify exact geometry.
+- [x] Manual Windows checkpoint: save → close app → reopen → Open → verify exact geometry.
 - [x] Full TypeScript/React CI green.
 - [x] Full Windows-native Rust CI green.
 
-### Hands-on checkpoint — available now
+### Hands-on checkpoint — passed on Windows
 
 This is the first useful point to pause feature work and test the desktop app manually.
 
@@ -243,7 +243,7 @@ Manual Windows check:
 7. Choose **Open…** and select the saved project.
 8. Confirm A4 remains 210 × 297 mm, item remains 50 × 50 mm, and position remains 20 × 30 mm.
 9. Choose **Save** once more to exercise replacement of an existing project file.
-10. Report the result before the manual checkpoint is marked complete.
+10. Result: **passed on Windows on 28 September 2026**.
 
 This checkpoint verifies the real Windows/Tauri boundary. It does not yet test imported content or the physical canvas.
 
