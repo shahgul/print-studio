@@ -136,4 +136,4 @@ The launcher verifies Node.js, pnpm, and Rust/Cargo, installs npm dependencies o
 
 The repository now captures the product, market, competitor, UX, domain, architecture, printer-control, calibration, professional-production, business, integration, test, risk, and six-month roadmap decisions discussed before development. The pnpm workspace, React/Vite desktop app, Tauri 2 shell, core package boundaries, quality scripts, and CI are scaffolded; physical-unit behavior is intentionally not implemented yet.
 
-Start with [ROADMAP.md](docs/ROADMAP.md) and [AGENTS.md](AGENTS.md) before writing application code.
+Start with [DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md), [TODO.md](TODO.md), and [AGENTS.md](AGENTS.md) before writing application code.
