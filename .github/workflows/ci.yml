@@ -22,8 +22,7 @@ jobs:
           node-version: 22
 
       - run: pnpm install --frozen-lockfile=false
-      - run: pnpm exec prettier --write packages/domain/src/index.ts packages/domain/src/media.ts packages/domain/src/sheet-definition.ts
-      - run: git diff -- packages/domain/src/index.ts packages/domain/src/media.ts packages/domain/src/sheet-definition.ts && exit 1
+      - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
