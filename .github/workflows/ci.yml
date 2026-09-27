@@ -22,8 +22,7 @@ jobs:
           node-version: 22
 
       - run: pnpm install --frozen-lockfile=false
-      - run: pnpm exec prettier --write apps/desktop/src/styles.css packages/units-geometry/src/index.ts packages/units-geometry/src/index.test.ts
-      - run: git diff -- apps/desktop/src/styles.css packages/units-geometry/src/index.ts packages/units-geometry/src/index.test.ts && exit 1
+      - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
