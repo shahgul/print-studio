@@ -221,11 +221,7 @@ function requireSafeInteger(value: unknown, path: string): number {
   return value as number;
 }
 
-function requireEnum<T extends string>(
-  value: unknown,
-  values: ReadonlyArray<T>,
-  path: string,
-): T {
+function requireEnum<T extends string>(value: unknown, values: ReadonlyArray<T>, path: string): T {
   if (typeof value !== 'string' || !values.includes(value as T)) {
     throw invalidSchema(`${path} has an unsupported value`);
   }
@@ -297,18 +293,14 @@ function parseSide(value: unknown, expectedKind: SideKind, path: string): Side {
     throw invalidSchema(`${path}.kind must be ${expectedKind}`);
   }
 
-  const placements = requireArray(record.placements, `${path}.placements`).map(
-    (placement, index) => parsePlacement(placement, `${path}.placements[${index}]`),
+  const placements = requireArray(record.placements, `${path}.placements`).map((placement, index) =>
+    parsePlacement(placement, `${path}.placements[${index}]`),
   );
 
   return Side.create(kind, placements);
 }
 
-function assertStoredSizeMatches(
-  storedSize: Size2D,
-  resolvedSize: Size2D,
-  path: string,
-): void {
+function assertStoredSizeMatches(storedSize: Size2D, resolvedSize: Size2D, path: string): void {
   if (!storedSize.equals(resolvedSize)) {
     throw invalidSchema(`${path}.sizeUm does not match the selected standard media`);
   }
@@ -321,11 +313,7 @@ function parseSheetDefinition(value: unknown, path: string): SheetDefinition {
   const storedSize = parseSize(record.sizeUm, `${path}.sizeUm`);
 
   if (kind === 'STANDARD') {
-    const media = requireEnum(
-      record.media,
-      Object.values(StandardMedia),
-      `${path}.media`,
-    );
+    const media = requireEnum(record.media, Object.values(StandardMedia), `${path}.media`);
     const orientation = requireEnum(
       record.orientation,
       Object.values(Orientation),
@@ -377,9 +365,7 @@ function parseV1(document: unknown): Project {
   const root = requireRecord(document, 'root');
 
   if (root.physicalUnit !== PROJECT_FILE_PHYSICAL_UNIT) {
-    throw invalidSchema(
-      `physicalUnit must be ${PROJECT_FILE_PHYSICAL_UNIT}`,
-    );
+    throw invalidSchema(`physicalUnit must be ${PROJECT_FILE_PHYSICAL_UNIT}`);
   }
 
   const projectRecord = requireRecord(root.project, 'project');
@@ -415,11 +401,9 @@ export function deserializeProject(serialized: string): Project {
   try {
     parsed = JSON.parse(serialized);
   } catch (error) {
-    throw new ProjectFileError(
-      ProjectFileErrorCode.InvalidJson,
-      'project file is not valid JSON',
-      { cause: error },
-    );
+    throw new ProjectFileError(ProjectFileErrorCode.InvalidJson, 'project file is not valid JSON', {
+      cause: error,
+    });
   }
 
   const migrated = migrateProjectFileDocument(parsed);
