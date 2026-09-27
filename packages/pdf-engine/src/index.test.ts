@@ -14,11 +14,7 @@ import { Length, Point2D, QuarterTurn, Size2D } from '@print-studio/units-geomet
 import { describe, expect, it } from 'vitest';
 
 import goldenA4 from '../../../tests/golden-geometry/a4-50mm-square.json';
-import {
-  mapPlacementToPdfRect,
-  physicalLengthToPdfPoints,
-  renderProjectToPdf,
-} from './index';
+import { mapPlacementToPdfRect, physicalLengthToPdfPoints, renderProjectToPdf } from './index';
 
 function createGoldenProject(): Project {
   const definition = SheetDefinition.standard(StandardMedia.A4, {
@@ -32,10 +28,7 @@ function createGoldenProject(): Project {
   const placement = Placement.create({
     id: goldenA4.placement.id,
     itemId: item.id,
-    origin: Point2D.of(
-      Length.mm(goldenA4.placement.xMm),
-      Length.mm(goldenA4.placement.yMm),
-    ),
+    origin: Point2D.of(Length.mm(goldenA4.placement.xMm), Length.mm(goldenA4.placement.yMm)),
     rotation: QuarterTurn.Deg0,
   });
   const sheet = Sheet.create({
