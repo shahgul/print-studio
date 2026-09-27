@@ -96,6 +96,15 @@ This is a lightweight architectural/product decision log. It records what is cur
 
 **Precision note:** one PDF point is approximately 352.778 µm and therefore cannot be represented exactly as an integer micrometre. The maximum construction quantization error is 0.5 µm, far below normal printer mechanical tolerances.
 
+### D-019 — Initial PDF adapter is @cantoo/pdf-lib behind pdf-engine
+**Decision:** Use `@cantoo/pdf-lib` as the first PDF creation/manipulation adapter inside `packages/pdf-engine`, while keeping domain and layout contracts independent of it.
+
+**Why:** The maintained Cantoo fork keeps the familiar pdf-lib API, is MIT licensed, works in JavaScript environments relevant to the project, and was actively maintained at the September 2026 implementation snapshot. The original upstream `pdf-lib` latest release is substantially older.
+
+**Boundary rule:** canonical micrometres convert to PDF points only inside the PDF engine. React/Tauri/browser pixels are never inputs to the renderer.
+
+**Replacement rule:** this is an adapter decision, not a permanent public API commitment. A future commercial/native PDF engine can replace it without changing canonical project geometry.
+
 ## Preferred direction, not yet irreversible
 
 ### D-P01 — React + TypeScript UI
@@ -107,8 +116,8 @@ Strong candidate for desktop/native integration.
 ### D-P03 — PDF.js for PDF preview/import rendering
 Candidate; keep behind abstraction.
 
-### D-P04 — pdf-lib for early composition/manipulation
-Candidate; keep behind abstraction.
+### D-P04 — PDF adapter abstraction
+Fulfilled by D-019. Keep the concrete PDF library behind `packages/pdf-engine`.
 
 ### D-P05 — qpdf as an optional structural companion
 Candidate where useful.
