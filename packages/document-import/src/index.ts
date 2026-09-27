@@ -1,6 +1,7 @@
 import { PDFDocument } from '@cantoo/pdf-lib';
 import {
   Source,
+  SourceAvailability,
   SourceFingerprint,
   SourceKind,
   SourcePage,
@@ -443,4 +444,22 @@ export async function importSourceBytes(
   }
 
   return importImage(input, format, limits, fingerprint);
+}
+
+
+export async function revalidateSourceBytes(
+  source: Source,
+  currentBytes: Uint8Array | null,
+): Promise<Source> {
+  if (currentBytes === null) {
+    return source.withAvailability(SourceAvailability.Missing);
+  }
+
+  const currentFingerprint = await sha256Hex(currentBytes);
+
+  return source.withAvailability(
+    currentFingerprint === source.fingerprint.value
+      ? SourceAvailability.Available
+      : SourceAvailability.Changed,
+  );
 }
