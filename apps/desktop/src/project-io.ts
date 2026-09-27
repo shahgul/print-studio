@@ -3,10 +3,7 @@ import type { ProjectTextStore } from '@print-studio/project-file';
 
 export const PROJECT_FILE_EXTENSION = '.printstudio';
 
-export type InvokeCommand = (
-  command: string,
-  args?: Record<string, unknown>,
-) => Promise<unknown>;
+export type InvokeCommand = (command: string, args?: Record<string, unknown>) => Promise<unknown>;
 
 export function ensureProjectExtension(path: string): string {
   return path.toLowerCase().endsWith(PROJECT_FILE_EXTENSION)
