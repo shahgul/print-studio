@@ -42,8 +42,12 @@ describe('Length', () => {
   it('round-trips common units within one micrometre', () => {
     const source = Length.mm(123.456);
 
-    expect(Length.inches(source.toInches()).micrometres).toBe(source.micrometres);
-    expect(Length.points(source.toPoints()).micrometres).toBe(source.micrometres);
+    expect(Length.inches(source.toInches()).micrometres).toBe(
+      source.micrometres,
+    );
+    expect(Length.points(source.toPoints()).micrometres).toBe(
+      source.micrometres,
+    );
   });
 
   it('supports deterministic arithmetic', () => {
@@ -131,9 +135,15 @@ describe('Rect', () => {
   });
 
   it('contains points on its boundary', () => {
-    expect(rect.containsPoint(Point2D.of(Length.mm(20), Length.mm(30)))).toBe(true);
-    expect(rect.containsPoint(Point2D.of(Length.mm(70), Length.mm(70)))).toBe(true);
-    expect(rect.containsPoint(Point2D.of(Length.mm(70.001), Length.mm(70)))).toBe(false);
+    expect(
+      rect.containsPoint(Point2D.of(Length.mm(20), Length.mm(30))),
+    ).toBe(true);
+    expect(
+      rect.containsPoint(Point2D.of(Length.mm(70), Length.mm(70))),
+    ).toBe(true);
+    expect(
+      rect.containsPoint(Point2D.of(Length.mm(70.001), Length.mm(70))),
+    ).toBe(false);
   });
 
   it('contains another rectangle when all edges fit', () => {
