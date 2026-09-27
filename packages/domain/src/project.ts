@@ -2,11 +2,13 @@ import { Item } from './item';
 import { Placement } from './placement';
 import { requireNonEmptyId } from './shared';
 import { Sheet } from './sheet';
+import { Source } from './source';
 
 type CreateProjectInput = Readonly<{
   id: string;
   items?: ReadonlyArray<Item>;
   sheets?: ReadonlyArray<Sheet>;
+  sources?: ReadonlyArray<Source>;
 }>;
 
 function requireUniqueIds<T>(
@@ -38,14 +40,17 @@ export class Project {
     readonly id: string,
     readonly items: ReadonlyArray<Item>,
     readonly sheets: ReadonlyArray<Sheet>,
+    readonly sources: ReadonlyArray<Source>,
   ) {}
 
   static create(input: CreateProjectInput): Project {
     const items = Object.freeze([...(input.items ?? [])]);
     const sheets = Object.freeze([...(input.sheets ?? [])]);
+    const sources = Object.freeze([...(input.sources ?? [])]);
 
     requireUniqueIds(items, (item) => item.id, 'item');
     requireUniqueIds(sheets, (sheet) => sheet.id, 'sheet');
+    requireUniqueIds(sources, (source) => source.id, 'source');
 
     const itemIds = new Set(items.map((item) => item.id));
     const allPlacements = sheets.flatMap((sheet) => getPlacements(sheet));
@@ -60,6 +65,6 @@ export class Project {
       }
     }
 
-    return new Project(requireNonEmptyId(input.id, 'project id'), items, sheets);
+    return new Project(requireNonEmptyId(input.id, 'project id'), items, sheets, sources);
   }
 }

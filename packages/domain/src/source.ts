@@ -10,6 +10,7 @@ export enum SourceKind {
 export enum SourceAvailability {
   Available = 'AVAILABLE',
   Missing = 'MISSING',
+  Changed = 'CHANGED',
 }
 
 export type DensityDpi = Readonly<{
