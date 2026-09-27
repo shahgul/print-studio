@@ -277,22 +277,22 @@ without depending on screen pixels or a PDF library.
 - [x] Basic PDF page-count/physical-size import from raw bytes.
 - [x] Malformed/unsupported input error contracts with typed codes.
 - [x] Resource-limit groundwork: 256 MiB file, 1,000 PDF pages, 250 MP image defaults.
-- [ ] Manual Windows import checkpoint.
+- [x] Manual Windows import checkpoint: real JPG and PDF imported successfully and metadata verified.
 - [x] CI green for the headless importer + desktop/native import bridge.
 
-### Hands-on M1.5 checkpoint
+### Hands-on M1.5 checkpoint — passed on Windows
 
-After pulling the current branch and running `run.bat`:
+Verified manually on 28 September 2026:
 
-1. Click **Import…**.
-2. Choose a real JPG/PNG.
-3. Verify pixel dimensions match the source.
-4. Verify DPI/physical size are shown only when trustworthy metadata is present.
-5. Choose a real PDF.
-6. Verify page count and first-page physical dimensions.
-7. Confirm a source without trusted DPI reports **Unknown — no trusted DPI** rather than an invented size.
+1. Real JPG imported successfully.
+2. Pixel/density/physical metadata matched expectations.
+3. Real PDF imported successfully.
+4. Page count and physical page dimensions matched expectations.
+5. Source fingerprints/path reporting behaved as expected.
 
-This checkpoint validates source inspection only. Placement on a physical sheet begins in M1.6.
+Result: **passed**.
+
+This checkpoint validates source inspection only. M1.5 still needs source persistence/revalidation before it can close; placement on a physical sheet begins in M1.6.
 
 ## M1.6 — Physical Sheet Canvas
 
