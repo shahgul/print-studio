@@ -171,6 +171,11 @@ Do not use TODO as a substitute for:
 
 ## Engineering
 
+- [ ] Replace temporary Tauri app icon with the final Print Studio brand icon set.
+  - Current `icon.ico` is a functional development placeholder required by `tauri-build` on Windows.
+  - Generate the full Tauri icon set once branding is finalized.
+
+
 - [ ] Decide when/where Rust becomes justified.
   - TypeScript first.
   - Move only measured performance/native requirements.
