@@ -422,3 +422,21 @@ export function deserializeProject(serialized: string): Project {
     );
   }
 }
+
+
+export interface ProjectTextStore {
+  read(path: string): Promise<string>;
+  writeAtomic(path: string, content: string): Promise<void>;
+}
+
+export class ProjectPersistence {
+  constructor(private readonly store: ProjectTextStore) {}
+
+  async save(path: string, project: Project): Promise<void> {
+    await this.store.writeAtomic(path, serializeProject(project));
+  }
+
+  async load(path: string): Promise<Project> {
+    return deserializeProject(await this.store.read(path));
+  }
+}
