@@ -34,7 +34,7 @@ A task is not marked complete merely because code exists. Relevant tests, type c
 
 ## M1.4 — Project Schema + Persistence
 
-**Status:** Next.
+**Status:** In progress.
 
 **Goal:** Make Print Studio projects durable without losing canonical physical geometry, while establishing schema versioning and migration rules before real user projects exist.
 
