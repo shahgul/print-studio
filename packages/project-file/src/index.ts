@@ -428,6 +428,38 @@ export interface ProjectTextStore {
   writeAtomic(path: string, content: string): Promise<void>;
 }
 
+export interface ProjectRecoveryStore extends ProjectTextStore {
+  remove(path: string): Promise<void>;
+}
+
+export const DEFAULT_AUTOSAVE_INTERVAL_MS = 30_000;
+
+export function getRecoveryProjectPath(projectPath: string): string {
+  const suffix = '.printstudio';
+
+  if (!projectPath.toLowerCase().endsWith(suffix)) {
+    throw new RangeError('project recovery requires a .printstudio project path');
+  }
+
+  return `${projectPath.slice(0, -suffix.length)}.autosave${suffix}`;
+}
+
+export class ProjectRecovery {
+  constructor(private readonly store: ProjectRecoveryStore) {}
+
+  async save(projectPath: string, project: Project): Promise<void> {
+    await this.store.writeAtomic(getRecoveryProjectPath(projectPath), serializeProject(project));
+  }
+
+  async load(projectPath: string): Promise<Project> {
+    return deserializeProject(await this.store.read(getRecoveryProjectPath(projectPath)));
+  }
+
+  async clear(projectPath: string): Promise<void> {
+    await this.store.remove(getRecoveryProjectPath(projectPath));
+  }
+}
+
 export class ProjectPersistence {
   constructor(private readonly store: ProjectTextStore) {}
 
