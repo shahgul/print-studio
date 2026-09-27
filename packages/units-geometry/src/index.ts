@@ -63,9 +63,7 @@ export class Length {
 
   static points(points: number): Length {
     assertFinite(points, 'points');
-    return new Length(
-      roundPhysical((points * MICROMETRES_PER_INCH) / PDF_POINTS_PER_INCH),
-    );
+    return new Length(roundPhysical((points * MICROMETRES_PER_INCH) / PDF_POINTS_PER_INCH));
   }
 
   static zero(): Length {
@@ -93,15 +91,11 @@ export class Length {
   }
 
   add(other: Length): Length {
-    return new Length(
-      this.#checkedCanonical(this.#micrometres + other.#micrometres),
-    );
+    return new Length(this.#checkedCanonical(this.#micrometres + other.#micrometres));
   }
 
   subtract(other: Length): Length {
-    return new Length(
-      this.#checkedCanonical(this.#micrometres - other.#micrometres),
-    );
+    return new Length(this.#checkedCanonical(this.#micrometres - other.#micrometres));
   }
 
   multiply(factor: number): Length {
@@ -252,12 +246,7 @@ export class Rect {
     return new Rect(origin, size);
   }
 
-  static fromXYWH(
-    x: Length,
-    y: Length,
-    width: Length,
-    height: Length,
-  ): Rect {
+  static fromXYWH(x: Length, y: Length, width: Length, height: Length): Rect {
     return new Rect(Point2D.of(x, y), Size2D.of(width, height));
   }
 
@@ -309,25 +298,12 @@ export class Rect {
       return null;
     }
 
-    const left = Length.um(
-      Math.max(this.left.micrometres, other.left.micrometres),
-    );
-    const top = Length.um(
-      Math.max(this.top.micrometres, other.top.micrometres),
-    );
-    const right = Length.um(
-      Math.min(this.right.micrometres, other.right.micrometres),
-    );
-    const bottom = Length.um(
-      Math.min(this.bottom.micrometres, other.bottom.micrometres),
-    );
+    const left = Length.um(Math.max(this.left.micrometres, other.left.micrometres));
+    const top = Length.um(Math.max(this.top.micrometres, other.top.micrometres));
+    const right = Length.um(Math.min(this.right.micrometres, other.right.micrometres));
+    const bottom = Length.um(Math.min(this.bottom.micrometres, other.bottom.micrometres));
 
-    return Rect.fromXYWH(
-      left,
-      top,
-      right.subtract(left),
-      bottom.subtract(top),
-    );
+    return Rect.fromXYWH(left, top, right.subtract(left), bottom.subtract(top));
   }
 
   translate(dx: Length, dy: Length): Rect {
