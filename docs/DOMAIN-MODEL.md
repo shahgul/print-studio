@@ -69,8 +69,10 @@ Current implemented foundation:
 - SHA-256 `SourceFingerprint`;
 - source byte length;
 - ordered immutable page/frame metadata;
-- availability state: AVAILABLE or MISSING;
-- missing sources retain their last-known imported metadata.
+- availability state: AVAILABLE, MISSING, or CHANGED;
+- missing and changed sources retain their last-known imported metadata;
+- Project now owns an immutable source collection with unique source IDs;
+- source availability is revalidated from the referenced path + original SHA-256 fingerprint when a project is reopened.
 
 Image rule:
 - pixel width/height are intrinsic metadata;

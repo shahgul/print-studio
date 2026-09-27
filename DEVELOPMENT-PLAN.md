@@ -270,8 +270,12 @@ without depending on screen pixels or a PDF library.
 - [x] Implement source fingerprint/hash calculation from imported bytes.
 - [x] Add bounded native binary source reader using Tauri raw IPC (no JSON byte expansion).
 - [x] Add desktop Import… checkpoint for real PNG/JPEG/PDF inspection.
-- [ ] Persist Source/SourcePage metadata inside the versioned Project file.
-- [ ] Revalidate referenced source path + fingerprint on project reopen and surface MISSING/CHANGED states.
+- [x] Persist Source/SourcePage metadata inside project schema V2.
+- [x] Revalidate referenced source path + fingerprint on project reopen and surface AVAILABLE/MISSING/CHANGED states.
+- [x] Migrate schema V1 → V2 by adding an empty source collection.
+- [x] Preserve original source fingerprint/page metadata when external bytes change.
+- [x] Distinguish missing files from read/permission failures.
+- [ ] Manual Windows persistence/revalidation checkpoint.
 - [ ] Non-destructive crop metadata.
 - [x] Basic PNG/JPEG metadata import from raw bytes.
 - [x] Basic PDF page-count/physical-size import from raw bytes.
@@ -293,6 +297,23 @@ Verified manually on 28 September 2026:
 Result: **passed**.
 
 This checkpoint validates source inspection only. M1.5 still needs source persistence/revalidation before it can close; placement on a physical sheet begins in M1.6.
+
+### Hands-on source persistence/revalidation checkpoint
+
+Pending Windows verification:
+
+1. Import a real JPG or PDF.
+2. **Save As…** a `.printstudio` project.
+3. Close Print Studio.
+4. Reopen the saved project.
+5. Confirm the source is restored and reports **AVAILABLE**.
+6. Close the app, rename or move the external source file, then reopen the project.
+7. Confirm the source reports **MISSING** while its last-known metadata remains visible.
+8. Restore the source path, alter the file contents, then reopen.
+9. Confirm the source reports **CHANGED** and Print Studio does not silently replace the stored fingerprint/metadata.
+10. Restore the original file bytes and confirm a later reopen returns to **AVAILABLE**.
+
+Only a genuinely absent path is classified as MISSING. If the file exists but cannot be read, the app should surface the I/O failure.
 
 ## M1.6 — Physical Sheet Canvas
 

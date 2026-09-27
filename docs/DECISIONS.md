@@ -111,6 +111,20 @@ This is a lightweight architectural/product decision log. It records what is cur
 
 **Why:** project files become long-lived user assets. Physical drift, silent version guessing, and partially-written saves would violate Print Studio's core trust model.
 
+### D-021 — Project schema V2 persists external source identity
+**Decision:** Schema V2 adds the Project's source collection, storing source/page metadata and the original SHA-256 fingerprint while keeping source file bytes external.
+
+**Migration:** V1 projects migrate deterministically to V2 by adding `sources: []`. Existing physical geometry is not transformed.
+
+**Revalidation:** Reopening a project checks whether each referenced path exists and, if present, compares the current bytes against the stored fingerprint:
+- match → AVAILABLE;
+- absent → MISSING;
+- mismatch → CHANGED.
+
+A CHANGED source keeps the original stored fingerprint and last-known intrinsic metadata until the user explicitly re-imports it. Read/permission failures are not silently converted into MISSING.
+
+**Why:** A project must remember what was imported without silently accepting mutated external files as the same content. This preserves traceability and makes relinking/reimport behavior explicit.
+
 ### D-019 — Initial PDF adapter is @cantoo/pdf-lib behind pdf-engine
 **Decision:** Use `@cantoo/pdf-lib` as the first PDF creation/manipulation adapter inside `packages/pdf-engine`, while keeping domain and layout contracts independent of it.
 

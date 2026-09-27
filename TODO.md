@@ -171,6 +171,12 @@ Do not use TODO as a substitute for:
 
 ## Engineering
 
+- [ ] Source relink/reimport UX.
+  - Core M1.5 states now distinguish AVAILABLE / MISSING / CHANGED.
+  - Later UX should let users locate a missing file or explicitly accept/re-import changed content.
+  - Never update the stored source fingerprint merely because a different file exists at the old path.
+
+
 - [ ] Add EXIF density metadata support for JPEG/TIFF-oriented photo workflows.
   - Current basic JPEG importer recognizes JFIF density and always recognizes SOF pixel dimensions.
   - Do not block M1.5 basic import on EXIF; add when photo fixtures justify it.
@@ -232,6 +238,7 @@ Do not use TODO as a substitute for:
 
 - [>] Source import model.
   - Scheduled as M1.5 in `DEVELOPMENT-PLAN.md`.
+  - Source persistence/revalidation now implemented in schema V2; crop/source-item metadata remains.
 
 - [>] Physical sheet canvas.
   - Scheduled as M1.6 in `DEVELOPMENT-PLAN.md`.

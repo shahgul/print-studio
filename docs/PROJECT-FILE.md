@@ -1,6 +1,6 @@
 # Project File Format
 
-Current schema: **1**
+Current schema: **2**
 
 This document defines the durable Print Studio project-file contract implemented by `packages/project-file`.
 
@@ -11,7 +11,7 @@ Every project document begins with:
 ```json
 {
   "format": "print-studio-project",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "physicalUnit": "MICROMETRE"
 }
 ```
@@ -40,7 +40,7 @@ Rules:
 - negative coordinates are valid where the domain permits them;
 - dimensions/margins still pass domain invariants after parsing.
 
-## V1 shape
+## V2 shape
 
 Simplified example:
 
@@ -135,7 +135,17 @@ It must not:
 
 Older versions pass through the migration boundary.
 
-Schema 1 is the first version, so there is currently no older migration. The migration registry/test seam exists before user projects accumulate.
+The first real migration is implemented:
+
+```text
+schema V1
+  project: { id, items, sheets }
+        ↓
+schema V2
+  project: { id, items, sheets, sources: [] }
+```
+
+V1 physical geometry is left untouched. Migration adds only the new empty source collection and updates the schema version.
 
 ## Errors
 
@@ -173,7 +183,7 @@ The first desktop implementation now exists in the Tauri/Rust layer:
 - native Open / Save dialogs are provided through the official Tauri dialog plugin;
 - the frontend bridge calls only `read_project_text` and `write_project_text_atomic`;
 - native reads/writes are restricted to paths ending in `.printstudio`;
-- current project text is capped at 16 MiB as a temporary safety bound while schema 1 contains no embedded source assets;
+- current project text is capped at 16 MiB as a temporary safety bound while schema 2 stores source references/metadata but does not embed source file bytes;
 - Windows-native Rust tests run separately in CI.
 
 The core codec owns:
@@ -223,16 +233,34 @@ The current Rust implementation is tested on a Windows GitHub Actions runner for
 
 ## Sources
 
-Source references are intentionally absent from schema 1 today because the Source/SourcePage domain is scheduled for M1.5.
+Schema V2 persists referenced source metadata inside the project while leaving the original source files external.
 
-When sources are added, the schema must support:
-- source identity/fingerprint;
-- referenced/embedded policy;
-- explicit missing-source state;
-- migration from earlier source-less projects.
+Each source stores:
+- source ID and kind;
+- display name;
+- referenced local file path;
+- original SHA-256 fingerprint;
+- original byte length;
+- availability state: `AVAILABLE`, `MISSING`, or `CHANGED`;
+- ordered SourcePage metadata.
 
-Do not invent source persistence before the source domain exists.
+Image page metadata may store:
+- pixel width/height;
+- declared density when known;
+- physical size when it can be derived from trustworthy metadata.
 
+PDF page metadata stores:
+- canonical physical page size;
+- no raster metadata merely because previews may later be rasterized.
+
+The project does **not** replace last-known imported metadata when an external file changes. On reopen:
+- missing path → `MISSING`;
+- same SHA-256 bytes → `AVAILABLE`;
+- different SHA-256 bytes → `CHANGED`.
+
+A changed source must be explicitly re-imported before its stored fingerprint or intrinsic metadata are replaced.
+
+The desktop existence probe is separate from the byte read so permission/I/O failures are not mislabeled as missing files.
 
 ## Manual Windows verification
 

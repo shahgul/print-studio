@@ -74,7 +74,7 @@ The repository is deliberately documentation-heavy before implementation. Read t
 ### Engineering
 
 - [Domain Model](docs/DOMAIN-MODEL.md) — canonical Project, Source, Item, Sheet, Side, Constraint, Layout, Recipe, PrinterProfile, PrintPlan and PrintJob concepts.
-- [Project File Format](docs/PROJECT-FILE.md) — durable schema v1, micrometre persistence, compatibility, migrations, typed errors, and atomic-storage contract.
+- [Project File Format](docs/PROJECT-FILE.md) — durable schema V2, source metadata, micrometre persistence, migrations, typed errors, and atomic-storage contract.
 - [Architecture](docs/ARCHITECTURE.md) — module boundaries, technology direction, persistence, preview/output separation, APIs and security.
 - [Printing Stack](docs/PRINTING-STACK.md) — print-ready export, OS spooler, IPP Everywhere, AirPrint-related paths, selected raw/device options, capability normalization and job lifecycle.
 - [Calibration](docs/CALIBRATION.md) — exact-size, offset, duplex registration, confidence and future camera-assisted calibration.
@@ -151,6 +151,6 @@ This checkpoint passed on Windows: the saved `.printstudio` project reopened wit
 
 **Month 1 implementation is active; M1.1–M1.4 are complete and M1.5 source import is in progress.**
 
-The repository now has deterministic physical geometry, the first physical document model, a headless PDF renderer, versioned `.printstudio` serialization, native Windows/Tauri atomic project storage, Open / Save / Save As dialogs, Linux/TypeScript quality CI, and Windows-native Rust CI. Recovery groundwork is in place; source-aware persistence, PDF/image import, and missing-source handling now belong to M1.5.
+The repository now has deterministic physical geometry, a headless PDF renderer, schema-V2 `.printstudio` serialization, native atomic project storage, PNG/JPEG/PDF metadata import, persisted external source references, and reopen-time AVAILABLE/MISSING/CHANGED fingerprint revalidation. M1.5 still needs its final crop/source-item metadata slice before closure.
 
 Start with [DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md), [TODO.md](TODO.md), and [AGENTS.md](AGENTS.md) before writing application code.
