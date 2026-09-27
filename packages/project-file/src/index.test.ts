@@ -18,6 +18,8 @@ import {
   ProjectFileError,
   ProjectFileErrorCode,
   ProjectPersistence,
+  ProjectRecovery,
+  getRecoveryProjectPath,
   deserializeProject,
   serializeProject,
 } from './index';
@@ -290,5 +292,77 @@ describe('ProjectPersistence', () => {
     await persistence.save('memory', createRoundTripProject());
 
     expect((await persistence.load('memory')).id).toBe('project-round-trip');
+  });
+});
+
+
+describe('project recovery groundwork', () => {
+  it('derives a companion recovery project path without changing the project extension', () => {
+    expect(getRecoveryProjectPath('D:\\jobs\\worksheet.printstudio')).toBe(
+      'D:\\jobs\\worksheet.autosave.printstudio',
+    );
+  });
+
+  it('writes and restores an atomic recovery snapshot', async () => {
+    const files = new Map<string, string>();
+
+    const recovery = new ProjectRecovery({
+      async read(path: string): Promise<string> {
+        const value = files.get(path);
+        if (value === undefined) {
+          throw new Error(`missing file: ${path}`);
+        }
+        return value;
+      },
+      async writeAtomic(path: string, value: string): Promise<void> {
+        files.set(path, value);
+      },
+      async remove(path: string): Promise<void> {
+        files.delete(path);
+      },
+    });
+
+    const original = createRoundTripProject();
+
+    await recovery.save('D:\\jobs\\worksheet.printstudio', original);
+    const restored = await recovery.load('D:\\jobs\\worksheet.printstudio');
+
+    expect(restored.id).toBe(original.id);
+    expect(restored.items[0]?.size.width.micrometres).toBe(50_001);
+    expect(files.has('D:\\jobs\\worksheet.autosave.printstudio')).toBe(true);
+  });
+
+  it('clears the companion recovery snapshot after a successful primary save', async () => {
+    const files = new Map<string, string>();
+
+    const store = {
+      async read(path: string): Promise<string> {
+        const value = files.get(path);
+        if (value === undefined) {
+          throw new Error(`missing file: ${path}`);
+        }
+        return value;
+      },
+      async writeAtomic(path: string, value: string): Promise<void> {
+        files.set(path, value);
+      },
+      async remove(path: string): Promise<void> {
+        files.delete(path);
+      },
+    };
+
+    const project = createRoundTripProject();
+    const persistence = new ProjectPersistence(store);
+    const recovery = new ProjectRecovery(store);
+    const projectPath = 'D:\\jobs\\worksheet.printstudio';
+
+    await recovery.save(projectPath, project);
+    expect(files.has(getRecoveryProjectPath(projectPath))).toBe(true);
+
+    await persistence.save(projectPath, project);
+    await recovery.clear(projectPath);
+
+    expect(files.has(projectPath)).toBe(true);
+    expect(files.has(getRecoveryProjectPath(projectPath))).toBe(false);
   });
 });
