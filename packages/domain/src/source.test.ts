@@ -1,13 +1,7 @@
 import { Length, Size2D } from '@print-studio/units-geometry';
 import { describe, expect, it } from 'vitest';
 
-import {
-  Source,
-  SourceAvailability,
-  SourceFingerprint,
-  SourceKind,
-  SourcePage,
-} from './index';
+import { Source, SourceAvailability, SourceFingerprint, SourceKind, SourcePage } from './index';
 
 describe('SourceFingerprint', () => {
   it('accepts a canonical SHA-256 hex digest', () => {
