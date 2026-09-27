@@ -259,10 +259,15 @@ without depending on screen pixels or a PDF library.
 
 ## M1.5 — Image/PDF Source Model
 
-- [ ] Implement `Source` / `SourcePage` minimal domain.
-- [ ] Image intrinsic pixel dimensions.
-- [ ] PDF page physical dimensions.
-- [ ] Source fingerprint/hash strategy.
+**Status:** In progress.
+
+- [x] Implement `Source` / `SourcePage` minimal domain.
+- [x] Represent image intrinsic pixel dimensions without inventing DPI.
+- [x] Represent PDF page physical dimensions in canonical units.
+- [x] Define SHA-256 source fingerprint identity.
+- [x] Add source availability state so missing files retain last-known metadata.
+- [x] Enforce deterministic contiguous page indices and unique page IDs.
+- [ ] Implement source fingerprint/hash calculation from imported bytes.
 - [ ] Non-destructive crop metadata.
 - [ ] Basic image import.
 - [ ] Basic PDF import.

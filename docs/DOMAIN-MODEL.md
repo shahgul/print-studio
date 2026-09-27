@@ -61,16 +61,26 @@ Examples:
 - generated QR/barcode;
 - simple text/shape content.
 
-Properties:
-- source ID;
-- type;
-- URI/path or embedded data;
-- fingerprint/hash;
-- intrinsic dimensions;
-- page/frame list;
-- color metadata where known;
-- raster pixel dimensions/PPI metadata where present;
-- parser warnings.
+Current implemented foundation:
+- `SourceKind.Image` and `SourceKind.Pdf`;
+- stable source ID;
+- display name;
+- local file path/reference;
+- SHA-256 `SourceFingerprint`;
+- source byte length;
+- ordered immutable page/frame metadata;
+- availability state: AVAILABLE or MISSING;
+- missing sources retain their last-known imported metadata.
+
+Image rule:
+- pixel width/height are intrinsic metadata;
+- density/DPI is optional metadata;
+- physical size may be absent;
+- Print Studio must **not invent 72/96/300 DPI** when the file does not provide a trustworthy physical-density signal.
+
+PDF rule:
+- each PDF page has an intrinsic physical size;
+- raster metadata is not attached to the PDF page merely because a preview may later be rasterized.
 
 The source should not be destructively edited. Cropping and transforms belong to items/derived assets.
 
@@ -80,8 +90,15 @@ Addressable page/frame/content unit from a Source.
 
 Examples:
 - PDF page 7;
-- JPEG image;
+- JPEG/PNG image frame;
 - generated vector QR.
+
+Current invariants:
+- page indices are zero-based and contiguous within a source;
+- page IDs are unique within a source;
+- image pages require positive integer pixel dimensions;
+- PDF pages require positive physical dimensions;
+- image physical size is nullable when density metadata is unavailable.
 
 ### Item
 

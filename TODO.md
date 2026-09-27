@@ -171,6 +171,10 @@ Do not use TODO as a substitute for:
 
 ## Engineering
 
+- [ ] Image DPI provenance and trust policy.
+  - M1.5 deliberately does not guess DPI when absent.
+  - When PNG/JPEG metadata parsing lands, distinguish declared density from user override and later measured/derived values.
+
 - [x] Manual Windows persistence checkpoint passed.
   - Save As → close app → reopen → Open preserved exact A4/item/position geometry.
   - Subsequent Save successfully exercised replacement of the existing `.printstudio` file.
