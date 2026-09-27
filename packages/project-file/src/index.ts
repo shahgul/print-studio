@@ -423,7 +423,6 @@ export function deserializeProject(serialized: string): Project {
   }
 }
 
-
 export interface ProjectTextStore {
   read(path: string): Promise<string>;
   writeAtomic(path: string, content: string): Promise<void>;
