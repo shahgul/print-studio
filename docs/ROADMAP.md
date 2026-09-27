@@ -14,8 +14,8 @@ The project should be usable internally throughout development, but the final mo
 - [x] `packages/domain` boundary
 - [x] lint / format / typecheck / Vitest / build scripts
 - [x] GitHub Actions quality workflow
-- [ ] M1.1 RED tests for physical units
-- [ ] canonical length representation implementation
+- [x] M1.1 RED tests for physical units
+- [x] canonical length representation implementation
 - [ ] first golden geometry fixture
 - [ ] first physically verified PDF export
 
