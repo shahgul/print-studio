@@ -183,6 +183,18 @@ Before adoption, check current releases and licenses.
 - Tauri  
   https://tauri.app/
 
+- Tauri plugins-workspace issue #3340 — cross-platform printer support proposal  
+  https://github.com/tauri-apps/plugins-workspace/issues/3340  
+  Notes: as of the research snapshot, no mature official cross-platform printer plugin is assumed.
+
+- MuPDF licensing  
+  https://mupdf.readthedocs.io/en/1.28.5/license.html  
+  Notes: GNU AGPL open-source license or commercial license from Artifex; review before proprietary/commercial adoption.
+
+- BookletCreator — pricing  
+  https://www.bookletcreator.com/order/  
+  Checked price: $19.95 one-time/lifetime license.
+
 ## Research hygiene
 
 - Vendor sites are authoritative for their own features/prices, not neutral comparisons.
