@@ -187,8 +187,9 @@ Do not use TODO as a substitute for:
 
 # Promoted / scheduled
 
-- [>] Physical document model and golden A4 layout.
-  - Scheduled as M1.2 in `DEVELOPMENT-PLAN.md`.
+- [x] Physical document model and golden A4 layout.
+  - Completed as M1.2 in `DEVELOPMENT-PLAN.md`.
+  - Golden fixture: `tests/golden-geometry/a4-50mm-square.json`.
 
 - [>] Headless PDF renderer.
   - Scheduled as M1.3 in `DEVELOPMENT-PLAN.md`.
