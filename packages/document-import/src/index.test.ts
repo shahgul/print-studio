@@ -193,8 +193,8 @@ describe('importSourceBytes', () => {
       pixelHeight: 2_000,
       densityDpi: { x: 300, y: 300 },
     });
-    expect(source.pages[0]?.physicalSize?.width.toInches()).toBeCloseTo(10, 5);
-    expect(source.pages[0]?.physicalSize?.height.toInches()).toBeCloseTo(20 / 3, 5);
+    expect(source.pages[0]?.physicalSize?.width.micrometres).toBe(254_000);
+    expect(source.pages[0]?.physicalSize?.height.micrometres).toBe(169_333);
   });
 
   it('converts JFIF dots-per-centimetre to DPI', async () => {
