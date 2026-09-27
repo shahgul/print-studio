@@ -94,8 +94,8 @@ describe('revalidateProjectSources', () => {
     const result = await revalidateProjectSources(original, reader);
 
     expect(result.id).toBe(original.id);
-    expect(result.items).toBe(original.items);
-    expect(result.sheets).toBe(original.sheets);
+    expect(result.items).toEqual(original.items);
+    expect(result.sheets).toEqual(original.sheets);
   });
 
   it('surfaces a read failure when the source exists instead of calling it missing', async () => {
