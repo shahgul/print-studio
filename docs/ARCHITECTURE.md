@@ -81,6 +81,7 @@ Tauri is a strong candidate because it allows:
 
 Caveat:
 - printer integration is not “solved” by choosing Tauri;
+- as of the September 2026 research snapshot, Tauri's official plugins workspace still has open proposals for cross-platform printer support rather than a mature official printer API;
 - OS spooler, IPP, USB/raw paths still need explicit implementation;
 - do not couple printer architecture to a wrapper plugin that may not cover production needs.
 
@@ -116,6 +117,7 @@ Current direction:
 - PDF.js: Apache-2.0;
 - pdf-lib: MIT;
 - qpdf: Apache-2.0;
+- MuPDF is technically strong but its open-source option is GNU AGPL, with commercial licensing offered by Artifex; do not make it a default dependency unless the product's distribution/license model is compatible;
 - be cautious with strong-copyleft PDF engines when commercial distribution or closed components are planned.
 
 Do not add a dependency only because it is technically powerful; licensing, platform support, security, and maintenance matter.
