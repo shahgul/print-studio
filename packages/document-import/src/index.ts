@@ -166,7 +166,7 @@ function parsePng(bytes: Uint8Array, limits: ImportLimits): ImageMetadata {
     throw malformed('PNG is truncated before its IHDR chunk');
   }
 
-  let offset = PNG_SIGNATURE.length;
+  let offset: number = PNG_SIGNATURE.length;
   let width: number | null = null;
   let height: number | null = null;
   let densityDpi: DensityDpi | null = null;
