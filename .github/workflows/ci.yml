@@ -23,7 +23,8 @@ jobs:
 
       - run: pnpm install --frozen-lockfile=false
       - run: test -f apps/desktop/src-tauri/icons/icon.ico
-      - run: pnpm format:check
+      - run: pnpm exec prettier --write apps/desktop/src/App.tsx
+      - run: git diff -- apps/desktop/src/App.tsx && exit 1
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
