@@ -1,0 +1,218 @@
+# TODO
+
+> **Living inbox for Print Studio ideas, discoveries, follow-ups, and important unscheduled work.**
+
+Last updated: 27 September 2026.
+
+This file is intentionally an **inbox**, not the execution plan.
+
+Use it when:
+- a new product idea appears during discussion;
+- implementation reveals an important follow-up;
+- a useful feature is not yet scheduled;
+- research is needed before committing to a direction;
+- an issue should not be forgotten but should not interrupt the current milestone.
+
+When an item gets scheduled, promote it to `DEVELOPMENT-PLAN.md` and mark it here as promoted.
+
+## Status legend
+
+- [ ] Open / unscheduled.
+- [~] Being investigated.
+- [>] Promoted into `DEVELOPMENT-PLAN.md`.
+- [x] Completed.
+- [!] Blocked / waiting for decision or external dependency.
+- [−] Dropped deliberately.
+
+## Capture rules
+
+Each important TODO should have enough context that a future agent can understand why it exists.
+
+Prefer:
+
+```text
+- [ ] Camera-assisted duplex calibration
+  - Why: manual ruler measurement is tedious.
+  - Trigger: after manual calibration is reliable.
+  - Related: docs/CALIBRATION.md
+```
+
+over:
+
+```text
+- [ ] camera thing
+```
+
+Do not use TODO as a substitute for:
+- canonical product specs;
+- architectural decisions;
+- bugs that need immediate tests/fixes;
+- the current milestone checklist.
+
+---
+
+# Open ideas / future considerations
+
+## Printing and printer intelligence
+
+- [ ] Explore a maintained printer capability/profile knowledge base.
+  - Could augment live IPP/OS capability discovery.
+  - Must distinguish reported, measured, community-supplied, and assumed values.
+  - Risk: large maintenance burden.
+
+- [ ] Explore camera-assisted calibration.
+  - Detect printed fiducials from a phone/camera.
+  - Estimate X/Y scale and duplex registration.
+  - Only after manual calibration is proven reliable.
+
+- [ ] Investigate printer-driver scaling detection.
+  - Detect likely Fit/Shrink behavior from calibration output.
+  - Relevant to Print Truth.
+
+- [ ] Research partially used label-sheet calibration.
+  - Important for labels/stickers where feed offset is critical.
+
+## Smart Layout
+
+- [ ] Explore “easiest cutting” as a first-class solver objective.
+  - Need a defensible cut-complexity metric, not merely area utilization.
+
+- [ ] Explore mixed-media/mixed-stock optimization.
+  - Example: choose between A4/A3/SRA3 based on cost and waste.
+
+- [ ] Explore human-readable solver explanations.
+  - “Uses one extra sheet but reduces eight cuts.”
+
+- [ ] Natural-language intent → structured constraints.
+  - LLM only translates intent.
+  - Deterministic solver remains authoritative.
+
+## Professional production
+
+- [ ] Governed recipe edit permissions.
+  - Inspired by controlled operator editing patterns.
+  - Recipe fields may be locked/editable/range-limited/approval-required.
+
+- [ ] Production recipe draft/published states.
+  - Useful for print shops and regulated workflows.
+
+- [ ] Production output regression comparison.
+  - Compare recipe/version output for page order, geometry, marks, content and sheet count.
+
+- [ ] Safe production scripting/extensibility.
+  - Declarative recipes first.
+  - Arbitrary scripting only after validated demand.
+
+- [ ] Hot-folder processing.
+  - Requires idempotent file handling, reports, recipe versions, and duplicate-print protection.
+
+- [ ] Production dashboard.
+  - Job state, preflight failures, render/solver timing, printer status and retries.
+
+## Classroom / DustChalk
+
+- [ ] Validate teacher printing patterns in Indian schools.
+  - Most common printers/media.
+  - Typical worksheet copy counts.
+  - Personal vs school-funded consumables.
+  - Mobile vs Windows workflow.
+
+- [ ] “Print for class” DustChalk integration.
+  - Student count → structured print intent.
+  - Keep DustChalk semantics outside core geometry.
+
+- [ ] Classroom cut-plan UX.
+  - Show number/direction of cuts, not prepress terminology.
+
+## Photography / makers
+
+- [ ] Photographer print workflow research.
+  - Exact physical size.
+  - contact sheets.
+  - border/crop decisions.
+  - PPI.
+  - printer/media/color expectations.
+
+- [ ] Maker/crafter 1:1 workflow research.
+  - sewing patterns;
+  - templates;
+  - sticker sheets;
+  - planner inserts;
+  - model making.
+
+## Color / prepress
+
+- [ ] ICC engine research.
+  - Do not implement until geometry/output pipeline is stable.
+
+- [ ] Evaluate LittleCMS and alternatives.
+  - License, precision, integration and cross-platform concerns.
+
+- [ ] Spot color / overprint / separation strategy.
+  - Production-mode only.
+
+- [ ] PDF/X scope.
+  - Decide which variants matter based on real professional users.
+
+## Product / business
+
+- [ ] Final product naming/trademark/domain review before public beta.
+  - Repository can remain `print-studio`.
+
+- [ ] Validate perpetual vs subscription preference separately for:
+  - personal users;
+  - teachers/creators;
+  - print shops;
+  - automation/SDK customers.
+
+- [ ] Interview 3–5 small print operators before deep Production-mode work.
+
+- [ ] Validate a free tier that is genuinely useful without giving away all recurring/automation value.
+
+## Engineering
+
+- [ ] Decide when/where Rust becomes justified.
+  - TypeScript first.
+  - Move only measured performance/native requirements.
+
+- [ ] Define project file extension/name once persistence work starts.
+
+- [ ] Consider a local API/daemon only when an actual second process/app needs it.
+
+- [ ] Add dependency/license inventory before public distribution.
+
+- [ ] Add vulnerability reporting process before public beta.
+
+---
+
+# Promoted / scheduled
+
+- [>] Physical document model and golden A4 layout.
+  - Scheduled as M1.2 in `DEVELOPMENT-PLAN.md`.
+
+- [>] Headless PDF renderer.
+  - Scheduled as M1.3 in `DEVELOPMENT-PLAN.md`.
+
+- [>] Project persistence/schema versioning.
+  - Scheduled as M1.4 in `DEVELOPMENT-PLAN.md`.
+
+- [>] Source import model.
+  - Scheduled as M1.5 in `DEVELOPMENT-PLAN.md`.
+
+- [>] Physical sheet canvas.
+  - Scheduled as M1.6 in `DEVELOPMENT-PLAN.md`.
+
+---
+
+# Completed / resolved
+
+- [x] Decide canonical physical length representation.
+  - Resolution: signed integer micrometres.
+  - Recorded as D-018.
+
+- [x] Add Windows development launcher.
+  - Resolution: root `run.bat`.
+
+- [x] Decide whether printer-vendor applications can eventually be bypassed.
+  - Resolution: staged export → OS spooler → Direct IPP → selected raw/device paths.
+  - See `docs/PRINTING-STACK.md`.

@@ -14,12 +14,14 @@ A beginner may only know the outcome they want. A professional may expect explic
 
 At minimum:
 1. `README.md`
-2. `docs/PRODUCT.md`
-3. `docs/DOMAIN-MODEL.md`
-4. `docs/ARCHITECTURE.md`
-5. `docs/FEATURES.md`
-6. `docs/UX.md`
-7. the specialist doc for the area being changed.
+2. `DEVELOPMENT-PLAN.md`
+3. `TODO.md`
+4. `docs/PRODUCT.md`
+5. `docs/DOMAIN-MODEL.md`
+6. `docs/ARCHITECTURE.md`
+7. `docs/FEATURES.md`
+8. `docs/UX.md`
+9. the specialist doc for the area being changed.
 
 For printer/device work also read:
 - `docs/PRINTING-STACK.md`
@@ -104,7 +106,9 @@ When a decision changes, update the owning document in the same change.
 - testing → `docs/TESTING.md`
 - monetization → `docs/BUSINESS.md`
 - DustChalk/external consumers → `docs/INTEGRATIONS.md`
-- sequencing → `docs/ROADMAP.md`
+- strategic sequencing → `docs/ROADMAP.md`
+- live implementation/completion tracking → `DEVELOPMENT-PLAN.md`
+- new unscheduled ideas/follow-ups → `TODO.md`
 - accepted/deferred decisions → `docs/DECISIONS.md`
 - product/engineering risks → `docs/RISKS.md`
 - terminology → `docs/GLOSSARY.md`
@@ -173,3 +177,12 @@ The intended product should eventually provide:
 The repository is in planning/foundation. Do not prematurely build a large framework or printer-specific driver matrix. Preserve the sequencing in `docs/ROADMAP.md`.
 
 If implementation reveals a conflict with the blueprint, document and resolve the conflict rather than silently diverging.
+
+## Development tracking discipline
+
+- Keep `DEVELOPMENT-PLAN.md` current during implementation.
+- Mark tasks complete only after their verification gate passes.
+- Capture newly discovered unscheduled work in `TODO.md`.
+- When a TODO becomes scheduled, mark it promoted there and add it to `DEVELOPMENT-PLAN.md`.
+- When a promoted TODO is implemented, mark/update both files.
+- Do not use random code comments as the only record of important future product work.

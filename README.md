@@ -83,7 +83,9 @@ The repository is deliberately documentation-heavy before implementation. Read t
 
 ### Planning and governance
 
-- [Roadmap](docs/ROADMAP.md) — six-month sequence with exit gates.
+- [Roadmap](docs/ROADMAP.md) — six-month strategy and milestone sequencing.
+- [Development Plan](DEVELOPMENT-PLAN.md) — live engineering checklist, active milestone, verification gates and completed work.
+- [TODO](TODO.md) — evolving inbox for new ideas, discoveries, research and important unscheduled work.
 - [Decisions](docs/DECISIONS.md) — accepted decisions, preferred technology direction and deliberately deferred choices.
 - [Risks](docs/RISKS.md) — product, engineering, printer, privacy, commercial and research risks.
 - [AGENTS.md](AGENTS.md) — operating instructions for future coding agents and contributors.
