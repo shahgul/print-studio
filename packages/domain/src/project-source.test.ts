@@ -1,4 +1,3 @@
-import { Size2D, Length } from '@print-studio/units-geometry';
 import { describe, expect, it } from 'vitest';
 
 import {
