@@ -33,6 +33,23 @@ describe('createTauriProjectTextStore', () => {
     ]);
   });
 
+  it('removes recovery project text through the narrow native command', async () => {
+    const calls: Array<{ command: string; args: unknown }> = [];
+    const store = createTauriProjectTextStore(async (command, args) => {
+      calls.push({ command, args });
+      return undefined;
+    });
+
+    await store.remove('D:\\jobs\\a.autosave.printstudio');
+
+    expect(calls).toEqual([
+      {
+        command: 'remove_project_text',
+        args: { path: 'D:\\jobs\\a.autosave.printstudio' },
+      },
+    ]);
+  });
+
   it('writes only through the atomic native command', async () => {
     const calls: Array<{ command: string; args: unknown }> = [];
     const store = createTauriProjectTextStore(async (command, args) => {

@@ -130,6 +130,30 @@ mod tests {
     }
 
     #[test]
+    fn removes_a_project_file_idempotently() {
+        let directory = tempdir().expect("create temp directory");
+        let target = directory.path().join("project.autosave.printstudio");
+        fs::write(&target, "recovery").expect("seed recovery project");
+
+        remove_project_text(&target).expect("remove recovery project");
+        remove_project_text(&target).expect("repeat recovery removal");
+
+        assert!(!target.exists());
+    }
+
+    #[test]
+    fn rejects_removing_non_project_files() {
+        let directory = tempdir().expect("create temp directory");
+        let target = directory.path().join("project.txt");
+        fs::write(&target, "keep me").expect("seed non-project file");
+
+        let error = remove_project_text(&target).expect_err("reject non-project removal");
+
+        assert_eq!(error.kind(), io::ErrorKind::InvalidInput);
+        assert_eq!(fs::read_to_string(target).expect("read non-project file"), "keep me");
+    }
+
+    #[test]
     fn rejects_oversized_project_content_before_touching_existing_file() {
         let directory = tempdir().expect("create temp directory");
         let target = directory.path().join("existing.printstudio");
