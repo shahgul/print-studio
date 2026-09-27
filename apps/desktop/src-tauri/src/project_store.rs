@@ -45,6 +45,16 @@ pub(crate) fn read_project_text(path: &Path) -> io::Result<String> {
     fs::read_to_string(path)
 }
 
+pub(crate) fn remove_project_text(path: &Path) -> io::Result<()> {
+    validate_project_path(path)?;
+
+    match fs::remove_file(path) {
+        Ok(()) => Ok(()),
+        Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(()),
+        Err(error) => Err(error),
+    }
+}
+
 pub(crate) fn write_project_text_atomic(path: &Path, content: &str) -> io::Result<()> {
     validate_project_path(path)?;
 
