@@ -22,6 +22,7 @@ jobs:
           node-version: 22
 
       - run: pnpm install --frozen-lockfile=false
+      - run: test -f apps/desktop/src-tauri/icons/icon.ico
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck
