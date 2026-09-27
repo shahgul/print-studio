@@ -174,8 +174,13 @@ Before adoption, check current releases and licenses.
 - PDF.js  
   https://mozilla.github.io/pdf.js/
 
-- pdf-lib  
-  https://github.com/Hopding/pdf-lib
+- @cantoo/pdf-lib  
+  https://www.npmjs.com/package/@cantoo/pdf-lib  
+  Notes: selected initial PDF adapter in September 2026; active MIT-licensed fork retaining the original pdf-lib API. Version checked during M1.3: 2.11.1.
+
+- pdf-lib upstream  
+  https://github.com/Hopding/pdf-lib  
+  Notes: original MIT project; latest upstream release checked during M1.3 was 1.17.1 and significantly older than the maintained Cantoo fork.
 
 - qpdf  
   https://github.com/qpdf/qpdf
