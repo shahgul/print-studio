@@ -295,7 +295,6 @@ describe('ProjectPersistence', () => {
   });
 });
 
-
 describe('project recovery groundwork', () => {
   it('derives a companion recovery project path without changing the project extension', () => {
     expect(getRecoveryProjectPath('D:\\jobs\\worksheet.printstudio')).toBe(
