@@ -96,6 +96,21 @@ This is a lightweight architectural/product decision log. It records what is cur
 
 **Precision note:** one PDF point is approximately 352.778 µm and therefore cannot be represented exactly as an integer micrometre. The maximum construction quantization error is 0.5 µm, far below normal printer mechanical tolerances.
 
+### D-020 — Project files are versioned, explicit, and lossless
+**Decision:** The first durable project format uses the identity `print-studio-project`, schema version `1`, and persists all canonical physical geometry as safe integer micrometres. The codec lives in `packages/project-file` and is independent of React, Tauri, filesystem APIs, printer code, and PDF libraries.
+
+**Compatibility rules:**
+- persisted micrometre values are never silently rounded;
+- malformed/semantically invalid files fail with typed project-file errors;
+- additive unknown fields are tolerated within a supported schema version;
+- unsupported future schema versions are rejected explicitly;
+- migrations run through a dedicated migration boundary before domain reconstruction;
+- standard media store both semantic media/orientation and resolved physical size so a future media-definition change cannot silently alter an old project's geometry.
+
+**Storage rule:** platform storage implements `writeAtomic`; partial file replacement must never be considered a successful save.
+
+**Why:** project files become long-lived user assets. Physical drift, silent version guessing, and partially-written saves would violate Print Studio's core trust model.
+
 ### D-019 — Initial PDF adapter is @cantoo/pdf-lib behind pdf-engine
 **Decision:** Use `@cantoo/pdf-lib` as the first PDF creation/manipulation adapter inside `packages/pdf-engine`, while keeping domain and layout contracts independent of it.
 
