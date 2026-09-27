@@ -1,14 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  Insets,
-  Length,
-  Point2D,
-  QuarterTurn,
-  Rect,
-  Size2D,
-  rotateSize,
-} from './index';
+import { Insets, Length, Point2D, QuarterTurn, Rect, Size2D, rotateSize } from './index';
 
 describe('Length', () => {
   it('uses exact integer micrometres for metric input', () => {
@@ -42,12 +34,8 @@ describe('Length', () => {
   it('round-trips common units within one micrometre', () => {
     const source = Length.mm(123.456);
 
-    expect(Length.inches(source.toInches()).micrometres).toBe(
-      source.micrometres,
-    );
-    expect(Length.points(source.toPoints()).micrometres).toBe(
-      source.micrometres,
-    );
+    expect(Length.inches(source.toInches()).micrometres).toBe(source.micrometres);
+    expect(Length.points(source.toPoints()).micrometres).toBe(source.micrometres);
   });
 
   it('supports deterministic arithmetic', () => {
@@ -120,12 +108,7 @@ describe('Insets', () => {
 });
 
 describe('Rect', () => {
-  const rect = Rect.fromXYWH(
-    Length.mm(20),
-    Length.mm(30),
-    Length.mm(50),
-    Length.mm(40),
-  );
+  const rect = Rect.fromXYWH(Length.mm(20), Length.mm(30), Length.mm(50), Length.mm(40));
 
   it('derives physical edges from origin and size', () => {
     expect(rect.left.toMillimetres()).toBe(20);
@@ -135,47 +118,26 @@ describe('Rect', () => {
   });
 
   it('contains points on its boundary', () => {
-    expect(
-      rect.containsPoint(Point2D.of(Length.mm(20), Length.mm(30))),
-    ).toBe(true);
-    expect(
-      rect.containsPoint(Point2D.of(Length.mm(70), Length.mm(70))),
-    ).toBe(true);
-    expect(
-      rect.containsPoint(Point2D.of(Length.mm(70.001), Length.mm(70))),
-    ).toBe(false);
+    expect(rect.containsPoint(Point2D.of(Length.mm(20), Length.mm(30)))).toBe(true);
+    expect(rect.containsPoint(Point2D.of(Length.mm(70), Length.mm(70)))).toBe(true);
+    expect(rect.containsPoint(Point2D.of(Length.mm(70.001), Length.mm(70)))).toBe(false);
   });
 
   it('contains another rectangle when all edges fit', () => {
-    const inner = Rect.fromXYWH(
-      Length.mm(25),
-      Length.mm(35),
-      Length.mm(10),
-      Length.mm(10),
-    );
+    const inner = Rect.fromXYWH(Length.mm(25), Length.mm(35), Length.mm(10), Length.mm(10));
 
     expect(rect.containsRect(inner)).toBe(true);
   });
 
   it('treats edge-touching rectangles as non-overlapping', () => {
-    const touching = Rect.fromXYWH(
-      Length.mm(70),
-      Length.mm(30),
-      Length.mm(10),
-      Length.mm(10),
-    );
+    const touching = Rect.fromXYWH(Length.mm(70), Length.mm(30), Length.mm(10), Length.mm(10));
 
     expect(rect.intersects(touching)).toBe(false);
     expect(rect.intersection(touching)).toBeNull();
   });
 
   it('returns the physical intersection for positive-area overlap', () => {
-    const overlapping = Rect.fromXYWH(
-      Length.mm(60),
-      Length.mm(60),
-      Length.mm(20),
-      Length.mm(20),
-    );
+    const overlapping = Rect.fromXYWH(Length.mm(60), Length.mm(60), Length.mm(20), Length.mm(20));
 
     const intersection = rect.intersection(overlapping);
 
