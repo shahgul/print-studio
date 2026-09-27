@@ -13,3 +13,12 @@ export { Project } from './project';
 export { Sheet, Side, SideKind } from './sheet';
 export { SheetDefinition } from './sheet-definition';
 export type { LayoutMargins } from './sheet-definition';
+
+export {
+  Source,
+  SourceAvailability,
+  SourceFingerprint,
+  SourceKind,
+  SourcePage,
+} from './source';
+export type { DensityDpi, RasterInfo } from './source';
