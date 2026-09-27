@@ -1,0 +1,148 @@
+# Decisions
+
+This is a lightweight architectural/product decision log. It records what is currently agreed, what is deliberately deferred, and what would require an explicit change.
+
+## Accepted
+
+### D-001 — Physical geometry is canonical
+**Decision:** Store intended geometry in physical units; screen pixels are derived.
+
+**Why:** Exact-size printing, export, calibration, and multiple renderers cannot safely depend on UI pixels.
+
+### D-002 — Sheet is a first-class object
+**Decision:** Model Sheet and Side explicitly rather than treating each output PDF page as the domain.
+
+**Why:** Duplex, imposition, stock, fronts/backs, and finishing all depend on the physical sheet.
+
+### D-003 — One model, progressive UX
+**Decision:** Simple, Studio, and Production modes share the same project/domain model.
+
+**Why:** Avoid consumer/pro forks and preserve continuity as users grow.
+
+### D-004 — Intent before terminology
+**Decision:** Beginner workflows start from “what are you making?” rather than print jargon.
+
+**Why:** Users think in outcomes; terminology should be revealed only when useful.
+
+### D-005 — Smart Layout is deterministic domain logic
+**Decision:** Geometry/constraint solving is authoritative. AI may translate natural language into structured intent later but does not directly position printable objects.
+
+**Why:** Print geometry must be testable, reproducible, and explainable.
+
+### D-006 — Hard constraints never fail silently
+**Decision:** Exact-size, no-rotation, minimum gap, containment, and similar hard constraints produce explicit conflict if unsatisfiable.
+
+**Why:** A physically wrong “best effort” is worse than a clear conflict.
+
+### D-007 — Multiple optimization objectives
+**Decision:** Smart Layout exposes meaningful alternatives rather than one mysterious score.
+
+**Why:** Minimum paper, easiest cutting, largest size, and orientation can conflict.
+
+### D-008 — Print Truth is a core product concept
+**Decision:** Before output, show effective dimensions, scale, printer-region issues, resolution, calibration, and warnings.
+
+**Why:** Preview alone is not sufficient to predict physical output.
+
+### D-009 — Calibration is part of the product
+**Decision:** Model printer/media/transport-specific repeatable deviation.
+
+**Why:** Correct digital geometry does not guarantee exact physical output.
+
+### D-010 — Vendor apps can be bypassed; physics cannot
+**Decision:** Support a staged path from PDF export → OS spooler → direct IPP → selected raw/device paths.
+
+**Why:** Broad compatibility first; direct control where standards allow; avoid becoming a driver vendor unnecessarily.
+
+### D-011 — Local-first
+**Decision:** Ordinary source processing/layout does not require uploading documents to a server.
+
+**Why:** privacy, latency, offline use, cost, and print-shop/school trust.
+
+### D-012 — Standalone engine, DustChalk consumer
+**Decision:** DustChalk uses Print Studio capabilities through a contract. Teacher concepts do not leak into core geometry types.
+
+**Why:** reusable platform and clean architecture.
+
+### D-013 — Print-relevant editing only
+**Decision:** Support crop/rotate/resize/simple overlays/marks, but do not become Canva/Illustrator/Word.
+
+**Why:** protect product identity and six-month focus.
+
+### D-014 — TDD for behavior
+**Decision:** red → green → refactor for behavior; bug fixes start with reproduction tests.
+
+**Why:** print correctness must survive refactoring.
+
+### D-015 — Golden physical fixtures
+**Decision:** Maintain geometry/PDF/physical verification fixtures.
+
+**Why:** screenshots cannot prove real-world size.
+
+### D-016 — Recipes store intent
+**Decision:** Saved recipes represent production rules/constraints, not merely serialized UI controls.
+
+**Why:** automation and SDK consumers should not depend on one UI.
+
+### D-017 — Print submission is a side effect with unknown states
+**Decision:** PrintPlan and PrintJob are separate; retries use stable intent IDs.
+
+**Why:** a network timeout may occur after the printer has accepted a job. Automatic duplicate submission can waste materials.
+
+## Preferred direction, not yet irreversible
+
+### D-P01 — React + TypeScript UI
+Strong current preference for application UI.
+
+### D-P02 — Tauri desktop shell
+Strong candidate for desktop/native integration.
+
+### D-P03 — PDF.js for PDF preview/import rendering
+Candidate; keep behind abstraction.
+
+### D-P04 — pdf-lib for early composition/manipulation
+Candidate; keep behind abstraction.
+
+### D-P05 — qpdf as an optional structural companion
+Candidate where useful.
+
+### D-P06 — TypeScript-first with Rust/native modules where justified
+Do not rewrite everything in Rust without measured need.
+
+## Deferred
+
+### D-X01 — Canonical internal length representation
+Candidates include integer microunits, rational/decimal abstraction, or points with strict handling. Must be benchmarked/tested before implementation.
+
+### D-X02 — Final project file format
+Requirements are defined; exact encoding/storage is not.
+
+### D-X03 — Final licensing model for Print Studio source/product
+Do not add an OSS license accidentally before product/licensing intent is decided.
+
+### D-X04 — Exact paid edition names/prices
+Business doc contains hypotheses only.
+
+### D-X05 — Color-management engine
+Architecture must preserve it; implementation is post-foundation.
+
+### D-X06 — Cloud architecture
+No cloud requirement exists for core local workflows.
+
+### D-X07 — Mobile product
+Touch-aware architecture is useful, but full mobile scope is not decided.
+
+### D-X08 — Printer capability database
+Could be useful but may create maintenance/support burden.
+
+### D-X09 — Camera-assisted calibration
+Promising but must prove measurement reliability.
+
+## Decision change protocol
+
+When changing an accepted decision:
+1. state why the old decision is insufficient;
+2. document migration/compatibility impact;
+3. update affected docs;
+4. update tests/contracts;
+5. do not silently diverge in implementation.
