@@ -94,11 +94,18 @@ Candidate:
 
 ### PDF composition/output
 
-Candidate:
-- pdf-lib for initial TypeScript PDF creation/manipulation;
-- qpdf as a possible lower-level structural tool/companion where it materially helps.
+Current implementation:
+- `packages/pdf-engine` is the headless PDF boundary;
+- `@cantoo/pdf-lib` is the initial TypeScript PDF adapter;
+- the adapter is isolated so domain/layout contracts do not depend on that library;
+- qpdf remains a possible lower-level structural companion where it materially helps.
 
-Do not make public domain contracts depend on either library.
+Why `@cantoo/pdf-lib`:
+- it retains the original pdf-lib API model;
+- it is MIT licensed;
+- as of the September 2026 implementation snapshot it is actively maintained, unlike the much older latest upstream `pdf-lib` release.
+
+Public domain contracts must remain independent of the PDF library.
 
 ### Native/core implementation language
 
@@ -115,7 +122,7 @@ The product may later be commercial. Dependency licenses must be reviewed before
 Current direction:
 - prefer permissive dependencies where possible;
 - PDF.js: Apache-2.0;
-- pdf-lib: MIT;
+- `@cantoo/pdf-lib`: MIT (current initial PDF adapter);
 - qpdf: Apache-2.0;
 - MuPDF is technically strong but its open-source option is GNU AGPL, with commercial licensing offered by Artifex; do not make it a default dependency unless the product's distribution/license model is compatible;
 - be cautious with strong-copyleft PDF engines when commercial distribution or closed components are planned.
