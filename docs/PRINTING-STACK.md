@@ -100,6 +100,8 @@ Print Studio
 
 IPP Everywhere is strategically important because it is specifically designed for driverless printing.
 
+The Printer Working Group currently states that **98% of printers sold support IPP/2.0 and DNS-SD**. That does not mean 98% expose every feature we need or are fully IPP Everywhere certified, but it makes standards-based direct printing strategically credible rather than a niche path.
+
 Potentially query:
 - `media-supported`;
 - `media-ready`;
