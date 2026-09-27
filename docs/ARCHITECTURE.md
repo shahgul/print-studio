@@ -238,8 +238,16 @@ Current rules:
 
 The word **atomic** is part of the adapter contract. A platform implementation must not report success after a partial/truncated project replacement.
 
+Desktop implementation now provides:
+- a TypeScript `ProjectTextStore` bridge that invokes only narrow Tauri commands;
+- native Rust read + atomic-write commands;
+- same-directory temporary writes followed by flush, sync, and atomic persist/replace;
+- `.printstudio` path validation;
+- native Open / Save dialogs;
+- a dedicated Windows-native CI job;
+- a temporary desktop persistence test surface.
+
 Still required:
-- native Windows/Tauri atomic replacement adapter;
 - autosave/recovery policy;
 - source fingerprinting and explicit missing-source state once Source/SourcePage exists;
 - migration fixtures when the first real schema migration is introduced;

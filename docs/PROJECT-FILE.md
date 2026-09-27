@@ -169,6 +169,13 @@ Platform implementations own:
 - filesystem errors;
 - backup/recovery policy.
 
+The first desktop implementation now exists in the Tauri/Rust layer:
+- native Open / Save dialogs are provided through the official Tauri dialog plugin;
+- the frontend bridge calls only `read_project_text` and `write_project_text_atomic`;
+- native reads/writes are restricted to paths ending in `.printstudio`;
+- current project text is capped at 16 MiB as a temporary safety bound while schema 1 contains no embedded source assets;
+- Windows-native Rust tests run separately in CI.
+
 The core codec owns:
 - format identity;
 - versioning;
@@ -180,14 +187,39 @@ The core codec owns:
 
 A project save must never leave the user's only good project truncated because the process crashed halfway through writing.
 
-The eventual desktop adapter must use a platform-appropriate atomic replacement strategy. A naive:
+The desktop adapter uses this sequence:
+
+```text
+target directory
+   ↓
+create same-directory temporary file
+   ↓
+write complete project text
+   ↓
+flush
+   ↓
+sync file contents
+   ↓
+atomically persist/replace target
+```
+
+The previous good project is never deliberately deleted before the replacement is ready.
+
+A naive:
 
 ```text
 delete old file
 write new file
 ```
 
-is not acceptable.
+remains unacceptable.
+
+The current Rust implementation is tested on a Windows GitHub Actions runner for:
+- creating a new project file;
+- replacing an existing project file;
+- preserving an existing file when validation fails;
+- refusing non-`.printstudio` paths;
+- rejecting oversized content before touching the existing project.
 
 ## Sources
 

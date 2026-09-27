@@ -211,11 +211,41 @@ without depending on screen pixels or a PDF library.
 - [x] Add migration hook and migration-focused tests.
 - [x] Add headless `ProjectPersistence` load/save orchestration.
 - [x] Define `ProjectTextStore.writeAtomic()` as the platform storage contract.
-- [ ] Implement native Windows/Tauri atomic file-store adapter.
-- [ ] Add desktop Save/Open integration and file picker.
+- [x] Implement native Windows/Tauri atomic file-store adapter.
+- [x] Add desktop Save/Open integration and native file picker.
 - [ ] Add missing-source representation after Source/SourcePage lands in M1.5.
 - [ ] Add autosave/recovery policy on top of the atomic storage adapter.
-- [x] Full CI green for the completed headless persistence slice.
+- [x] Add narrow Tauri commands for project read + atomic write.
+- [x] Restrict native project storage to `.printstudio` files.
+- [x] Add 16 MiB safety bound for the current source-less project format.
+- [x] Add Windows-native CI job with `cargo fmt --check` + Rust tests.
+- [x] Add temporary M1.4 desktop test surface with Open / Save / Save As.
+- [ ] Manual Windows checkpoint: save → close app → reopen → Open → verify exact geometry.
+- [x] Full TypeScript/React CI green.
+- [x] Full Windows-native Rust CI green.
+
+### Hands-on checkpoint — available now
+
+This is the first useful point to pause feature work and test the desktop app manually.
+
+Expected starter project:
+- A4 portrait: 210 × 297 mm;
+- item: 50 × 50 mm;
+- position: 20 × 30 mm.
+
+Manual Windows check:
+1. `git pull`.
+2. Run `run.bat`.
+3. Confirm the starter values shown in the app.
+4. Choose **Save As…** and save a `.printstudio` file.
+5. Close Print Studio completely.
+6. Run `run.bat` again.
+7. Choose **Open…** and select the saved project.
+8. Confirm A4 remains 210 × 297 mm, item remains 50 × 50 mm, and position remains 20 × 30 mm.
+9. Choose **Save** once more to exercise replacement of an existing project file.
+10. Report the result before the manual checkpoint is marked complete.
+
+This checkpoint verifies the real Windows/Tauri boundary. It does not yet test imported content or the physical canvas.
 
 ## M1.5 — Image/PDF Source Model
 

@@ -129,12 +129,28 @@ For the current development build, clone the repository and double-click:
 
 `run.bat`
 
-The launcher verifies Node.js, pnpm, and Rust/Cargo, installs npm dependencies on first run, and starts the Tauri desktop app.
+The launcher verifies Node.js, pnpm, and Rust/Cargo, synchronizes workspace dependencies, and starts the Tauri desktop app.
+
+### Current manual test checkpoint
+
+The M1.4 persistence test surface is ready on Windows:
+
+1. `git pull`
+2. run `run.bat`
+3. confirm A4 = **210 × 297 mm**, item = **50 × 50 mm**, position = **20, 30 mm**
+4. choose **Save As…** and save a `.printstudio` project
+5. close the app
+6. run it again
+7. choose **Open…**
+8. confirm the exact same physical values
+9. choose **Save** to exercise atomic replacement of the existing file
+
+This is intentionally a temporary test surface. PDF/image import and the real physical-sheet canvas arrive in the following milestones.
 
 ## Current status
 
-**Blueprint complete; Month 1 scaffold initialized.**
+**Month 1 implementation is active; M1.1–M1.3 are complete and M1.4 persistence is in progress.**
 
-The repository now captures the product, market, competitor, UX, domain, architecture, printer-control, calibration, professional-production, business, integration, test, risk, and six-month roadmap decisions discussed before development. The pnpm workspace, React/Vite desktop app, Tauri 2 shell, core package boundaries, quality scripts, and CI are scaffolded; physical-unit behavior is intentionally not implemented yet.
+The repository now has deterministic physical geometry, the first physical document model, a headless PDF renderer, versioned `.printstudio` serialization, native Windows/Tauri atomic project storage, Open / Save / Save As dialogs, Linux/TypeScript quality CI, and Windows-native Rust CI. Autosave/recovery and source-aware persistence remain part of the unfinished M1.4/M1.5 work.
 
 Start with [DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md), [TODO.md](TODO.md), and [AGENTS.md](AGENTS.md) before writing application code.

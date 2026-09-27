@@ -171,10 +171,11 @@ Do not use TODO as a substitute for:
 
 ## Engineering
 
-- [>] Native atomic project-file adapter for Windows/Tauri.
-  - Scheduled inside M1.4.
-  - Must satisfy the `ProjectTextStore.writeAtomic()` contract without a delete-then-rename window that can lose the previous good file.
-  - Add Save/Open UI only after the adapter is verified.
+- [x] Native atomic project-file adapter for Windows/Tauri.
+  - Implemented inside M1.4.
+  - Uses a same-directory temporary file, flush + `sync_all()`, then atomic persist/replace.
+  - Verified by a dedicated Windows-native Rust CI job.
+  - Desktop Open / Save / Save As test surface is wired to the adapter.
 
 - [ ] Commit and enforce a pnpm lockfile for fully reproducible dependency installs.
   - Current CI intentionally uses `--frozen-lockfile=false` because no lockfile is committed yet.
@@ -189,7 +190,8 @@ Do not use TODO as a substitute for:
   - TypeScript first.
   - Move only measured performance/native requirements.
 
-- [ ] Define project file extension/name once persistence work starts.
+- [x] Define project file extension/name once persistence work starts.
+  - Resolution: `.printstudio`.
 
 - [ ] Consider a local API/daemon only when an actual second process/app needs it.
 
