@@ -31,7 +31,5 @@ export function getStandardMediaSize(
 ): Size2D {
   const portrait = getPortraitSize(media);
 
-  return orientation === Orientation.Portrait
-    ? portrait
-    : rotateSize(portrait, QuarterTurn.Deg90);
+  return orientation === Orientation.Portrait ? portrait : rotateSize(portrait, QuarterTurn.Deg90);
 }
