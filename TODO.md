@@ -171,6 +171,10 @@ Do not use TODO as a substitute for:
 
 ## Engineering
 
+- [ ] Commit and enforce a pnpm lockfile for fully reproducible dependency installs.
+  - Current CI intentionally uses `--frozen-lockfile=false` because no lockfile is committed yet.
+  - Do before public/beta packaging.
+
 - [ ] Replace temporary Tauri app icon with the final Print Studio brand icon set.
   - Current `icon.ico` is a functional development placeholder required by `tauri-build` on Windows.
   - Generate the full Tauri icon set once branding is finalized.
@@ -196,8 +200,10 @@ Do not use TODO as a substitute for:
   - Completed as M1.2 in `DEVELOPMENT-PLAN.md`.
   - Golden fixture: `tests/golden-geometry/a4-50mm-square.json`.
 
-- [>] Headless PDF renderer.
-  - Scheduled as M1.3 in `DEVELOPMENT-PLAN.md`.
+- [x] Headless PDF renderer.
+  - Completed as M1.3 in `DEVELOPMENT-PLAN.md`.
+  - Initial adapter: `@cantoo/pdf-lib`, isolated behind `packages/pdf-engine`.
+  - Semantic PDF geometry tests are authoritative; no binary golden PDF is checked in yet.
 
 - [>] Project persistence/schema versioning.
   - Scheduled as M1.4 in `DEVELOPMENT-PLAN.md`.
