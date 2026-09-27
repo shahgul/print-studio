@@ -1,0 +1,202 @@
+# Project File Format
+
+Current schema: **1**
+
+This document defines the durable Print Studio project-file contract implemented by `packages/project-file`.
+
+## Identity
+
+Every project document begins with:
+
+```json
+{
+  "format": "print-studio-project",
+  "schemaVersion": 1,
+  "physicalUnit": "MICROMETRE"
+}
+```
+
+These fields are not UI metadata. They are compatibility/safety markers.
+
+## Physical precision
+
+All canonical geometry is persisted as **signed safe integer micrometres**.
+
+Examples:
+
+```json
+{
+  "sizeUm": {
+    "width": 210000,
+    "height": 297000
+  }
+}
+```
+
+Rules:
+- do not save mm/cm/in/pt floats as canonical geometry;
+- do not round persisted values while loading;
+- fractional or unsafe integer micrometre values are invalid;
+- negative coordinates are valid where the domain permits them;
+- dimensions/margins still pass domain invariants after parsing.
+
+## V1 shape
+
+Simplified example:
+
+```json
+{
+  "format": "print-studio-project",
+  "schemaVersion": 1,
+  "physicalUnit": "MICROMETRE",
+  "project": {
+    "id": "project-1",
+    "items": [
+      {
+        "id": "item-1",
+        "sizeUm": {
+          "width": 50000,
+          "height": 50000
+        }
+      }
+    ],
+    "sheets": [
+      {
+        "id": "sheet-1",
+        "definition": {
+          "kind": "STANDARD",
+          "media": "A4",
+          "orientation": "PORTRAIT",
+          "sizeUm": {
+            "width": 210000,
+            "height": 297000
+          },
+          "layoutMarginsUm": {
+            "top": 10000,
+            "right": 10000,
+            "bottom": 10000,
+            "left": 10000
+          }
+        },
+        "front": {
+          "kind": "FRONT",
+          "placements": [
+            {
+              "id": "placement-1",
+              "itemId": "item-1",
+              "originUm": {
+                "x": 20000,
+                "y": 30000
+              },
+              "rotation": 0
+            }
+          ]
+        },
+        "back": null
+      }
+    ]
+  }
+}
+```
+
+Custom media use `kind: "CUSTOM"` and persist their name, resolved physical size, and margins.
+
+## Why standard media also store size
+
+A standard sheet stores:
+- semantic media key;
+- orientation;
+- resolved physical size.
+
+On load, Print Studio reconstructs the standard media and verifies that the persisted physical size still matches.
+
+This prevents a future code/configuration error from silently turning an old project into a physically different document.
+
+## Compatibility policy
+
+### Same schema version
+
+Unknown additional fields are ignored.
+
+This permits additive evolution where older readers can safely continue when new optional metadata appears.
+
+Required known fields and enums are still validated strictly.
+
+### Future schema version
+
+A reader must reject a project whose `schemaVersion` is newer than it understands.
+
+It must not:
+- guess;
+- strip unknown structures;
+- open and resave the file as if nothing happened.
+
+### Older schema version
+
+Older versions pass through the migration boundary.
+
+Schema 1 is the first version, so there is currently no older migration. The migration registry/test seam exists before user projects accumulate.
+
+## Errors
+
+Project-file failures use typed codes:
+
+- `INVALID_JSON`
+- `INVALID_FORMAT`
+- `UNSUPPORTED_SCHEMA_VERSION`
+- `INVALID_SCHEMA`
+- `INVALID_PROJECT`
+
+The UI can later translate these into actionable messages without depending on incidental parser exception text.
+
+## Storage boundary
+
+Serialization is intentionally separate from disk I/O.
+
+`ProjectPersistence` depends on:
+
+```ts
+interface ProjectTextStore {
+  read(path: string): Promise<string>;
+  writeAtomic(path: string, content: string): Promise<void>;
+}
+```
+
+Platform implementations own:
+- file dialogs;
+- path permissions;
+- atomic replacement;
+- filesystem errors;
+- backup/recovery policy.
+
+The core codec owns:
+- format identity;
+- versioning;
+- validation;
+- migrations;
+- lossless reconstruction.
+
+## Atomic-save requirement
+
+A project save must never leave the user's only good project truncated because the process crashed halfway through writing.
+
+The eventual desktop adapter must use a platform-appropriate atomic replacement strategy. A naive:
+
+```text
+delete old file
+write new file
+```
+
+is not acceptable.
+
+## Sources
+
+Source references are intentionally absent from schema 1 today because the Source/SourcePage domain is scheduled for M1.5.
+
+When sources are added, the schema must support:
+- source identity/fingerprint;
+- referenced/embedded policy;
+- explicit missing-source state;
+- migration from earlier source-less projects.
+
+Do not invent source persistence before the source domain exists.
