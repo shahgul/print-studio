@@ -36,6 +36,25 @@ select {
   font: inherit;
 }
 
+button {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid #d2d2cc;
+  border-radius: 10px;
+  color: inherit;
+  background: #fff;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  border-color: #8e8e86;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
 .shell {
   display: grid;
   min-height: 100vh;
@@ -43,8 +62,15 @@ select {
   padding: 32px;
 }
 
-.hero {
-  width: min(720px, 100%);
+.project-panel {
+  width: min(980px, 100%);
+}
+
+.project-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
 }
 
 .eyebrow {
@@ -58,7 +84,7 @@ select {
 h1 {
   max-width: 11ch;
   margin: 0;
-  font-size: clamp(44px, 8vw, 84px);
+  font-size: clamp(44px, 7vw, 76px);
   font-weight: 600;
   letter-spacing: -0.055em;
   line-height: 0.95;
@@ -72,11 +98,56 @@ h1 {
   line-height: 1.65;
 }
 
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.truth-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 48px;
+}
+
+.truth-grid article,
+.file-path {
+  padding: 18px;
+  border: 1px solid #ddddda;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.truth-grid span,
+.file-path span {
+  display: block;
+  margin-bottom: 8px;
+  color: #77776f;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.truth-grid strong {
+  font-size: 16px;
+}
+
+.file-path {
+  margin-top: 12px;
+}
+
+.file-path code {
+  overflow-wrap: anywhere;
+}
+
 .status {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-top: 32px;
+  margin-top: 24px;
   padding: 10px 14px;
   border: 1px solid #d9d9d3;
   border-radius: 999px;
@@ -92,18 +163,51 @@ h1 {
   background: currentColor;
 }
 
+.test-note {
+  max-width: 76ch;
+  margin: 24px 0 0;
+  color: #77776f;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+@media (max-width: 760px) {
+  .project-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .actions {
+    justify-content: flex-start;
+  }
+
+  .truth-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f0f0ec;
     background: #11110f;
   }
 
-  .lede {
+  .lede,
+  .test-note,
+  .truth-grid span,
+  .file-path span {
     color: #a7a79f;
   }
 
+  button,
+  .truth-grid article,
+  .file-path,
   .status {
     border-color: #35352f;
     background: #191917;
+  }
+
+  button:hover:not(:disabled) {
+    border-color: #6d6d65;
   }
 }
