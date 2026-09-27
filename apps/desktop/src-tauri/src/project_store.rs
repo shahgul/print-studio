@@ -102,7 +102,8 @@ mod tests {
         let target = directory.path().join("existing.txt");
         fs::write(&target, "old").expect("seed old file");
 
-        let error = write_project_text_atomic(&target, "new").expect_err("reject invalid extension");
+        let error =
+            write_project_text_atomic(&target, "new").expect_err("reject invalid extension");
 
         assert_eq!(error.kind(), io::ErrorKind::InvalidInput);
         assert_eq!(fs::read_to_string(target).expect("read old file"), "old");
@@ -121,7 +122,9 @@ mod tests {
             "project"
         );
         assert_eq!(
-            read_project_text(&text_path).expect_err("reject non-project file").kind(),
+            read_project_text(&text_path)
+                .expect_err("reject non-project file")
+                .kind(),
             io::ErrorKind::InvalidInput
         );
     }
