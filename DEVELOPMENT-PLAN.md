@@ -32,56 +32,68 @@ A task is not marked complete merely because code exists. Relevant tests, type c
 
 # Current milestone
 
+## M1.3 — Headless PDF Renderer
+
+**Status:** Next.
+
+**Goal:** Generate a mathematically correct PDF from the canonical physical domain model, with no dependency on React or screen pixels.
+
+The detailed M1.3 checklist is below under **Next milestones**.
+
+---
+
+# Completed milestones
+
 ## M1.2 — Physical Document Model + Golden A4 Layout
 
-**Status:** In progress.
+**Status:** Complete and verified.
 
 **Goal:** Represent a real physical sheet, items, sides, placements, and usable area entirely in the headless domain package, then prove the first canonical A4 layout without React or PDF rendering.
 
 ### Contract / tests
 
-- [ ] Define RED tests for standard media.
-- [ ] Define RED tests for `SheetDefinition`.
-- [ ] Define RED tests for layout margins and usable area.
-- [ ] Define RED tests for `Item`.
-- [ ] Define RED tests for `Placement`.
-- [ ] Define RED tests for `Side`.
-- [ ] Define RED tests for `Sheet`.
-- [ ] Define RED tests for minimal `Project`.
-- [ ] Define RED tests for placement validation.
-- [ ] Create first golden geometry fixture:
+- [x] Define RED tests for standard media.
+- [x] Define RED tests for `SheetDefinition`.
+- [x] Define RED tests for layout margins and usable area.
+- [x] Define RED tests for `Item`.
+- [x] Define RED tests for `Placement`.
+- [x] Define RED tests for `Side`.
+- [x] Define RED tests for `Sheet`.
+- [x] Define RED tests for minimal `Project`.
+- [x] Define RED tests for placement validation.
+- [x] Create first golden geometry fixture:
   - A4 portrait = 210 × 297 mm
   - layout margin = 10 mm
   - item position = 20 × 30 mm
   - item size = 50 × 50 mm
   - rotation = 0°
-- [ ] Verify an edge-touching item follows geometry semantics consistently.
-- [ ] Verify an item outside the physical sheet is invalid.
-- [ ] Verify an item inside the physical sheet but outside the usable area is distinguishable from physical overflow.
+- [x] Verify an edge-touching item follows geometry semantics consistently.
+- [x] Verify an item outside the physical sheet is invalid.
+- [x] Verify an item inside the physical sheet but outside the usable area is distinguishable from physical overflow.
 
 ### Implementation
 
-- [ ] Add standard media definitions.
-- [ ] Add `SheetDefinition`.
-- [ ] Add `Item`.
-- [ ] Add `Placement`.
-- [ ] Add `Side`.
-- [ ] Add `Sheet`.
-- [ ] Add minimal `Project`.
-- [ ] Add placement validation result/error codes.
-- [ ] Keep all domain code independent of React, Tauri, PDF libraries, and printer transports.
+- [x] Add standard media definitions.
+- [x] Add `SheetDefinition`.
+- [x] Add `Item`.
+- [x] Add `Placement`.
+- [x] Add `Side`.
+- [x] Add `Sheet`.
+- [x] Add minimal `Project`.
+- [x] Add placement validation result/error codes.
+- [x] Keep all domain code independent of React, Tauri, PDF libraries, and printer transports.
 
 ### Verification
 
-- [ ] Domain focused tests pass.
-- [ ] Full Vitest suite passes.
-- [ ] Format check passes.
-- [ ] Lint passes.
-- [ ] Typecheck passes.
-- [ ] Build passes.
-- [ ] CI is green.
-- [ ] Relevant canonical docs updated.
-- [ ] Development plan marked complete only after verification.
+- [x] Domain focused tests pass.
+- [x] Full Vitest suite passes.
+- [x] Format check passes.
+- [x] Lint passes.
+- [x] Typecheck passes.
+- [x] Build passes.
+- [x] CI is green.
+- [x] Relevant canonical docs updated.
+- [x] Development plan marked complete only after verification.
 
 ### Exit gate
 
@@ -149,6 +161,8 @@ without depending on screen pixels or a PDF library.
 # Next milestones
 
 ## M1.3 — Headless PDF Renderer
+
+**Status:** Next.
 
 **Goal:** Generate a mathematically correct PDF from the canonical domain model.
 
