@@ -12,19 +12,21 @@ Do not store a user’s intended 50 mm object as a CSS pixel width.
 
 ## Units
 
-Internally use one canonical high-precision unit and explicit typed conversion at boundaries.
+Canonical storage is a signed **integer number of micrometres (µm)** represented by a JavaScript safe integer.
 
-Candidate representations:
-- PDF points as rational/decimal;
-- micrometres or another integer physical unit;
-- a strongly typed decimal length abstraction.
+Rules:
+- 1 mm = 1,000 µm;
+- 1 cm = 10,000 µm;
+- 1 inch = 25,400 µm exactly;
+- external decimal units are rounded once at the construction boundary to the nearest micrometre;
+- half-micrometre ties round away from zero symmetrically;
+- PDF points are converted using 72 pt/in and therefore may quantize by at most 0.5 µm;
+- public geometry uses typed `Length` values rather than ambiguous naked numbers;
+- negative `Length` values are valid for coordinates/offsets;
+- `Size2D` and `Insets` enforce non-negative invariants;
+- UI pixels and raster pixels are derived values and never canonical physical geometry.
 
-Decision is deferred until implementation benchmarking, but requirements are fixed:
-- no ambiguous naked numbers for public geometry;
-- deterministic conversion;
-- no accumulating float drift in repeated transforms;
-- explicit DPI only when converting raster pixels to physical size;
-- PDF point mapping must be lossless enough for production tolerances.
+This decision is recorded as D-018 in `DECISIONS.md`.
 
 Known relationship:
 - 1 inch = 25.4 mm;
