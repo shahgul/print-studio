@@ -2,6 +2,14 @@ use std::{fs, io, path::Path};
 
 pub(crate) const MAX_SOURCE_FILE_BYTES: u64 = 256 * 1024 * 1024;
 
+pub(crate) fn source_file_exists(path: &Path) -> io::Result<bool> {
+    match fs::metadata(path) {
+        Ok(metadata) => Ok(metadata.is_file()),
+        Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(false),
+        Err(error) => Err(error),
+    }
+}
+
 pub(crate) fn read_source_bytes(path: &Path) -> io::Result<Vec<u8>> {
     read_source_bytes_with_limit(path, MAX_SOURCE_FILE_BYTES)
 }
@@ -35,6 +43,17 @@ mod tests {
     use super::*;
     use std::fs;
     use tempfile::tempdir;
+
+    #[test]
+    fn reports_source_file_existence_without_reading_bytes() {
+        let directory = tempdir().expect("create temp directory");
+        let existing = directory.path().join("photo.png");
+        let missing = directory.path().join("missing.png");
+        fs::write(&existing, [1_u8, 2, 3]).expect("seed source");
+
+        assert!(source_file_exists(&existing).expect("probe existing source"));
+        assert!(!source_file_exists(&missing).expect("probe missing source"));
+    }
 
     #[test]
     fn reads_source_bytes_within_the_native_limit() {

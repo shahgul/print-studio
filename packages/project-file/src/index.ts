@@ -237,7 +237,7 @@ function sourceToV2(source: Source): SourceV2 {
 function projectToV2(project: Project): ProjectFileV2 {
   return {
     format: PROJECT_FILE_FORMAT,
-    schemaVersion: 2,
+    schemaVersion: CURRENT_PROJECT_SCHEMA_VERSION,
     physicalUnit: PROJECT_FILE_PHYSICAL_UNIT,
     project: {
       id: project.id,

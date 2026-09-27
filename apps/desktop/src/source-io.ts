@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
 
 export interface SourceBytesReader {
+  exists(path: string): Promise<boolean>;
   read(path: string): Promise<Uint8Array>;
 }
 
@@ -25,6 +26,16 @@ export function createTauriSourceBytesReader(
   invokeCommand: BinaryInvokeCommand = (command, args) => invoke<ArrayBuffer>(command, args),
 ): SourceBytesReader {
   return {
+    async exists(path: string): Promise<boolean> {
+      const result = await invokeCommand('source_file_exists', { path });
+
+      if (typeof result !== 'boolean') {
+        throw new TypeError('source_file_exists returned a non-boolean value');
+      }
+
+      return result;
+    },
+
     async read(path: string): Promise<Uint8Array> {
       return toUint8Array(await invokeCommand('read_source_bytes', { path }));
     },

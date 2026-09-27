@@ -4,6 +4,11 @@ mod source_store;
 use std::path::Path;
 
 #[tauri::command]
+fn source_file_exists(path: String) -> Result<bool, String> {
+    source_store::source_file_exists(Path::new(&path)).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
 fn read_source_bytes(path: String) -> Result<tauri::ipc::Response, String> {
     source_store::read_source_bytes(Path::new(&path))
         .map(tauri::ipc::Response::new)
@@ -33,6 +38,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             read_project_text,
             read_source_bytes,
+            source_file_exists,
             remove_project_text,
             write_project_text_atomic
         ])
