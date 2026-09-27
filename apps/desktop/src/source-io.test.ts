@@ -3,6 +3,22 @@ import { describe, expect, it } from 'vitest';
 import { createTauriSourceBytesReader } from './source-io';
 
 describe('createTauriSourceBytesReader', () => {
+  it('probes source existence separately from binary reads', async () => {
+    const calls: Array<{ command: string; args: unknown }> = [];
+    const reader = createTauriSourceBytesReader(async (command, args) => {
+      calls.push({ command, args });
+      return command === 'source_file_exists';
+    });
+
+    await expect(reader.exists('D:\\input\\document.pdf')).resolves.toBe(true);
+    expect(calls).toEqual([
+      {
+        command: 'source_file_exists',
+        args: { path: 'D:\\input\\document.pdf' },
+      },
+    ]);
+  });
+
   it('reads native binary IPC responses without JSON byte expansion', async () => {
     const calls: Array<{ command: string; args: unknown }> = [];
     const reader = createTauriSourceBytesReader(async (command, args) => {
