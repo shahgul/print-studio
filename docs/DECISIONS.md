@@ -89,6 +89,13 @@ This is a lightweight architectural/product decision log. It records what is cur
 
 **Why:** a network timeout may occur after the printer has accepted a job. Automatic duplicate submission can waste materials.
 
+### D-018 — Canonical length representation is integer micrometres
+**Decision:** Store canonical physical lengths as signed JavaScript safe integers measured in micrometres. Convert external units at construction boundaries and round once to the nearest micrometre, using symmetric half-away-from-zero rounding.
+
+**Why:** This gives deterministic physical geometry, exact common metric dimensions, exact inch conversion (1 inch = 25,400 µm), bounded sub-millimetre error for PDF points, and straightforward serialization. Negative lengths remain valid for coordinates and calibration offsets; size/inset types enforce their own non-negative invariants.
+
+**Precision note:** one PDF point is approximately 352.778 µm and therefore cannot be represented exactly as an integer micrometre. The maximum construction quantization error is 0.5 µm, far below normal printer mechanical tolerances.
+
 ## Preferred direction, not yet irreversible
 
 ### D-P01 — React + TypeScript UI
@@ -110,9 +117,6 @@ Candidate where useful.
 Do not rewrite everything in Rust without measured need.
 
 ## Deferred
-
-### D-X01 — Canonical internal length representation
-Candidates include integer microunits, rational/decimal abstraction, or points with strict handling. Must be benchmarked/tested before implementation.
 
 ### D-X02 — Final project file format
 Requirements are defined; exact encoding/storage is not.
