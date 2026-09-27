@@ -4,6 +4,13 @@ mod source_store;
 use std::path::Path;
 
 #[tauri::command]
+fn read_source_bytes(path: String) -> Result<tauri::ipc::Response, String> {
+    source_store::read_source_bytes(Path::new(&path))
+        .map(tauri::ipc::Response::new)
+        .map_err(|error| error.to_string())
+}
+
+#[tauri::command]
 fn read_project_text(path: String) -> Result<String, String> {
     project_store::read_project_text(Path::new(&path)).map_err(|error| error.to_string())
 }
@@ -25,6 +32,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             read_project_text,
+            read_source_bytes,
             remove_project_text,
             write_project_text_atomic
         ])

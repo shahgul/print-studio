@@ -1,3 +1,39 @@
+use std::{
+    fs,
+    io,
+    path::Path,
+};
+
+pub(crate) const MAX_SOURCE_FILE_BYTES: u64 = 256 * 1024 * 1024;
+
+pub(crate) fn read_source_bytes(path: &Path) -> io::Result<Vec<u8>> {
+    read_source_bytes_with_limit(path, MAX_SOURCE_FILE_BYTES)
+}
+
+fn read_source_bytes_with_limit(path: &Path, max_bytes: u64) -> io::Result<Vec<u8>> {
+    let metadata = fs::metadata(path)?;
+
+    if !metadata.is_file() {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "source path must reference a regular file",
+        ));
+    }
+
+    if metadata.len() > max_bytes {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            format!(
+                "source file is {} bytes, exceeding the {}-byte native read limit",
+                metadata.len(),
+                max_bytes
+            ),
+        ));
+    }
+
+    fs::read(path)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
