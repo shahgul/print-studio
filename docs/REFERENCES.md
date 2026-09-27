@@ -203,3 +203,42 @@ Before adoption, check current releases and licenses.
 - Prices are snapshots and can change.
 - Standards pages should be preferred over blog summaries for protocol behavior.
 - Do not copy competitor terminology/design blindly; use research to understand the problem and baseline.
+
+
+## Quadient Inspire / CCM architecture research
+
+- Quadient Document Map  
+  https://university.quadient.com/document-map/  
+  Notes: positions Inspire Automation as process automation, Designer as personalization/composition, Interactive as ad-hoc collaborative document creation, Scaler as cloud-enabled automation/production management, and Production Server as non-GUI generation.
+
+- Quadient Inspire Designer & Content Manager  
+  https://www.quadient.com/en-int/customer-communications/inspire-designer-icm  
+  Notes: multi-source data, personalized print/digital output, importing InDesign/Quark/PDF/PostScript/AFP, controlled deployment, and high-volume output via Production Server.
+
+- Quadient Inspire Interactive  
+  https://www.quadient.com/en-int/customer-communications/inspire-interactive  
+  Notes: governed business-user editing, predefined content/rules, proofing, review/approval and reduced IT dependency.
+
+- Inspire Days 2023 — Deep Dive: Inspire Scaler  
+  https://www.quadient.com/en-gb/ebooks-papers/inspire-days-2023-deep-dive-inspire-scaler  
+  Notes: Scaler as production orchestration/integration hub; dashboards, low-code workflow, scripting, Kafka, OAuth2, JMS, OpenShift/Kubernetes/Amazon ECS.
+
+- Quadient customer events / 2026 PSO best practices  
+  https://cx.quadient.com/how-to-whats-new-Aug20-PSO  
+  Notes: migration planning explicitly distinguishes Inspire Automation vs Scaler.
+
+- Quadient — Inspire Designer dynamic letter generation case article  
+  https://www.quadient.com/en-ca/blog/inspire-designer-simplifies-dynamic-letter-generation-uk-housing-associations  
+  Notes: data filters, imposition scripts, variable page selection and printed-material fulfillment.
+
+- Quadient — testing/upgrades/migrations webinar  
+  https://communication.quadient.com/how-to-Compare  
+  Notes: print-stream comparison and automated regression testing for production-output consistency.
+
+- Quadient — Check the budget  
+  https://www.quadient.com/en-ca/check-the-budget  
+  Notes: current vendor case metrics on automation savings and reducing print-vendor programming with print-ready output. Treat vendor ROI claims as case-specific, not market averages.
+
+- Quadient — Customer events and webinar series  
+  https://www.quadient.com/de-de/customer-events-and-webinar-series  
+  Notes: current R17-era topics include Designer, Interactive, Scaler, imposition scripting, integration and AI-assisted scripting.
