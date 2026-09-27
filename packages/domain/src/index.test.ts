@@ -293,18 +293,12 @@ describe('golden A4 physical layout', () => {
     });
     const item = Item.create({
       id: goldenA4.item.id,
-      size: Size2D.of(
-        Length.mm(goldenA4.item.widthMm),
-        Length.mm(goldenA4.item.heightMm),
-      ),
+      size: Size2D.of(Length.mm(goldenA4.item.widthMm), Length.mm(goldenA4.item.heightMm)),
     });
     const placement = Placement.create({
       id: goldenA4.placement.id,
       itemId: item.id,
-      origin: Point2D.of(
-        Length.mm(goldenA4.placement.xMm),
-        Length.mm(goldenA4.placement.yMm),
-      ),
+      origin: Point2D.of(Length.mm(goldenA4.placement.xMm), Length.mm(goldenA4.placement.yMm)),
       rotation: QuarterTurn.Deg0,
     });
 
