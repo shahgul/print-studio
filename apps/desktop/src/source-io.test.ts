@@ -24,9 +24,7 @@ describe('createTauriSourceBytesReader', () => {
   it('accepts a Uint8Array response for adapter compatibility', async () => {
     const reader = createTauriSourceBytesReader(async () => new Uint8Array([1, 2, 3]));
 
-    await expect(reader.read('D:\\input\\image.png')).resolves.toEqual(
-      new Uint8Array([1, 2, 3]),
-    );
+    await expect(reader.read('D:\\input\\image.png')).resolves.toEqual(new Uint8Array([1, 2, 3]));
   });
 
   it('rejects unexpected native response shapes', async () => {
