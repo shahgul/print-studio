@@ -446,7 +446,6 @@ export async function importSourceBytes(
   return importImage(input, format, limits, fingerprint);
 }
 
-
 export async function revalidateSourceBytes(
   source: Source,
   currentBytes: Uint8Array | null,
