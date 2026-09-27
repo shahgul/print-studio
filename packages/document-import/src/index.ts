@@ -158,10 +158,7 @@ function physicalSizeFromDensity(
     return null;
   }
 
-  return Size2D.of(
-    Length.inches(pixelWidth / density.x),
-    Length.inches(pixelHeight / density.y),
-  );
+  return Size2D.of(Length.inches(pixelWidth / density.x), Length.inches(pixelHeight / density.y));
 }
 
 function parsePng(bytes: Uint8Array, limits: ImportLimits): ImageMetadata {
@@ -236,22 +233,14 @@ function parsePng(bytes: Uint8Array, limits: ImportLimits): ImageMetadata {
 }
 
 const JPEG_SOF_MARKERS = new Set([
-  0xc0,
-  0xc1,
-  0xc2,
-  0xc3,
-  0xc5,
-  0xc6,
-  0xc7,
-  0xc9,
-  0xca,
-  0xcb,
-  0xcd,
-  0xce,
-  0xcf,
+  0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf,
 ]);
 
-function parseJfifDensity(bytes: Uint8Array, dataStart: number, segmentLength: number): DensityDpi | null {
+function parseJfifDensity(
+  bytes: Uint8Array,
+  dataStart: number,
+  segmentLength: number,
+): DensityDpi | null {
   if (segmentLength < 16 || asciiAt(bytes, dataStart, 5) !== 'JFIF\0') {
     return null;
   }
@@ -354,7 +343,9 @@ async function sha256Hex(bytes: Uint8Array): Promise<string> {
   }
 
   const digest = await globalThis.crypto.subtle.digest('SHA-256', bytes.slice());
-  return Array.from(new Uint8Array(digest), (value) => value.toString(16).padStart(2, '0')).join('');
+  return Array.from(new Uint8Array(digest), (value) => value.toString(16).padStart(2, '0')).join(
+    '',
+  );
 }
 
 async function importImage(
@@ -363,7 +354,8 @@ async function importImage(
   limits: ImportLimits,
   fingerprint: SourceFingerprint,
 ): Promise<Source> {
-  const metadata = format === 'PNG' ? parsePng(input.bytes, limits) : parseJpeg(input.bytes, limits);
+  const metadata =
+    format === 'PNG' ? parsePng(input.bytes, limits) : parseJpeg(input.bytes, limits);
 
   return Source.create({
     id: input.sourceId,
