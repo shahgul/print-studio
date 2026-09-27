@@ -35,10 +35,7 @@ export class SheetDefinition {
     readonly usableBounds: Rect,
   ) {}
 
-  static standard(
-    media: StandardMedia,
-    options: StandardSheetOptions = {},
-  ): SheetDefinition {
+  static standard(media: StandardMedia, options: StandardSheetOptions = {}): SheetDefinition {
     const orientation = options.orientation ?? Orientation.Portrait;
     const size = getStandardMediaSize(media, orientation);
     const layoutMargins = normalizeMargins(options.layoutMargins);
@@ -66,13 +63,15 @@ export class SheetDefinition {
     });
   }
 
-  private static createResolved(input: Readonly<{
-    mediaKey: StandardMedia | null;
-    name: string;
-    orientation: Orientation | null;
-    size: Size2D;
-    layoutMargins: Insets;
-  }>): SheetDefinition {
+  private static createResolved(
+    input: Readonly<{
+      mediaKey: StandardMedia | null;
+      name: string;
+      orientation: Orientation | null;
+      size: Size2D;
+      layoutMargins: Insets;
+    }>,
+  ): SheetDefinition {
     const bounds = Rect.of(Point2D.of(Length.zero(), Length.zero()), input.size);
     const usableBounds = bounds.inset(input.layoutMargins);
 
