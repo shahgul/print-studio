@@ -14,7 +14,8 @@
     "@print-studio/units-geometry": "workspace:*",
     "@tauri-apps/api": "^2.0.0",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "@print-studio/project-file": "workspace:*"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",
