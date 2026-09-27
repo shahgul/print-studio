@@ -247,7 +247,6 @@ describe('project file boundary validation', () => {
   });
 });
 
-
 describe('ProjectPersistence', () => {
   it('saves a project through an atomic text-store boundary and loads it back', async () => {
     const files = new Map<string, string>();
