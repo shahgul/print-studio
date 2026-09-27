@@ -74,6 +74,7 @@ The repository is deliberately documentation-heavy before implementation. Read t
 ### Engineering
 
 - [Domain Model](docs/DOMAIN-MODEL.md) — canonical Project, Source, Item, Sheet, Side, Constraint, Layout, Recipe, PrinterProfile, PrintPlan and PrintJob concepts.
+- [Project File Format](docs/PROJECT-FILE.md) — durable schema v1, micrometre persistence, compatibility, migrations, typed errors, and atomic-storage contract.
 - [Architecture](docs/ARCHITECTURE.md) — module boundaries, technology direction, persistence, preview/output separation, APIs and security.
 - [Printing Stack](docs/PRINTING-STACK.md) — print-ready export, OS spooler, IPP Everywhere, AirPrint-related paths, selected raw/device options, capability normalization and job lifecycle.
 - [Calibration](docs/CALIBRATION.md) — exact-size, offset, duplex registration, confidence and future camera-assisted calibration.
