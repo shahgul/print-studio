@@ -195,15 +195,27 @@ without depending on screen pixels or a PDF library.
 
 ## M1.4 — Project Schema + Persistence
 
-- [ ] Define schema version.
-- [ ] Define project serialization contract.
-- [ ] Serialize canonical physical geometry without loss.
-- [ ] Load/save project.
-- [ ] Detect unsupported future schema versions.
-- [ ] Add migration test infrastructure.
-- [ ] Add missing-source representation.
-- [ ] Add atomic/autosave groundwork.
-- [ ] CI green.
+**Status:** In progress.
+
+- [x] Define schema version 1.
+- [x] Define stable project serialization contract.
+- [x] Add explicit file identity (`print-studio-project`) and physical unit marker.
+- [x] Serialize canonical physical geometry as safe integer micrometres without loss.
+- [x] Round-trip standard/custom media, duplex sides, rotations, margins, and signed coordinates.
+- [x] Reject malformed JSON with typed error codes.
+- [x] Reject wrong product/file identity.
+- [x] Detect and reject unsupported future schema versions.
+- [x] Reject fractional/unsafe persisted micrometre values instead of rounding them.
+- [x] Validate persisted enum values and broken domain references.
+- [x] Tolerate additive unknown fields within the current schema version.
+- [x] Add migration hook and migration-focused tests.
+- [x] Add headless `ProjectPersistence` load/save orchestration.
+- [x] Define `ProjectTextStore.writeAtomic()` as the platform storage contract.
+- [ ] Implement native Windows/Tauri atomic file-store adapter.
+- [ ] Add desktop Save/Open integration and file picker.
+- [ ] Add missing-source representation after Source/SourcePage lands in M1.5.
+- [ ] Add autosave/recovery policy on top of the atomic storage adapter.
+- [x] Full CI green for the completed headless persistence slice.
 
 ## M1.5 — Image/PDF Source Model
 
