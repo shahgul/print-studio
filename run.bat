@@ -30,12 +30,11 @@ if errorlevel 1 (
   goto :fail
 )
 
-if not exist "node_modules" (
-  echo [INFO] Dependencies are not installed. Running pnpm install...
-  call pnpm install
-  if errorlevel 1 goto :fail
-)
+echo [INFO] Syncing workspace dependencies...
+call pnpm install --frozen-lockfile=false --prefer-offline
+if errorlevel 1 goto :fail
 
+echo.
 echo [INFO] Starting Print Studio...
 echo [INFO] Close the Tauri window or press Ctrl+C here to stop.
 echo.
