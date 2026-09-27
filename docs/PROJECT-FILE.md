@@ -259,3 +259,23 @@ Save existing file again
 ```
 
 The reopened project preserved the expected canonical physical geometry, and the second Save exercised replacement of the existing project file through the native atomic storage path.
+
+
+## Recovery groundwork
+
+M1.4 establishes a recovery snapshot convention for saved projects:
+
+```text
+job.printstudio
+job.autosave.printstudio
+```
+
+Recovery rules:
+- snapshots use the same versioned project codec as the primary project;
+- recovery writes use the same atomic-write contract;
+- the current initial autosave interval policy is 30 seconds;
+- successful primary saves may clear the companion recovery snapshot;
+- recovery removal is idempotent;
+- native removal refuses paths that are not `.printstudio` files.
+
+This is intentionally **groundwork**, not the final autosave UX. Automatic timers, untitled-session recovery storage, recovery prompts, and polished crash restoration remain later product work.

@@ -149,8 +149,8 @@ This checkpoint passed on Windows: the saved `.printstudio` project reopened wit
 
 ## Current status
 
-**Month 1 implementation is active; M1.1–M1.3 are complete and M1.4 persistence is in progress.**
+**Month 1 implementation is active; M1.1–M1.4 are complete and M1.5 source import is in progress.**
 
-The repository now has deterministic physical geometry, the first physical document model, a headless PDF renderer, versioned `.printstudio` serialization, native Windows/Tauri atomic project storage, Open / Save / Save As dialogs, Linux/TypeScript quality CI, and Windows-native Rust CI. Autosave/recovery and source-aware persistence remain part of the unfinished M1.4/M1.5 work.
+The repository now has deterministic physical geometry, the first physical document model, a headless PDF renderer, versioned `.printstudio` serialization, native Windows/Tauri atomic project storage, Open / Save / Save As dialogs, Linux/TypeScript quality CI, and Windows-native Rust CI. Recovery groundwork is in place; source-aware persistence, PDF/image import, and missing-source handling now belong to M1.5.
 
 Start with [DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md), [TODO.md](TODO.md), and [AGENTS.md](AGENTS.md) before writing application code.

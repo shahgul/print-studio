@@ -216,8 +216,9 @@ Do not use TODO as a substitute for:
   - Initial adapter: `@cantoo/pdf-lib`, isolated behind `packages/pdf-engine`.
   - Semantic PDF geometry tests are authoritative; no binary golden PDF is checked in yet.
 
-- [>] Project persistence/schema versioning.
-  - Scheduled as M1.4 in `DEVELOPMENT-PLAN.md`.
+- [x] Project persistence/schema versioning.
+  - Completed as M1.4 in `DEVELOPMENT-PLAN.md`.
+  - Includes schema v1, atomic Windows Save/Open, manual Windows verification, and recovery snapshot groundwork.
 
 - [>] Source import model.
   - Scheduled as M1.5 in `DEVELOPMENT-PLAN.md`.

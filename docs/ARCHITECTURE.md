@@ -247,8 +247,18 @@ Desktop implementation now provides:
 - a dedicated Windows-native CI job;
 - a temporary desktop persistence test surface.
 
-Still required:
-- autosave/recovery policy;
+Recovery groundwork now provides:
+- companion `.autosave.printstudio` snapshots for saved project paths;
+- atomic recovery writes;
+- idempotent native cleanup;
+- a 30-second initial interval policy constant.
+
+Still required in later autosave/crash-recovery work:
+- timer/session orchestration and dirty-state integration;
+- untitled-session recovery;
+- recovery prompts and conflict UX.
+
+M1.5 now owns:
 - source fingerprinting and explicit missing-source state once Source/SourcePage exists;
 - migration fixtures when the first real schema migration is introduced;
 - no hidden dependence on temporary browser object URLs.

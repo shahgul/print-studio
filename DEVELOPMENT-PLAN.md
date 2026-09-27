@@ -32,17 +32,81 @@ A task is not marked complete merely because code exists. Relevant tests, type c
 
 # Current milestone
 
-## M1.4 — Project Schema + Persistence
+## M1.5 — Image/PDF Source Model
 
 **Status:** In progress.
 
-**Goal:** Make Print Studio projects durable without losing canonical physical geometry, while establishing schema versioning and migration rules before real user projects exist.
+**Goal:** Represent imported PDFs and images as validated, immutable source metadata without inventing physical size when the source does not provide it.
 
-The detailed M1.4 checklist is below under **Next milestones**.
+The detailed M1.5 checklist is below under **Next milestones**.
 
 ---
 
 # Completed milestones
+
+## M1.4 — Project Schema + Persistence
+
+**Status:** Complete and verified.
+
+- [x] Define schema version 1.
+- [x] Define stable project serialization contract.
+- [x] Add explicit file identity (`print-studio-project`) and physical unit marker.
+- [x] Serialize canonical physical geometry as safe integer micrometres without loss.
+- [x] Round-trip standard/custom media, duplex sides, rotations, margins, and signed coordinates.
+- [x] Reject malformed JSON with typed error codes.
+- [x] Reject wrong product/file identity.
+- [x] Detect and reject unsupported future schema versions.
+- [x] Reject fractional/unsafe persisted micrometre values instead of rounding them.
+- [x] Validate persisted enum values and broken domain references.
+- [x] Tolerate additive unknown fields within the current schema version.
+- [x] Add migration hook and migration-focused tests.
+- [x] Add headless `ProjectPersistence` load/save orchestration.
+- [x] Define `ProjectTextStore.writeAtomic()` as the platform storage contract.
+- [x] Implement native Windows/Tauri atomic file-store adapter.
+- [x] Add desktop Save/Open integration and native file picker.
+- [x] Source-aware/missing-source persistence explicitly transferred to M1.5, where Source/SourcePage will exist.
+- [x] Add autosave/recovery groundwork on top of the atomic storage adapter.
+  - companion path: `name.autosave.printstudio`;
+  - recovery snapshots use the same versioned/lossless codec;
+  - recovery writes remain atomic;
+  - cleanup is idempotent and restricted to `.printstudio` paths;
+  - initial interval policy constant: 30 seconds;
+  - final timer/untitled-session/prompt UX remains scheduled under strong autosave/crash recovery.
+- [x] Add narrow Tauri commands for project read + atomic write.
+- [x] Restrict native project storage to `.printstudio` files.
+- [x] Add 16 MiB safety bound for the current source-less project format.
+- [x] Add Windows-native CI job with `cargo fmt --check` + Rust tests.
+- [x] Add temporary M1.4 desktop test surface with Open / Save / Save As.
+- [x] Manual Windows checkpoint: save → close app → reopen → Open → verify exact geometry.
+- [x] Full TypeScript/React CI green.
+- [x] Full Windows-native Rust CI green.
+- [x] Recovery cleanup verified in Windows-native CI.
+
+### Hands-on checkpoint — passed on Windows
+
+This is the first useful point to pause feature work and test the desktop app manually.
+
+Expected starter project:
+- A4 portrait: 210 × 297 mm;
+- item: 50 × 50 mm;
+- position: 20 × 30 mm.
+
+Manual Windows check:
+1. `git pull`.
+2. Run `run.bat`.
+3. Confirm the starter values shown in the app.
+4. Choose **Save As…** and save a `.printstudio` file.
+5. Close Print Studio completely.
+6. Run `run.bat` again.
+7. Choose **Open…** and select the saved project.
+8. Confirm A4 remains 210 × 297 mm, item remains 50 × 50 mm, and position remains 20 × 30 mm.
+9. Choose **Save** once more to exercise replacement of an existing project file.
+10. Result: **passed on Windows on 28 September 2026**.
+
+This checkpoint verifies the real Windows/Tauri boundary. It does not yet test imported content or the physical canvas.
+
+
+---
 
 ## M1.3 — Headless PDF Renderer
 
@@ -192,60 +256,6 @@ without depending on screen pixels or a PDF library.
 ---
 
 # Next milestones
-
-## M1.4 — Project Schema + Persistence
-
-**Status:** In progress.
-
-- [x] Define schema version 1.
-- [x] Define stable project serialization contract.
-- [x] Add explicit file identity (`print-studio-project`) and physical unit marker.
-- [x] Serialize canonical physical geometry as safe integer micrometres without loss.
-- [x] Round-trip standard/custom media, duplex sides, rotations, margins, and signed coordinates.
-- [x] Reject malformed JSON with typed error codes.
-- [x] Reject wrong product/file identity.
-- [x] Detect and reject unsupported future schema versions.
-- [x] Reject fractional/unsafe persisted micrometre values instead of rounding them.
-- [x] Validate persisted enum values and broken domain references.
-- [x] Tolerate additive unknown fields within the current schema version.
-- [x] Add migration hook and migration-focused tests.
-- [x] Add headless `ProjectPersistence` load/save orchestration.
-- [x] Define `ProjectTextStore.writeAtomic()` as the platform storage contract.
-- [x] Implement native Windows/Tauri atomic file-store adapter.
-- [x] Add desktop Save/Open integration and native file picker.
-- [ ] Add missing-source representation after Source/SourcePage lands in M1.5.
-- [ ] Add autosave/recovery policy on top of the atomic storage adapter.
-- [x] Add narrow Tauri commands for project read + atomic write.
-- [x] Restrict native project storage to `.printstudio` files.
-- [x] Add 16 MiB safety bound for the current source-less project format.
-- [x] Add Windows-native CI job with `cargo fmt --check` + Rust tests.
-- [x] Add temporary M1.4 desktop test surface with Open / Save / Save As.
-- [x] Manual Windows checkpoint: save → close app → reopen → Open → verify exact geometry.
-- [x] Full TypeScript/React CI green.
-- [x] Full Windows-native Rust CI green.
-
-### Hands-on checkpoint — passed on Windows
-
-This is the first useful point to pause feature work and test the desktop app manually.
-
-Expected starter project:
-- A4 portrait: 210 × 297 mm;
-- item: 50 × 50 mm;
-- position: 20 × 30 mm.
-
-Manual Windows check:
-1. `git pull`.
-2. Run `run.bat`.
-3. Confirm the starter values shown in the app.
-4. Choose **Save As…** and save a `.printstudio` file.
-5. Close Print Studio completely.
-6. Run `run.bat` again.
-7. Choose **Open…** and select the saved project.
-8. Confirm A4 remains 210 × 297 mm, item remains 50 × 50 mm, and position remains 20 × 30 mm.
-9. Choose **Save** once more to exercise replacement of an existing project file.
-10. Result: **passed on Windows on 28 September 2026**.
-
-This checkpoint verifies the real Windows/Tauri boundary. It does not yet test imported content or the physical canvas.
 
 ## M1.5 — Image/PDF Source Model
 
