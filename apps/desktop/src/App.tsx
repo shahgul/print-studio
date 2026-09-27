@@ -13,10 +13,7 @@ const PROJECT_FILTER = [
 ];
 
 export function App() {
-  const persistence = useMemo(
-    () => new ProjectPersistence(createTauriProjectTextStore()),
-    [],
-  );
+  const persistence = useMemo(() => new ProjectPersistence(createTauriProjectTextStore()), []);
   const [project, setProject] = useState(createStarterProject);
   const [projectPath, setProjectPath] = useState<string | null>(null);
   const [status, setStatus] = useState('Starter project is in memory and has not been saved yet.');
@@ -100,8 +97,8 @@ export function App() {
             <h1 id="app-title">Save physical truth.</h1>
             <p className="lede">
               This temporary screen verifies that exact physical geometry survives a real Windows
-              save, application restart, and reopen before we build source import and the full
-              sheet canvas.
+              save, application restart, and reopen before we build source import and the full sheet
+              canvas.
             </p>
           </div>
 
