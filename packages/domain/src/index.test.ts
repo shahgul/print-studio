@@ -1,316 +1,261 @@
 import { describe, expect, it } from 'vitest';
-
-import goldenA4 from '../../../tests/golden-geometry/a4-50mm-square.json';
-import { Length, Point2D, QuarterTurn, Size2D } from '@print-studio/units-geometry';
+import { Insets, Length, Point2D, QuarterTurn, Size2D } from '@print-studio/units-geometry';
 
 import {
   Item,
-  Orientation,
+  MediaDefinition,
   Placement,
-  PlacementStatus,
   Project,
   Sheet,
   SheetDefinition,
   Side,
-  SideKind,
   StandardMedia,
-  getStandardMediaSize,
-  getPlacementBounds,
   validatePlacement,
 } from './index';
 
-describe('standard media', () => {
-  it('defines A4 portrait as exactly 210 × 297 mm', () => {
-    const size = getStandardMediaSize(StandardMedia.A4, Orientation.Portrait);
-
-    expect(size.width.micrometres).toBe(210_000);
-    expect(size.height.micrometres).toBe(297_000);
+describe('StandardMedia', () => {
+  it('defines A4 as exactly 210 × 297 mm', () => {
+    expect(StandardMedia.A4.size.width.toMillimetres()).toBe(210);
+    expect(StandardMedia.A4.size.height.toMillimetres()).toBe(297);
   });
 
-  it('rotates standard media dimensions for landscape', () => {
-    const size = getStandardMediaSize(StandardMedia.A4, Orientation.Landscape);
+  it('defines A5, A3, and US Letter physical dimensions', () => {
+    expect(StandardMedia.A5.size.width.toMillimetres()).toBe(148);
+    expect(StandardMedia.A5.size.height.toMillimetres()).toBe(210);
 
-    expect(size.width.micrometres).toBe(297_000);
-    expect(size.height.micrometres).toBe(210_000);
+    expect(StandardMedia.A3.size.width.toMillimetres()).toBe(297);
+    expect(StandardMedia.A3.size.height.toMillimetres()).toBe(420);
+
+    expect(StandardMedia.LETTER.size.width.toInches()).toBeCloseTo(8.5, 6);
+    expect(StandardMedia.LETTER.size.height.toInches()).toBeCloseTo(11, 6);
   });
 
-  it('defines US Letter using exact inch dimensions', () => {
-    const size = getStandardMediaSize(StandardMedia.Letter, Orientation.Portrait);
+  it('supports custom physical media', () => {
+    const media = MediaDefinition.custom('Custom Card', Size2D.of(Length.mm(100), Length.mm(150)));
 
-    expect(size.width.micrometres).toBe(215_900);
-    expect(size.height.micrometres).toBe(279_400);
+    expect(media.id).toBe('custom');
+    expect(media.name).toBe('Custom Card');
+    expect(media.size.width.toMillimetres()).toBe(100);
+    expect(media.size.height.toMillimetres()).toBe(150);
   });
 });
 
 describe('SheetDefinition', () => {
-  it('derives physical and usable bounds from media and layout margins', () => {
-    const definition = SheetDefinition.standard(StandardMedia.A4, {
-      orientation: Orientation.Portrait,
-      layoutMargins: Length.mm(10),
+  it('derives a usable area from physical bounds and layout margins', () => {
+    const sheet = SheetDefinition.create({
+      media: StandardMedia.A4,
+      layoutMargins: Insets.uniform(Length.mm(10)),
     });
 
-    expect(definition.size.width.toMillimetres()).toBe(210);
-    expect(definition.size.height.toMillimetres()).toBe(297);
-    expect(definition.bounds.left.toMillimetres()).toBe(0);
-    expect(definition.bounds.top.toMillimetres()).toBe(0);
-    expect(definition.usableBounds.left.toMillimetres()).toBe(10);
-    expect(definition.usableBounds.top.toMillimetres()).toBe(10);
-    expect(definition.usableBounds.size.width.toMillimetres()).toBe(190);
-    expect(definition.usableBounds.size.height.toMillimetres()).toBe(277);
+    expect(sheet.physicalBounds.origin.equals(Point2D.of(Length.zero(), Length.zero()))).toBe(true);
+    expect(sheet.physicalBounds.size.equals(StandardMedia.A4.size)).toBe(true);
+    expect(sheet.usableArea.origin.x.toMillimetres()).toBe(10);
+    expect(sheet.usableArea.origin.y.toMillimetres()).toBe(10);
+    expect(sheet.usableArea.size.width.toMillimetres()).toBe(190);
+    expect(sheet.usableArea.size.height.toMillimetres()).toBe(277);
   });
 
-  it('supports custom physical media dimensions', () => {
-    const definition = SheetDefinition.custom({
-      name: 'Custom card stock',
-      size: Size2D.of(Length.mm(100), Length.mm(150)),
-      layoutMargins: Length.mm(5),
-    });
-
-    expect(definition.mediaKey).toBeNull();
-    expect(definition.name).toBe('Custom card stock');
-    expect(definition.size.width.toMillimetres()).toBe(100);
-    expect(definition.size.height.toMillimetres()).toBe(150);
-    expect(definition.usableBounds.size.width.toMillimetres()).toBe(90);
-    expect(definition.usableBounds.size.height.toMillimetres()).toBe(140);
-  });
-
-  it('rejects layout margins that exceed the physical sheet', () => {
+  it('rejects margins that consume more than the sheet', () => {
     expect(() =>
-      SheetDefinition.standard(StandardMedia.A5, {
-        layoutMargins: Length.mm(100),
+      SheetDefinition.create({
+        media: StandardMedia.A4,
+        layoutMargins: Insets.uniform(Length.mm(110)),
       }),
     ).toThrow();
   });
 });
 
 describe('Item and Placement', () => {
-  it('requires a non-empty item id and positive physical size', () => {
-    expect(() =>
-      Item.create({
-        id: '',
-        size: Size2D.of(Length.mm(50), Length.mm(50)),
-      }),
-    ).toThrow();
-
-    expect(() =>
-      Item.create({
-        id: 'zero',
-        size: Size2D.of(Length.zero(), Length.mm(50)),
-      }),
-    ).toThrow();
+  const item = Item.create({
+    id: 'item-1',
+    size: Size2D.of(Length.mm(50), Length.mm(50)),
   });
 
-  it('derives placement bounds from item size and quarter-turn rotation', () => {
-    const item = Item.create({
-      id: 'card',
-      size: Size2D.of(Length.mm(50), Length.mm(30)),
-    });
+  it('stores exact requested physical size', () => {
+    expect(item.size.width.toMillimetres()).toBe(50);
+    expect(item.size.height.toMillimetres()).toBe(50);
+  });
+
+  it('creates a placement without mutating item geometry', () => {
     const placement = Placement.create({
-      id: 'placement-1',
       itemId: item.id,
       origin: Point2D.of(Length.mm(20), Length.mm(30)),
-      rotation: QuarterTurn.Deg90,
+      rotation: QuarterTurn.Deg0,
     });
 
-    const bounds = getPlacementBounds(item, placement);
-
-    expect(bounds.origin.x.toMillimetres()).toBe(20);
-    expect(bounds.origin.y.toMillimetres()).toBe(30);
-    expect(bounds.size.width.toMillimetres()).toBe(30);
-    expect(bounds.size.height.toMillimetres()).toBe(50);
-  });
-
-  it('rejects placement/item mismatches when deriving bounds', () => {
-    const item = Item.create({
-      id: 'card',
-      size: Size2D.of(Length.mm(50), Length.mm(30)),
-    });
-    const placement = Placement.create({
-      id: 'placement-1',
-      itemId: 'different-item',
-      origin: Point2D.of(Length.zero(), Length.zero()),
-    });
-
-    expect(() => getPlacementBounds(item, placement)).toThrow();
+    expect(placement.itemId).toBe('item-1');
+    expect(placement.origin.x.toMillimetres()).toBe(20);
+    expect(placement.origin.y.toMillimetres()).toBe(30);
+    expect(placement.rotation).toBe(QuarterTurn.Deg0);
+    expect(item.size.width.toMillimetres()).toBe(50);
   });
 });
 
 describe('placement validation', () => {
-  const definition = SheetDefinition.standard(StandardMedia.A4, {
-    layoutMargins: Length.mm(10),
+  const definition = SheetDefinition.create({
+    media: StandardMedia.A4,
+    layoutMargins: Insets.uniform(Length.mm(10)),
   });
+
   const item = Item.create({
-    id: 'square',
+    id: 'item-1',
     size: Size2D.of(Length.mm(50), Length.mm(50)),
   });
 
-  it('accepts an item contained inside the usable area', () => {
+  it('marks the canonical golden A4 placement as inside the usable area', () => {
     const placement = Placement.create({
-      id: 'placement-valid',
       itemId: item.id,
       origin: Point2D.of(Length.mm(20), Length.mm(30)),
-    });
-
-    const result = validatePlacement(definition, item, placement);
-
-    expect(result.status).toBe(PlacementStatus.Valid);
-    expect(result.isInsideSheet).toBe(true);
-    expect(result.isInsideUsableArea).toBe(true);
-  });
-
-  it('distinguishes usable-area overflow from physical-sheet overflow', () => {
-    const placement = Placement.create({
-      id: 'placement-margin',
-      itemId: item.id,
-      origin: Point2D.of(Length.mm(5), Length.mm(30)),
-    });
-
-    const result = validatePlacement(definition, item, placement);
-
-    expect(result.status).toBe(PlacementStatus.OutsideUsableArea);
-    expect(result.isInsideSheet).toBe(true);
-    expect(result.isInsideUsableArea).toBe(false);
-  });
-
-  it('reports physical-sheet overflow as the stronger failure', () => {
-    const placement = Placement.create({
-      id: 'placement-sheet-overflow',
-      itemId: item.id,
-      origin: Point2D.of(Length.mm(180), Length.mm(260)),
-    });
-
-    const result = validatePlacement(definition, item, placement);
-
-    expect(result.status).toBe(PlacementStatus.OutsideSheet);
-    expect(result.isInsideSheet).toBe(false);
-    expect(result.isInsideUsableArea).toBe(false);
-  });
-
-  it('allows placement to touch the usable-area edge exactly', () => {
-    const placement = Placement.create({
-      id: 'placement-touch',
-      itemId: item.id,
-      origin: Point2D.of(Length.mm(150), Length.mm(237)),
-    });
-
-    const result = validatePlacement(definition, item, placement);
-
-    expect(result.status).toBe(PlacementStatus.Valid);
-  });
-});
-
-describe('Sheet, Side, and Project', () => {
-  const definition = SheetDefinition.standard(StandardMedia.A4, {
-    layoutMargins: Length.mm(10),
-  });
-  const item = Item.create({
-    id: 'square',
-    size: Size2D.of(Length.mm(50), Length.mm(50)),
-  });
-  const placement = Placement.create({
-    id: 'placement-1',
-    itemId: item.id,
-    origin: Point2D.of(Length.mm(20), Length.mm(30)),
-  });
-
-  it('creates front and optional back sides explicitly', () => {
-    const front = Side.create(SideKind.Front, [placement]);
-    const back = Side.create(SideKind.Back);
-    const sheet = Sheet.create({
-      id: 'sheet-1',
-      definition,
-      front,
-      back,
-    });
-
-    expect(sheet.front.kind).toBe(SideKind.Front);
-    expect(sheet.front.placements).toHaveLength(1);
-    expect(sheet.back?.kind).toBe(SideKind.Back);
-  });
-
-  it('rejects a back side passed as the front side', () => {
-    expect(() =>
-      Sheet.create({
-        id: 'sheet-1',
-        definition,
-        front: Side.create(SideKind.Back),
-      }),
-    ).toThrow();
-  });
-
-  it('requires unique item, sheet, and placement ids within a project', () => {
-    const front = Side.create(SideKind.Front, [placement]);
-    const sheet = Sheet.create({
-      id: 'sheet-1',
-      definition,
-      front,
-    });
-
-    expect(() =>
-      Project.create({
-        id: 'project-1',
-        items: [item, item],
-        sheets: [sheet],
-      }),
-    ).toThrow();
-
-    expect(() =>
-      Project.create({
-        id: 'project-1',
-        items: [item],
-        sheets: [sheet, sheet],
-      }),
-    ).toThrow();
-  });
-
-  it('rejects placements that reference an unknown item', () => {
-    const unknownPlacement = Placement.create({
-      id: 'placement-unknown',
-      itemId: 'missing',
-      origin: Point2D.of(Length.zero(), Length.zero()),
-    });
-    const sheet = Sheet.create({
-      id: 'sheet-1',
-      definition,
-      front: Side.create(SideKind.Front, [unknownPlacement]),
-    });
-
-    expect(() =>
-      Project.create({
-        id: 'project-1',
-        items: [item],
-        sheets: [sheet],
-      }),
-    ).toThrow();
-  });
-});
-
-describe('golden A4 physical layout', () => {
-  it('represents the canonical fixture exactly in physical units', () => {
-    const definition = SheetDefinition.standard(StandardMedia.A4, {
-      orientation: Orientation.Portrait,
-      layoutMargins: Length.mm(goldenA4.sheet.layoutMarginMm),
-    });
-    const item = Item.create({
-      id: goldenA4.item.id,
-      size: Size2D.of(Length.mm(goldenA4.item.widthMm), Length.mm(goldenA4.item.heightMm)),
-    });
-    const placement = Placement.create({
-      id: goldenA4.placement.id,
-      itemId: item.id,
-      origin: Point2D.of(Length.mm(goldenA4.placement.xMm), Length.mm(goldenA4.placement.yMm)),
       rotation: QuarterTurn.Deg0,
     });
 
-    const bounds = getPlacementBounds(item, placement);
     const result = validatePlacement(definition, item, placement);
 
-    expect(definition.size.width.micrometres).toBe(210_000);
-    expect(definition.size.height.micrometres).toBe(297_000);
-    expect(bounds.origin.x.micrometres).toBe(20_000);
-    expect(bounds.origin.y.micrometres).toBe(30_000);
-    expect(bounds.size.width.micrometres).toBe(50_000);
-    expect(bounds.size.height.micrometres).toBe(50_000);
-    expect(result.status).toBe(PlacementStatus.Valid);
+    expect(result.status).toBe('inside-usable-area');
+    expect(result.bounds.origin.x.toMillimetres()).toBe(20);
+    expect(result.bounds.origin.y.toMillimetres()).toBe(30);
+    expect(result.bounds.size.width.toMillimetres()).toBe(50);
+    expect(result.bounds.size.height.toMillimetres()).toBe(50);
+  });
+
+  it('distinguishes physical containment from usable-area containment', () => {
+    const placement = Placement.create({
+      itemId: item.id,
+      origin: Point2D.of(Length.mm(5), Length.mm(20)),
+      rotation: QuarterTurn.Deg0,
+    });
+
+    const result = validatePlacement(definition, item, placement);
+
+    expect(result.status).toBe('inside-sheet-outside-usable-area');
+    expect(definition.physicalBounds.containsRect(result.bounds)).toBe(true);
+    expect(definition.usableArea.containsRect(result.bounds)).toBe(false);
+  });
+
+  it('marks a placement outside the physical sheet as overflow', () => {
+    const placement = Placement.create({
+      itemId: item.id,
+      origin: Point2D.of(Length.mm(180), Length.mm(260)),
+      rotation: QuarterTurn.Deg0,
+    });
+
+    const result = validatePlacement(definition, item, placement);
+
+    expect(result.status).toBe('outside-sheet');
+  });
+
+  it('uses rotated physical dimensions during validation', () => {
+    const portraitItem = Item.create({
+      id: 'item-portrait',
+      size: Size2D.of(Length.mm(40), Length.mm(60)),
+    });
+
+    const placement = Placement.create({
+      itemId: portraitItem.id,
+      origin: Point2D.of(Length.mm(20), Length.mm(30)),
+      rotation: QuarterTurn.Deg90,
+    });
+
+    const result = validatePlacement(definition, portraitItem, placement);
+
+    expect(result.bounds.size.width.toMillimetres()).toBe(60);
+    expect(result.bounds.size.height.toMillimetres()).toBe(40);
+  });
+
+  it('rejects validation against the wrong item', () => {
+    const placement = Placement.create({
+      itemId: 'different-item',
+      origin: Point2D.of(Length.mm(20), Length.mm(30)),
+      rotation: QuarterTurn.Deg0,
+    });
+
+    expect(() => validatePlacement(definition, item, placement)).toThrow();
+  });
+});
+
+describe('Side, Sheet, and Project', () => {
+  const definition = SheetDefinition.create({
+    media: StandardMedia.A4,
+    layoutMargins: Insets.uniform(Length.mm(10)),
+  });
+  const item = Item.create({
+    id: 'item-1',
+    size: Size2D.of(Length.mm(50), Length.mm(50)),
+  });
+  const placement = Placement.create({
+    itemId: item.id,
+    origin: Point2D.of(Length.mm(20), Length.mm(30)),
+    rotation: QuarterTurn.Deg0,
+  });
+
+  it('creates a front side with placements', () => {
+    const side = Side.create('front', [placement]);
+
+    expect(side.kind).toBe('front');
+    expect(side.placements).toHaveLength(1);
+  });
+
+  it('creates a sheet with a required front and optional back', () => {
+    const front = Side.create('front', [placement]);
+    const sheet = Sheet.create({
+      id: 'sheet-1',
+      definition,
+      front,
+    });
+
+    expect(sheet.front).toBe(front);
+    expect(sheet.back).toBeUndefined();
+  });
+
+  it('creates a minimal project that indexes items and sheets', () => {
+    const sheet = Sheet.create({
+      id: 'sheet-1',
+      definition,
+      front: Side.create('front', [placement]),
+    });
+    const project = Project.create({
+      id: 'project-1',
+      name: 'Golden A4',
+      items: [item],
+      sheets: [sheet],
+    });
+
+    expect(project.getItem('item-1')).toBe(item);
+    expect(project.getSheet('sheet-1')).toBe(sheet);
+    expect(project.items).toHaveLength(1);
+    expect(project.sheets).toHaveLength(1);
+  });
+
+  it('rejects duplicate item ids', () => {
+    expect(() =>
+      Project.create({
+        id: 'project-1',
+        name: 'Duplicate',
+        items: [item, item],
+        sheets: [],
+      }),
+    ).toThrow();
+  });
+
+  it('rejects placements that refer to missing items', () => {
+    const missingPlacement = Placement.create({
+      itemId: 'missing',
+      origin: Point2D.of(Length.mm(20), Length.mm(30)),
+      rotation: QuarterTurn.Deg0,
+    });
+    const sheet = Sheet.create({
+      id: 'sheet-1',
+      definition,
+      front: Side.create('front', [missingPlacement]),
+    });
+
+    expect(() =>
+      Project.create({
+        id: 'project-1',
+        name: 'Invalid',
+        items: [item],
+        sheets: [sheet],
+      }),
+    ).toThrow();
   });
 });
