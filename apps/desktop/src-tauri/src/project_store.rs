@@ -160,7 +160,10 @@ mod tests {
         let error = remove_project_text(&target).expect_err("reject non-project removal");
 
         assert_eq!(error.kind(), io::ErrorKind::InvalidInput);
-        assert_eq!(fs::read_to_string(target).expect("read non-project file"), "keep me");
+        assert_eq!(
+            fs::read_to_string(target).expect("read non-project file"),
+            "keep me"
+        );
     }
 
     #[test]
