@@ -39,6 +39,7 @@ print-studio/
 │   ├── preflight/
 │   ├── renderer/
 │   ├── pdf-engine/
+│   ├── project-file/
 │   ├── recipes/
 │   ├── printer-core/
 │   ├── calibration/
@@ -219,18 +220,30 @@ Good:
 
 ## Persistence
 
-Projects and recipes need schema versions from the beginning.
+The first persistence boundary is implemented in `packages/project-file`.
 
-Requirements:
-- atomic save where possible;
-- autosave;
-- crash recovery;
-- migration tests;
-- source fingerprinting;
-- explicit missing-file state;
+Current rules:
+- format identity: `print-studio-project`;
+- current schema version: 1;
+- canonical persisted physical unit: integer micrometres;
+- project files are treated as untrusted input and validated at load time;
+- unknown additive fields are tolerated inside a supported schema version;
+- unsupported future versions fail explicitly rather than being guessed;
+- migration logic is isolated behind a migration hook from the beginning;
+- serialization/deserialization is independent of React, Tauri, filesystem APIs, and the PDF engine.
+
+`ProjectPersistence` depends on a small `ProjectTextStore` port:
+- `read(path)`;
+- `writeAtomic(path, content)`.
+
+The word **atomic** is part of the adapter contract. A platform implementation must not report success after a partial/truncated project replacement.
+
+Still required:
+- native Windows/Tauri atomic replacement adapter;
+- autosave/recovery policy;
+- source fingerprinting and explicit missing-source state once Source/SourcePage exists;
+- migration fixtures when the first real schema migration is introduced;
 - no hidden dependence on temporary browser object URLs.
-
-Possible local database/storage can be chosen later.
 
 ## Worker / performance model
 
