@@ -1,11 +1,12 @@
 import { importSourceBytes } from '@print-studio/document-import';
-import { type Source } from '@print-studio/domain';
+import { Project, type Source } from '@print-studio/domain';
 import { ProjectPersistence } from '@print-studio/project-file';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { useMemo, useState } from 'react';
 
 import { createTauriProjectTextStore, ensureProjectExtension } from './project-io';
 import { createTauriSourceBytesReader } from './source-io';
+import { revalidateProjectSources } from './source-revalidation';
 import { createStarterProject } from './starter-project';
 
 const PROJECT_FILTER = [
@@ -120,9 +121,21 @@ export function App() {
 
       if (typeof selected === 'string') {
         const restored = await persistence.load(selected);
-        setProject(restored);
+        const revalidated = await revalidateProjectSources(restored, sourceReader);
+        setProject(revalidated);
         setProjectPath(selected);
-        setStatus(`Opened ${selected}. Geometry reconstructed from integer micrometres.`);
+        setSource(revalidated.sources.at(-1) ?? null);
+
+        const missing = revalidated.sources.filter(
+          (candidate) => candidate.availability === 'MISSING',
+        ).length;
+        const changed = revalidated.sources.filter(
+          (candidate) => candidate.availability === 'CHANGED',
+        ).length;
+
+        setStatus(
+          `Opened ${selected}. ${revalidated.sources.length} source(s) revalidated; ${missing} missing, ${changed} changed.`,
+        );
       }
     } catch (error) {
       setStatus(`Open failed: ${String(error)}`);
@@ -154,8 +167,16 @@ export function App() {
       });
 
       setSource(imported);
+      setProject(
+        Project.create({
+          id: project.id,
+          items: project.items,
+          sheets: project.sheets,
+          sources: [...project.sources, imported],
+        }),
+      );
       setStatus(
-        `Imported ${imported.displayName}: ${imported.pages.length} page(s), ${imported.byteLength.toLocaleString()} bytes.`,
+        `Imported and attached ${imported.displayName}: ${imported.pages.length} page(s), ${imported.byteLength.toLocaleString()} bytes.`,
       );
     } catch (error) {
       setStatus(`Import failed: ${String(error)}`);
@@ -200,13 +221,15 @@ export function App() {
               <p className="eyebrow">Current source</p>
               <h2 id="source-heading">{source?.displayName ?? 'Nothing imported yet'}</h2>
             </div>
-            <span className="source-kind">{source?.kind ?? '—'}</span>
+            <span className="source-kind">
+              {source ? `${source.kind} · ${source.availability}` : '—'}
+            </span>
           </div>
 
           <div className="truth-grid">
             <article>
-              <span>Pages / frames</span>
-              <strong>{source?.pages.length ?? '—'}</strong>
+              <span>Sources in project</span>
+              <strong>{project.sources.length}</strong>
             </article>
             <article>
               <span>Intrinsic pixels</span>
@@ -278,9 +301,9 @@ export function App() {
         </div>
 
         <p className="test-note">
-          M1.5 checkpoint: import one real photo and one real PDF. Verify pixels/page count,
-          physical size where known, and that an image without trustworthy DPI explicitly says its
-          physical size is unknown.
+          M1.5 persistence checkpoint: import a source, Save As, close the app, reopen the project,
+          and confirm the source is restored as AVAILABLE. Then rename/move the external source and
+          reopen to verify MISSING, or modify the file and reopen to verify CHANGED.
         </p>
       </section>
     </main>
