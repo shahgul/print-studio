@@ -7,6 +7,11 @@ import {
   SheetDefinition,
   Side,
   SideKind,
+  Source,
+  SourceAvailability,
+  SourceFingerprint,
+  SourceKind,
+  SourcePage,
   StandardMedia,
 } from '@print-studio/domain';
 import { Insets, Length, Point2D, QuarterTurn, Size2D } from '@print-studio/units-geometry';
@@ -28,19 +33,19 @@ export {
 
 type JsonRecord = Record<string, unknown>;
 
-type SizeUmV1 = Readonly<{
+type SizeUmV2 = Readonly<{
   width: number;
   height: number;
 }>;
 
-type InsetsUmV1 = Readonly<{
+type InsetsUmV2 = Readonly<{
   top: number;
   right: number;
   bottom: number;
   left: number;
 }>;
 
-type PlacementV1 = Readonly<{
+type PlacementV2 = Readonly<{
   id: string;
   itemId: string;
   originUm: Readonly<{
@@ -50,59 +55,85 @@ type PlacementV1 = Readonly<{
   rotation: QuarterTurn;
 }>;
 
-type SideV1 = Readonly<{
+type SideV2 = Readonly<{
   kind: SideKind;
-  placements: ReadonlyArray<PlacementV1>;
+  placements: ReadonlyArray<PlacementV2>;
 }>;
 
-type StandardSheetDefinitionV1 = Readonly<{
+type StandardSheetDefinitionV2 = Readonly<{
   kind: 'STANDARD';
   media: StandardMedia;
   orientation: Orientation;
-  sizeUm: SizeUmV1;
-  layoutMarginsUm: InsetsUmV1;
+  sizeUm: SizeUmV2;
+  layoutMarginsUm: InsetsUmV2;
 }>;
 
-type CustomSheetDefinitionV1 = Readonly<{
+type CustomSheetDefinitionV2 = Readonly<{
   kind: 'CUSTOM';
   name: string;
-  sizeUm: SizeUmV1;
-  layoutMarginsUm: InsetsUmV1;
+  sizeUm: SizeUmV2;
+  layoutMarginsUm: InsetsUmV2;
 }>;
 
-type SheetDefinitionV1 = StandardSheetDefinitionV1 | CustomSheetDefinitionV1;
+type SheetDefinitionV2 = StandardSheetDefinitionV2 | CustomSheetDefinitionV2;
 
-type SheetV1 = Readonly<{
+type SheetV2 = Readonly<{
   id: string;
-  definition: SheetDefinitionV1;
-  front: SideV1;
-  back: SideV1 | null;
+  definition: SheetDefinitionV2;
+  front: SideV2;
+  back: SideV2 | null;
 }>;
 
-type ItemV1 = Readonly<{
+type ItemV2 = Readonly<{
   id: string;
-  sizeUm: SizeUmV1;
+  sizeUm: SizeUmV2;
 }>;
 
-type ProjectFileV1 = Readonly<{
+type SourcePageV2 = Readonly<{
+  id: string;
+  index: number;
+  physicalSizeUm: SizeUmV2 | null;
+  raster: Readonly<{
+    pixelWidth: number;
+    pixelHeight: number;
+    densityDpi: Readonly<{ x: number; y: number }> | null;
+  }> | null;
+}>;
+
+type SourceV2 = Readonly<{
+  id: string;
+  kind: SourceKind;
+  displayName: string;
+  filePath: string;
+  fingerprint: Readonly<{
+    algorithm: 'SHA-256';
+    value: string;
+  }>;
+  byteLength: number;
+  availability: SourceAvailability;
+  pages: ReadonlyArray<SourcePageV2>;
+}>;
+
+type ProjectFileV2 = Readonly<{
   format: typeof PROJECT_FILE_FORMAT;
-  schemaVersion: typeof CURRENT_PROJECT_SCHEMA_VERSION;
+  schemaVersion: 2;
   physicalUnit: typeof PROJECT_FILE_PHYSICAL_UNIT;
   project: Readonly<{
     id: string;
-    items: ReadonlyArray<ItemV1>;
-    sheets: ReadonlyArray<SheetV1>;
+    items: ReadonlyArray<ItemV2>;
+    sheets: ReadonlyArray<SheetV2>;
+    sources: ReadonlyArray<SourceV2>;
   }>;
 }>;
 
-function sizeToV1(size: Size2D): SizeUmV1 {
+function sizeToV2(size: Size2D): SizeUmV2 {
   return {
     width: size.width.micrometres,
     height: size.height.micrometres,
   };
 }
 
-function insetsToV1(insets: Insets): InsetsUmV1 {
+function insetsToV2(insets: Insets): InsetsUmV2 {
   return {
     top: insets.top.micrometres,
     right: insets.right.micrometres,
@@ -111,7 +142,7 @@ function insetsToV1(insets: Insets): InsetsUmV1 {
   };
 }
 
-function placementToV1(placement: Placement): PlacementV1 {
+function placementToV2(placement: Placement): PlacementV2 {
   return {
     id: placement.id,
     itemId: placement.itemId,
@@ -123,14 +154,14 @@ function placementToV1(placement: Placement): PlacementV1 {
   };
 }
 
-function sideToV1(side: Side): SideV1 {
+function sideToV2(side: Side): SideV2 {
   return {
     kind: side.kind,
-    placements: side.placements.map(placementToV1),
+    placements: side.placements.map(placementToV2),
   };
 }
 
-function sheetDefinitionToV1(definition: SheetDefinition): SheetDefinitionV1 {
+function sheetDefinitionToV2(definition: SheetDefinition): SheetDefinitionV2 {
   if (definition.mediaKey !== null) {
     if (definition.orientation === null) {
       throw new ProjectFileError(
@@ -143,46 +174,85 @@ function sheetDefinitionToV1(definition: SheetDefinition): SheetDefinitionV1 {
       kind: 'STANDARD',
       media: definition.mediaKey,
       orientation: definition.orientation,
-      sizeUm: sizeToV1(definition.size),
-      layoutMarginsUm: insetsToV1(definition.layoutMargins),
+      sizeUm: sizeToV2(definition.size),
+      layoutMarginsUm: insetsToV2(definition.layoutMargins),
     };
   }
 
   return {
     kind: 'CUSTOM',
     name: definition.name,
-    sizeUm: sizeToV1(definition.size),
-    layoutMarginsUm: insetsToV1(definition.layoutMargins),
+    sizeUm: sizeToV2(definition.size),
+    layoutMarginsUm: insetsToV2(definition.layoutMargins),
   };
 }
 
-function sheetToV1(sheet: Sheet): SheetV1 {
+function sheetToV2(sheet: Sheet): SheetV2 {
   return {
     id: sheet.id,
-    definition: sheetDefinitionToV1(sheet.definition),
-    front: sideToV1(sheet.front),
-    back: sheet.back === null ? null : sideToV1(sheet.back),
+    definition: sheetDefinitionToV2(sheet.definition),
+    front: sideToV2(sheet.front),
+    back: sheet.back === null ? null : sideToV2(sheet.back),
   };
 }
 
-function projectToV1(project: Project): ProjectFileV1 {
+function sourcePageToV2(page: SourcePage): SourcePageV2 {
+  return {
+    id: page.id,
+    index: page.index,
+    physicalSizeUm: page.physicalSize === null ? null : sizeToV2(page.physicalSize),
+    raster:
+      page.raster === null
+        ? null
+        : {
+            pixelWidth: page.raster.pixelWidth,
+            pixelHeight: page.raster.pixelHeight,
+            densityDpi:
+              page.raster.densityDpi === null
+                ? null
+                : {
+                    x: page.raster.densityDpi.x,
+                    y: page.raster.densityDpi.y,
+                  },
+          },
+  };
+}
+
+function sourceToV2(source: Source): SourceV2 {
+  return {
+    id: source.id,
+    kind: source.kind,
+    displayName: source.displayName,
+    filePath: source.filePath,
+    fingerprint: {
+      algorithm: source.fingerprint.algorithm,
+      value: source.fingerprint.value,
+    },
+    byteLength: source.byteLength,
+    availability: source.availability,
+    pages: source.pages.map(sourcePageToV2),
+  };
+}
+
+function projectToV2(project: Project): ProjectFileV2 {
   return {
     format: PROJECT_FILE_FORMAT,
-    schemaVersion: CURRENT_PROJECT_SCHEMA_VERSION,
+    schemaVersion: 2,
     physicalUnit: PROJECT_FILE_PHYSICAL_UNIT,
     project: {
       id: project.id,
       items: project.items.map((item) => ({
         id: item.id,
-        sizeUm: sizeToV1(item.size),
+        sizeUm: sizeToV2(item.size),
       })),
-      sheets: project.sheets.map(sheetToV1),
+      sheets: project.sheets.map(sheetToV2),
+      sources: project.sources.map(sourceToV2),
     },
   };
 }
 
 export function serializeProject(project: Project): string {
-  return `${JSON.stringify(projectToV1(project), null, 2)}\n`;
+  return `${JSON.stringify(projectToV2(project), null, 2)}\n`;
 }
 
 function isRecord(value: unknown): value is JsonRecord {
@@ -221,6 +291,21 @@ function requireSafeInteger(value: unknown, path: string): number {
   return value as number;
 }
 
+function requirePositiveSafeInteger(value: unknown, path: string): number {
+  const parsed = requireSafeInteger(value, path);
+  if (parsed <= 0) {
+    throw invalidSchema(`${path} must be a positive safe integer`);
+  }
+  return parsed;
+}
+
+function requirePositiveFiniteNumber(value: unknown, path: string): number {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) {
+    throw invalidSchema(`${path} must be a positive finite number`);
+  }
+  return value;
+}
+
 function requireEnum<T extends string>(value: unknown, values: ReadonlyArray<T>, path: string): T {
   if (typeof value !== 'string' || !values.includes(value as T)) {
     throw invalidSchema(`${path} has an unsupported value`);
@@ -257,6 +342,10 @@ function parseSize(value: unknown, path: string): Size2D {
     parseLength(record.width, `${path}.width`),
     parseLength(record.height, `${path}.height`),
   );
+}
+
+function parseNullableSize(value: unknown, path: string): Size2D | null {
+  return value === null ? null : parseSize(value, path);
 }
 
 function parseInsets(value: unknown, path: string): Insets {
@@ -361,7 +450,73 @@ function parseItem(value: unknown, path: string): Item {
   });
 }
 
-function parseV1(document: unknown): Project {
+function parseSourcePage(value: unknown, kind: SourceKind, path: string): SourcePage {
+  const record = requireRecord(value, path);
+  const id = requireString(record.id, `${path}.id`);
+  const index = requireSafeInteger(record.index, `${path}.index`);
+  const physicalSize = parseNullableSize(record.physicalSizeUm, `${path}.physicalSizeUm`);
+
+  if (kind === SourceKind.Pdf) {
+    if (physicalSize === null || record.raster !== null) {
+      throw invalidSchema(`${path} PDF page requires physical size and null raster metadata`);
+    }
+    return SourcePage.pdf({ id, index, physicalSize });
+  }
+
+  const raster = requireRecord(record.raster, `${path}.raster`);
+  const density =
+    raster.densityDpi === null
+      ? null
+      : (() => {
+          const densityRecord = requireRecord(raster.densityDpi, `${path}.raster.densityDpi`);
+          return {
+            x: requirePositiveFiniteNumber(densityRecord.x, `${path}.raster.densityDpi.x`),
+            y: requirePositiveFiniteNumber(densityRecord.y, `${path}.raster.densityDpi.y`),
+          };
+        })();
+
+  return SourcePage.image({
+    id,
+    index,
+    pixelWidth: requirePositiveSafeInteger(raster.pixelWidth, `${path}.raster.pixelWidth`),
+    pixelHeight: requirePositiveSafeInteger(raster.pixelHeight, `${path}.raster.pixelHeight`),
+    densityDpi: density,
+    physicalSize,
+  });
+}
+
+function parseSource(value: unknown, path: string): Source {
+  const record = requireRecord(value, path);
+  const kind = requireEnum(record.kind, Object.values(SourceKind), `${path}.kind`);
+  const fingerprint = requireRecord(record.fingerprint, `${path}.fingerprint`);
+
+  if (fingerprint.algorithm !== 'SHA-256') {
+    throw invalidSchema(`${path}.fingerprint.algorithm must be SHA-256`);
+  }
+
+  const pages = requireArray(record.pages, `${path}.pages`).map((page, index) =>
+    parseSourcePage(page, kind, `${path}.pages[${index}]`),
+  );
+
+  return Source.create({
+    id: requireString(record.id, `${path}.id`),
+    kind,
+    displayName: requireString(record.displayName, `${path}.displayName`),
+    filePath: requireString(record.filePath, `${path}.filePath`),
+    fingerprint: SourceFingerprint.sha256(
+      requireString(fingerprint.value, `${path}.fingerprint.value`),
+    ),
+    byteLength: requirePositiveSafeInteger(record.byteLength, `${path}.byteLength`),
+    availability: requireEnum(
+      record.availability,
+      Object.values(SourceAvailability),
+      `${path}.availability`,
+    ),
+    pages,
+  });
+}
+
+function parseV2(document: unknown): Project {
   const root = requireRecord(document, 'root');
 
   if (root.physicalUnit !== PROJECT_FILE_PHYSICAL_UNIT) {
@@ -375,12 +530,16 @@ function parseV1(document: unknown): Project {
   const sheets = requireArray(projectRecord.sheets, 'project.sheets').map((sheet, index) =>
     parseSheet(sheet, `project.sheets[${index}]`),
   );
+  const sources = requireArray(projectRecord.sources, 'project.sources').map((source, index) =>
+    parseSource(source, `project.sources[${index}]`),
+  );
 
   try {
     return Project.create({
       id: requireString(projectRecord.id, 'project.id'),
       items,
       sheets,
+      sources,
     });
   } catch (error) {
     if (error instanceof ProjectFileError) {
@@ -409,7 +568,7 @@ export function deserializeProject(serialized: string): Project {
   const migrated = migrateProjectFileDocument(parsed);
 
   try {
-    return parseV1(migrated);
+    return parseV2(migrated);
   } catch (error) {
     if (error instanceof ProjectFileError) {
       throw error;

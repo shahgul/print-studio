@@ -9,6 +9,26 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+function migrateV1ToV2(document: Record<string, unknown>): Record<string, unknown> {
+  const project = document.project;
+
+  if (!isRecord(project)) {
+    throw new ProjectFileError(
+      ProjectFileErrorCode.InvalidSchema,
+      'project must be an object before V1 to V2 migration',
+    );
+  }
+
+  return {
+    ...document,
+    schemaVersion: 2,
+    project: {
+      ...project,
+      sources: [],
+    },
+  };
+}
+
 export function migrateProjectFileDocument(document: unknown): unknown {
   if (!isRecord(document)) {
     throw new ProjectFileError(
@@ -40,12 +60,16 @@ export function migrateProjectFileDocument(document: unknown): unknown {
     );
   }
 
-  if (schemaVersion < CURRENT_PROJECT_SCHEMA_VERSION) {
-    throw new ProjectFileError(
-      ProjectFileErrorCode.UnsupportedSchemaVersion,
-      `project schema version ${schemaVersion} has no registered migration to version ${CURRENT_PROJECT_SCHEMA_VERSION}`,
-    );
+  if (schemaVersion === CURRENT_PROJECT_SCHEMA_VERSION) {
+    return document;
   }
 
-  return document;
+  if (schemaVersion === 1) {
+    return migrateV1ToV2(document);
+  }
+
+  throw new ProjectFileError(
+    ProjectFileErrorCode.UnsupportedSchemaVersion,
+    `project schema version ${schemaVersion} has no registered migration to version ${CURRENT_PROJECT_SCHEMA_VERSION}`,
+  );
 }

@@ -83,7 +83,7 @@ function createRoundTripProject(): Project {
 describe('project file contract', () => {
   it('publishes a stable format identity and schema version', () => {
     expect(PROJECT_FILE_FORMAT).toBe('print-studio-project');
-    expect(CURRENT_PROJECT_SCHEMA_VERSION).toBe(1);
+    expect(CURRENT_PROJECT_SCHEMA_VERSION).toBe(2);
   });
 
   it('serializes canonical geometry as integer micrometres', () => {
@@ -104,7 +104,7 @@ describe('project file contract', () => {
     };
 
     expect(document.format).toBe(PROJECT_FILE_FORMAT);
-    expect(document.schemaVersion).toBe(1);
+    expect(document.schemaVersion).toBe(2);
     expect(document.project.items[0]?.sizeUm).toEqual({
       width: 50_001,
       height: 49_999,
