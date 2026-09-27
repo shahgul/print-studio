@@ -1,0 +1,22 @@
+{
+  "name": "@print-studio/document-import",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run src",
+    "typecheck": "tsc -p tsconfig.json --pretty false"
+  },
+  "dependencies": {
+    "@cantoo/pdf-lib": "^2.11.1",
+    "@print-studio/domain": "workspace:*",
+    "@print-studio/units-geometry": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "vitest": "^4.0.0"
+  }
+}
