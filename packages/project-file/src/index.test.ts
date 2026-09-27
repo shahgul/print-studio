@@ -17,6 +17,7 @@ import {
   PROJECT_FILE_FORMAT,
   ProjectFileError,
   ProjectFileErrorCode,
+  ProjectPersistence,
   deserializeProject,
   serializeProject,
 } from './index';
@@ -243,5 +244,52 @@ describe('project file boundary validation', () => {
     } catch (error) {
       expect(error).toBeInstanceOf(ProjectFileError);
     }
+  });
+});
+
+
+describe('ProjectPersistence', () => {
+  it('saves a project through an atomic text-store boundary and loads it back', async () => {
+    const files = new Map<string, string>();
+
+    const store = {
+      async read(path: string): Promise<string> {
+        const content = files.get(path);
+        if (content === undefined) {
+          throw new Error(`missing file: ${path}`);
+        }
+        return content;
+      },
+      async writeAtomic(path: string, content: string): Promise<void> {
+        files.set(path, content);
+      },
+    };
+
+    const persistence = new ProjectPersistence(store);
+    const project = createRoundTripProject();
+
+    await persistence.save('job.printstudio', project);
+    const restored = await persistence.load('job.printstudio');
+
+    expect(restored.id).toBe(project.id);
+    expect(restored.items[0]?.size.width.micrometres).toBe(50_001);
+    expect(files.get('job.printstudio')).toBe(serializeProject(project));
+  });
+
+  it('does not require filesystem, React, or Tauri APIs in the persistence contract', async () => {
+    let saved = '';
+
+    const persistence = new ProjectPersistence({
+      async read(): Promise<string> {
+        return saved;
+      },
+      async writeAtomic(_path: string, content: string): Promise<void> {
+        saved = content;
+      },
+    });
+
+    await persistence.save('memory', createRoundTripProject());
+
+    expect((await persistence.load('memory')).id).toBe('project-round-trip');
   });
 });
