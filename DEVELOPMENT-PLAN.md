@@ -32,17 +32,50 @@ A task is not marked complete merely because code exists. Relevant tests, type c
 
 # Current milestone
 
-## M1.3 — Headless PDF Renderer
+## M1.4 — Project Schema + Persistence
 
 **Status:** Next.
 
-**Goal:** Generate a mathematically correct PDF from the canonical physical domain model, with no dependency on React or screen pixels.
+**Goal:** Make Print Studio projects durable without losing canonical physical geometry, while establishing schema versioning and migration rules before real user projects exist.
 
-The detailed M1.3 checklist is below under **Next milestones**.
+The detailed M1.4 checklist is below under **Next milestones**.
 
 ---
 
 # Completed milestones
+
+## M1.3 — Headless PDF Renderer
+
+**Status:** Complete and verified.
+
+**Goal:** Generate a mathematically correct PDF from the canonical domain model.
+
+- [x] Select/lock initial PDF composition adapter behind an interface.
+- [x] Define renderer contract before implementation.
+- [x] Add PDF renderer package boundary.
+- [x] Convert canonical micrometres → PDF points only at renderer boundary.
+- [x] Render A4 page exactly 210 × 297 mm.
+- [x] Render first 50 × 50 mm vector object at 20 × 30 mm.
+- [x] Re-open generated PDF and inspect page geometry programmatically.
+- [x] Add semantic golden-PDF validation.
+- [x] Decide not to check in a binary golden PDF yet; semantic geometry assertions are the authoritative M1.3 regression test.
+- [x] Prove canvas/browser pixels are not involved.
+- [x] Reject physical-sheet overflow rather than silently clipping.
+- [x] Render duplex sheets as front then back PDF pages.
+- [x] CI green.
+- [x] Update Development Plan.
+
+### Exit gate
+
+The canonical M1.2 fixture produces a PDF whose page and placed object geometry match the intended physical dimensions within documented PDF-point quantization tolerance.
+
+Verified:
+- A4 page geometry is re-opened from serialized PDF bytes and checked programmatically.
+- the 50 × 50 mm object maps from top-left project coordinates to the correct bottom-left PDF coordinates.
+- rendering is headless and independent of React/Tauri/browser pixels.
+- `@cantoo/pdf-lib` is contained behind `packages/pdf-engine`.
+
+---
 
 ## M1.2 — Physical Document Model + Golden A4 Layout
 
@@ -162,26 +195,34 @@ without depending on screen pixels or a PDF library.
 
 ## M1.3 — Headless PDF Renderer
 
-**Status:** Next.
+**Status:** Complete and verified.
 
 **Goal:** Generate a mathematically correct PDF from the canonical domain model.
 
-- [ ] Select/lock initial PDF composition adapter behind an interface.
-- [ ] Define renderer contract before implementation.
-- [ ] Add PDF renderer package boundary.
-- [ ] Convert canonical micrometres → PDF points only at renderer boundary.
-- [ ] Render A4 page exactly 210 × 297 mm.
-- [ ] Render first 50 × 50 mm vector object at 20 × 30 mm.
-- [ ] Re-open generated PDF and inspect page geometry programmatically.
-- [ ] Add semantic golden-PDF validation.
-- [ ] Add first checked-in golden PDF if stable/useful.
-- [ ] Prove canvas/browser pixels are not involved.
-- [ ] CI green.
-- [ ] Update Development Plan.
+- [x] Select/lock initial PDF composition adapter behind an interface.
+- [x] Define renderer contract before implementation.
+- [x] Add PDF renderer package boundary.
+- [x] Convert canonical micrometres → PDF points only at renderer boundary.
+- [x] Render A4 page exactly 210 × 297 mm.
+- [x] Render first 50 × 50 mm vector object at 20 × 30 mm.
+- [x] Re-open generated PDF and inspect page geometry programmatically.
+- [x] Add semantic golden-PDF validation.
+- [x] Decide not to check in a binary golden PDF yet; semantic geometry assertions are the authoritative M1.3 regression test.
+- [x] Prove canvas/browser pixels are not involved.
+- [x] Reject physical-sheet overflow rather than silently clipping.
+- [x] Render duplex sheets as front then back PDF pages.
+- [x] CI green.
+- [x] Update Development Plan.
 
 ### Exit gate
 
 The canonical M1.2 fixture produces a PDF whose page and placed object geometry match the intended physical dimensions within documented PDF-point quantization tolerance.
+
+Verified:
+- A4 page geometry is re-opened from serialized PDF bytes and checked programmatically.
+- the 50 × 50 mm object maps from top-left project coordinates to the correct bottom-left PDF coordinates.
+- rendering is headless and independent of React/Tauri/browser pixels.
+- `@cantoo/pdf-lib` is contained behind `packages/pdf-engine`.
 
 ## M1.4 — Project Schema + Persistence
 
