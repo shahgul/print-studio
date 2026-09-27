@@ -61,6 +61,7 @@ The repository is deliberately documentation-heavy before implementation. Read t
 - [Business](docs/BUSINESS.md) — monetization thesis, pricing hypotheses, customer ladder, free/paid principles and B2B/SDK direction.
 - [Research References](docs/REFERENCES.md) — dated standards, market, competitor, and anecdotal sources.
 - [Research Backlog](docs/RESEARCH-BACKLOG.md) — user, printer, solver, PDF, color, commercial, legal, and competitor questions still requiring validation.
+- [Quadient Inspire Lessons](docs/QUADIENT-INSPIRE-LESSONS.md) — lessons from Designer, Interactive, Automation, Scaler, and Production Server that should inform Print Studio architecture without turning it into a CCM product.
 
 ### Product behavior and UX
 
