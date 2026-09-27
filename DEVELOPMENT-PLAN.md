@@ -278,7 +278,7 @@ without depending on screen pixels or a PDF library.
 - [x] Malformed/unsupported input error contracts with typed codes.
 - [x] Resource-limit groundwork: 256 MiB file, 1,000 PDF pages, 250 MP image defaults.
 - [ ] Manual Windows import checkpoint.
-- [ ] CI green.
+- [x] CI green for the headless importer + desktop/native import bridge.
 
 ### Hands-on M1.5 checkpoint
 
