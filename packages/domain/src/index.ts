@@ -1,7 +1,20 @@
 /**
- * Print Studio's canonical domain model lives here.
+ * Print Studio's canonical domain model.
  *
- * This package must remain independent of React, Tauri, PDF libraries,
- * printer transports, and other presentation/infrastructure concerns.
+ * This package intentionally remains independent of React, Tauri, PDF
+ * libraries, printer transports, and presentation state.
  */
-export {};
+
+export { Item } from './item';
+export { Orientation, StandardMedia, getStandardMediaSize } from './media';
+export {
+  Placement,
+  PlacementStatus,
+  getPlacementBounds,
+  validatePlacement,
+} from './placement';
+export type { PlacementValidationResult } from './placement';
+export { Project } from './project';
+export { Sheet, Side, SideKind } from './sheet';
+export { SheetDefinition } from './sheet-definition';
+export type { LayoutMargins } from './sheet-definition';
