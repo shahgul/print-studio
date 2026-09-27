@@ -16,7 +16,9 @@ The project should be usable internally throughout development, but the final mo
 - [x] GitHub Actions quality workflow
 - [x] M1.1 RED tests for physical units
 - [x] canonical length representation implementation
-- [ ] first golden geometry fixture
+- [x] physical document model / A4 sheet domain
+- [x] placement validation and usable-area distinction
+- [x] first golden geometry fixture
 - [ ] first physically verified PDF export
 
 ## Month 1 — Physical truth foundation
