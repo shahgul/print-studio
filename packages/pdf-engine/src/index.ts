@@ -53,26 +53,15 @@ function getItemById(project: Project, itemId: string): Item {
   return item;
 }
 
-function assertPlacementFitsPhysicalSheet(
-  sheet: Sheet,
-  item: Item,
-  placement: Placement,
-): void {
+function assertPlacementFitsPhysicalSheet(sheet: Sheet, item: Item, placement: Placement): void {
   const validation = validatePlacement(sheet.definition, item, placement);
 
   if (validation.status === PlacementStatus.OutsideSheet) {
-    throw new RangeError(
-      `placement ${placement.id} is outside physical sheet ${sheet.id}`,
-    );
+    throw new RangeError(`placement ${placement.id} is outside physical sheet ${sheet.id}`);
   }
 }
 
-function renderSide(
-  document: PDFDocument,
-  project: Project,
-  sheet: Sheet,
-  side: Side,
-): void {
+function renderSide(document: PDFDocument, project: Project, sheet: Sheet, side: Side): void {
   const width = physicalLengthToPdfPoints(sheet.definition.size.width);
   const height = physicalLengthToPdfPoints(sheet.definition.size.height);
   const page = document.addPage([width, height]);
