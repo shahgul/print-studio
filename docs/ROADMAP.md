@@ -4,6 +4,21 @@ Assumption: focused development of roughly **4–5 hours/day** for six months. T
 
 The project should be usable internally throughout development, but the final month is reserved for real polish rather than unfinished foundational work.
 
+## Current implementation status
+
+- [x] Repository blueprint
+- [x] pnpm monorepo/workspace scaffold
+- [x] React + Vite desktop frontend shell
+- [x] Tauri 2 native shell
+- [x] `packages/units-geometry` boundary
+- [x] `packages/domain` boundary
+- [x] lint / format / typecheck / Vitest / build scripts
+- [x] GitHub Actions quality workflow
+- [ ] M1.1 RED tests for physical units
+- [ ] canonical length representation implementation
+- [ ] first golden geometry fixture
+- [ ] first physically verified PDF export
+
 ## Month 1 — Physical truth foundation
 
 ### Goal
