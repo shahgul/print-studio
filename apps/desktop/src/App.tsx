@@ -278,9 +278,9 @@ export function App() {
         </div>
 
         <p className="test-note">
-          M1.5 checkpoint: import one real photo and one real PDF. Verify pixels/page count, physical
-          size where known, and that an image without trustworthy DPI explicitly says its physical
-          size is unknown.
+          M1.5 checkpoint: import one real photo and one real PDF. Verify pixels/page count,
+          physical size where known, and that an image without trustworthy DPI explicitly says its
+          physical size is unknown.
         </p>
       </section>
     </main>

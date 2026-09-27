@@ -146,6 +146,19 @@ Deterministic physical geometry:
 ### Document import
 Turns external files into validated Source/Asset metadata. Treat files as untrusted.
 
+Current M1.5 implementation:
+- `packages/document-import` accepts raw bytes plus caller-owned source identity/path metadata;
+- file type is detected from byte signatures rather than trusted from the filename;
+- PNG/JPEG metadata parsing reads dimensions without decoding a full bitmap;
+- PNG `pHYs` and JPEG JFIF density are used when they declare physical units;
+- missing/unknown image density does not create an assumed physical size;
+- PDFs are parsed for page count and canonical physical page dimensions, including 90°/270° page rotation;
+- SHA-256 fingerprints identify the exact imported bytes;
+- typed errors distinguish unsupported, malformed, and resource-limit failures;
+- default guards currently cap imports at 256 MiB, 1,000 PDF pages, and 250 million image pixels.
+
+Desktop source reads use a bounded Rust adapter and Tauri raw binary IPC (`tauri::ipc::Response`) so file bytes are not expanded into JSON arrays.
+
 ### Layout core
 Applies known placement algorithms and validates layouts.
 

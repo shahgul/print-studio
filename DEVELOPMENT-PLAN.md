@@ -267,13 +267,32 @@ without depending on screen pixels or a PDF library.
 - [x] Define SHA-256 source fingerprint identity.
 - [x] Add source availability state so missing files retain last-known metadata.
 - [x] Enforce deterministic contiguous page indices and unique page IDs.
-- [ ] Implement source fingerprint/hash calculation from imported bytes.
+- [x] Implement source fingerprint/hash calculation from imported bytes.
+- [x] Add bounded native binary source reader using Tauri raw IPC (no JSON byte expansion).
+- [x] Add desktop Import… checkpoint for real PNG/JPEG/PDF inspection.
+- [ ] Persist Source/SourcePage metadata inside the versioned Project file.
+- [ ] Revalidate referenced source path + fingerprint on project reopen and surface MISSING/CHANGED states.
 - [ ] Non-destructive crop metadata.
-- [ ] Basic image import.
-- [ ] Basic PDF import.
-- [ ] Malformed input/error contracts.
-- [ ] Resource-limit groundwork.
+- [x] Basic PNG/JPEG metadata import from raw bytes.
+- [x] Basic PDF page-count/physical-size import from raw bytes.
+- [x] Malformed/unsupported input error contracts with typed codes.
+- [x] Resource-limit groundwork: 256 MiB file, 1,000 PDF pages, 250 MP image defaults.
+- [ ] Manual Windows import checkpoint.
 - [ ] CI green.
+
+### Hands-on M1.5 checkpoint
+
+After pulling the current branch and running `run.bat`:
+
+1. Click **Import…**.
+2. Choose a real JPG/PNG.
+3. Verify pixel dimensions match the source.
+4. Verify DPI/physical size are shown only when trustworthy metadata is present.
+5. Choose a real PDF.
+6. Verify page count and first-page physical dimensions.
+7. Confirm a source without trusted DPI reports **Unknown — no trusted DPI** rather than an invented size.
+
+This checkpoint validates source inspection only. Placement on a physical sheet begins in M1.6.
 
 ## M1.6 — Physical Sheet Canvas
 

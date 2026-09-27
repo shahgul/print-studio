@@ -171,9 +171,15 @@ Do not use TODO as a substitute for:
 
 ## Engineering
 
+- [ ] Add EXIF density metadata support for JPEG/TIFF-oriented photo workflows.
+  - Current basic JPEG importer recognizes JFIF density and always recognizes SOF pixel dimensions.
+  - Do not block M1.5 basic import on EXIF; add when photo fixtures justify it.
+
+
 - [ ] Image DPI provenance and trust policy.
   - M1.5 deliberately does not guess DPI when absent.
-  - When PNG/JPEG metadata parsing lands, distinguish declared density from user override and later measured/derived values.
+  - PNG pHYs and JPEG JFIF declared physical density are now recognized.
+  - Still define provenance for EXIF density, user override, and later measured/derived values.
 
 - [x] Manual Windows persistence checkpoint passed.
   - Save As → close app → reopen → Open preserved exact A4/item/position geometry.
