@@ -4,9 +4,7 @@ import { createTauriProjectTextStore, ensureProjectExtension } from './project-i
 
 describe('ensureProjectExtension', () => {
   it('adds the .printstudio extension when missing', () => {
-    expect(ensureProjectExtension('D:\\jobs\\worksheet')).toBe(
-      'D:\\jobs\\worksheet.printstudio',
-    );
+    expect(ensureProjectExtension('D:\\jobs\\worksheet')).toBe('D:\\jobs\\worksheet.printstudio');
   });
 
   it('preserves an existing extension case-insensitively', () => {
