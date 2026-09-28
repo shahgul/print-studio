@@ -262,6 +262,36 @@ A changed source must be explicitly re-imported before its stored fingerprint or
 
 The desktop existence probe is separate from the byte read so permission/I/O failures are not mislabeled as missing files.
 
+### Source-backed item metadata
+
+Schema V2 may also attach a source reference to an item:
+
+```json
+{
+  "id": "item-photo",
+  "sizeUm": {
+    "width": 100000,
+    "height": 150000
+  },
+  "sourceRef": {
+    "sourceId": "source-photo",
+    "sourcePageId": "source-photo:page:0",
+    "cropMillionths": {
+      "x": 100000,
+      "y": 125000,
+      "width": 750000,
+      "height": 625000
+    }
+  }
+}
+```
+
+`sourceRef` is nullable and remains optional when reading earlier schema-V2 files, so existing source-less projects continue to load unchanged.
+
+Crop metadata is non-destructive. It stores a normalized rectangle relative to the original source page using integer millionths, where `1_000_000` represents the full width or height. The rectangle must have positive width/height and remain inside the source page. This avoids coupling crop intent to raster pixels, DPI, item output size, or screen coordinates.
+
+Project reconstruction validates that the referenced Source exists and that the referenced SourcePage belongs to that Source.
+
 ## Manual Windows verification
 
 The first real desktop persistence checkpoint passed on **28 September 2026**.
