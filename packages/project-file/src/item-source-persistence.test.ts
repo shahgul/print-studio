@@ -91,7 +91,7 @@ describe('source item project-file metadata', () => {
     expect(restoredItem.sourceRef?.sourceId).toBe('source-photo');
     expect(restoredItem.sourceRef?.sourcePageId).toBe('source-photo:page:0');
     expect(restoredItem.sourceRef?.crop.xMillionths).toBe(100_000);
-    expect(restored.sources[0]?.fingerprint).toBe(original.sources[0]?.fingerprint);
+    expect(restored.sources[0]?.fingerprint).toEqual(original.sources[0]?.fingerprint);
   });
 
   it('loads older schema-V2 items that do not yet contain sourceRef as source-less items', () => {
