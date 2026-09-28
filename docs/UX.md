@@ -137,6 +137,8 @@ The desktop workspace currently shows the first sheet's front side, its physical
 
 Viewport scale is displayed in screen pixels per millimetre and does not change saved physical dimensions. Edits that extend beyond the physical sheet report an error rather than clipping silently. Resizing an Item used by another placement reports an error; independent per-placement size is not yet modeled. Source-content imagery is not yet rendered inside placement outlines.
 
+The canvas interactions and edited-project Save → reopen flow are implemented, but their user manual Windows verification is pending. The same applies to M1.5 live source-state changes while the app stays open.
+
 ## Smart Layout UX
 
 Smart Layout should not be a mysterious “AI” button.

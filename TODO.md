@@ -236,12 +236,12 @@ Do not use TODO as a substitute for:
   - Completed as M1.4 in `DEVELOPMENT-PLAN.md`.
   - Includes schema v1, atomic Windows Save/Open, manual Windows verification, and recovery snapshot groundwork.
 
-- [x] Source import model.
-  - Completed and Windows-verified as M1.5 in `DEVELOPMENT-PLAN.md`.
+- [>] Source import model.
+  - M1.5 implementation, automated checks, and CI passed; user manual Windows live-source monitoring remains pending in `DEVELOPMENT-PLAN.md`.
   - Source persistence/revalidation, non-destructive crop/source-item metadata, and live-source monitoring are implemented.
 
-- [x] Physical sheet canvas.
-  - Completed and Windows-verified as M1.6 in `DEVELOPMENT-PLAN.md`.
+- [>] Physical sheet canvas.
+  - M1.6 implementation, automated checks, and CI passed; user manual Windows canvas and edited-project Save → reopen checks remain pending in `DEVELOPMENT-PLAN.md`.
 
 ---
 
