@@ -5,7 +5,7 @@
  * libraries, printer transports, and presentation state.
  */
 
-export { Item } from './item';
+export { Item, ItemSourceReference, SOURCE_CROP_SCALE, SourceCrop } from './item';
 export { Orientation, StandardMedia, getStandardMediaSize } from './media';
 export { Placement, PlacementStatus, getPlacementBounds, validatePlacement } from './placement';
 export type { PlacementValidationResult } from './placement';
