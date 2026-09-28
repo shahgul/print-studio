@@ -1,4 +1,7 @@
-use std::{fs, io, path::{Path, PathBuf}};
+use std::{
+    fs, io,
+    path::{Path, PathBuf},
+};
 
 pub(crate) const MAX_SOURCE_FILE_BYTES: u64 = 256 * 1024 * 1024;
 

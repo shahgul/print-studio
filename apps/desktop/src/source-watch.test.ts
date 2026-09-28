@@ -30,17 +30,19 @@ describe('createTauriSourceWatchService', () => {
   });
 
   it('translates native change and window-focus callbacks into monitor signals', async () => {
-    let changeHandler: (() => void) | null = null;
-    let focusHandler: ((focused: boolean) => void) | null = null;
+    const handlers: {
+      change?: () => void;
+      focus?: (focused: boolean) => void;
+    } = {};
 
     const service = createTauriSourceWatchService({
       invoke: async () => undefined,
       listen: async (_event, handler) => {
-        changeHandler = () => handler({ payload: null });
+        handlers.change = () => handler({ payload: null });
         return () => undefined;
       },
       onFocusChanged: async (handler) => {
-        focusHandler = (focused) => handler({ payload: focused });
+        handlers.focus = (focused) => handler({ payload: focused });
         return () => undefined;
       },
     });
@@ -50,9 +52,9 @@ describe('createTauriSourceWatchService', () => {
     const stopChanges = await service.onPotentialChange(() => changes.push('changed'));
     const stopFocus = await service.onFocusChanged((focused) => focuses.push(focused));
 
-    changeHandler?.();
-    focusHandler?.(false);
-    focusHandler?.(true);
+    handlers.change?.();
+    handlers.focus?.(false);
+    handlers.focus?.(true);
 
     expect(changes).toEqual(['changed']);
     expect(focuses).toEqual([false, true]);
@@ -66,14 +68,14 @@ describe('createLiveSourceMonitor', () => {
   it('debounces native change bursts and revalidates the current project once', async () => {
     vi.useFakeTimers();
 
-    let changeHandler: (() => void) | null = null;
+    const handlers: { change?: () => void } = {};
     const configured: string[][] = [];
     const service: SourceWatchService = {
       async configure(paths) {
         configured.push([...paths]);
       },
       async onPotentialChange(handler) {
-        changeHandler = handler;
+        handlers.change = handler;
         return () => undefined;
       },
       async onFocusChanged() {
@@ -93,9 +95,9 @@ describe('createLiveSourceMonitor', () => {
       onProject,
     });
 
-    changeHandler?.();
-    changeHandler?.();
-    changeHandler?.();
+    handlers.change?.();
+    handlers.change?.();
+    handlers.change?.();
 
     await vi.advanceTimersByTimeAsync(99);
     expect(revalidate).not.toHaveBeenCalled();
@@ -114,14 +116,14 @@ describe('createLiveSourceMonitor', () => {
   it('revalidates when the window regains focus but ignores focus loss', async () => {
     vi.useFakeTimers();
 
-    let focusHandler: ((focused: boolean) => void) | null = null;
+    const handlers: { focus?: (focused: boolean) => void } = {};
     const service: SourceWatchService = {
       async configure() {},
       async onPotentialChange() {
         return () => undefined;
       },
       async onFocusChanged(handler) {
-        focusHandler = handler;
+        handlers.focus = handler;
         return () => undefined;
       },
     };
@@ -137,11 +139,11 @@ describe('createLiveSourceMonitor', () => {
       onProject: () => undefined,
     });
 
-    focusHandler?.(false);
+    handlers.focus?.(false);
     await vi.advanceTimersByTimeAsync(50);
     expect(revalidate).not.toHaveBeenCalled();
 
-    focusHandler?.(true);
+    handlers.focus?.(true);
     await vi.advanceTimersByTimeAsync(50);
     expect(revalidate).toHaveBeenCalledTimes(1);
 
