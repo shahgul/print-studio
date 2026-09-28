@@ -48,9 +48,7 @@ function validateItemSourceReferences(
 
     const source = sourcesById.get(item.sourceRef.sourceId);
     if (source === undefined) {
-      throw new RangeError(
-        `item ${item.id} references unknown source ${item.sourceRef.sourceId}`,
-      );
+      throw new RangeError(`item ${item.id} references unknown source ${item.sourceRef.sourceId}`);
     }
 
     if (!source.pages.some((page) => page.id === item.sourceRef?.sourcePageId)) {
