@@ -122,6 +122,15 @@ Properties:
 
 One SourcePage may generate many Items.
 
+For source-backed items, the reference contains both the owning Source ID and SourcePage ID. Crop is non-destructive item metadata, not a mutation of the imported Source. The initial crop representation is a normalized rectangle in integer millionths of the original source page:
+
+- `0` = top/left edge;
+- `1_000_000` = full source width/height;
+- crop width/height must be positive;
+- the crop rectangle must remain inside the normalized source page.
+
+Normalized crop coordinates deliberately do not use pixels, DPI, or physical units. This lets the same contract address raster images and PDF pages without inventing physical metadata for images that do not declare trustworthy density.
+
 ### CopySpecification
 
 Represents repetition intent without immediately cloning every object.
