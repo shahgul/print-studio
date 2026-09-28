@@ -134,6 +134,13 @@ A CHANGED source keeps the original stored fingerprint and last-known intrinsic 
 
 **Compatibility:** Schema-V2 files created before this decision may omit `sourceRef`; they load as source-less Items. The new field is additive within schema V2.
 
+### D-023 — Repository is the cross-environment source of truth
+**Decision:** GitHub/repository state is authoritative across Codex, ChatGPT, and other development environments. Conversation history is advisory context only. Codex on the local development PC is the preferred implementation environment; product/architecture discussions may happen elsewhere, but accepted decisions and verification results must be written back to the repository.
+
+**Session rule:** A new agent/thread reconstructs context from `AGENTS.md`, `DEVELOPMENT-PLAN.md`, `TODO.md`, relevant canonical docs, current git state, and recent changes before editing. If a prompt conflicts with the repository, the repository wins unless the conflict is explicitly resolved and documented.
+
+**Why:** Long-running conversations can hit context limits or move between tools/models. Keeping the durable state in versioned repository files prevents stale conversational assumptions from becoming implementation truth.
+
 ### D-019 — Initial PDF adapter is @cantoo/pdf-lib behind pdf-engine
 **Decision:** Use `@cantoo/pdf-lib` as the first PDF creation/manipulation adapter inside `packages/pdf-engine`, while keeping domain and layout contracts independent of it.
 
