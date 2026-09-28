@@ -1,5 +1,6 @@
 import {
   Item,
+  ItemSourceReference,
   Orientation,
   Placement,
   Project,
@@ -12,6 +13,7 @@ import {
   SourceFingerprint,
   SourceKind,
   SourcePage,
+  SourceCrop,
   StandardMedia,
 } from '@print-studio/domain';
 import { Insets, Length, Point2D, QuarterTurn, Size2D } from '@print-studio/units-geometry';
@@ -84,9 +86,23 @@ type SheetV2 = Readonly<{
   back: SideV2 | null;
 }>;
 
+type SourceCropMillionthsV2 = Readonly<{
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}>;
+
+type ItemSourceRefV2 = Readonly<{
+  sourceId: string;
+  sourcePageId: string;
+  cropMillionths: SourceCropMillionthsV2;
+}>;
+
 type ItemV2 = Readonly<{
   id: string;
   sizeUm: SizeUmV2;
+  sourceRef: ItemSourceRefV2 | null;
 }>;
 
 type SourcePageV2 = Readonly<{
@@ -244,6 +260,19 @@ function projectToV2(project: Project): ProjectFileV2 {
       items: project.items.map((item) => ({
         id: item.id,
         sizeUm: sizeToV2(item.size),
+        sourceRef:
+          item.sourceRef === null
+            ? null
+            : {
+                sourceId: item.sourceRef.sourceId,
+                sourcePageId: item.sourceRef.sourcePageId,
+                cropMillionths: {
+                  x: item.sourceRef.crop.xMillionths,
+                  y: item.sourceRef.crop.yMillionths,
+                  width: item.sourceRef.crop.widthMillionths,
+                  height: item.sourceRef.crop.heightMillionths,
+                },
+              },
       })),
       sheets: project.sheets.map(sheetToV2),
       sources: project.sources.map(sourceToV2),
@@ -441,12 +470,33 @@ function parseSheet(value: unknown, path: string): Sheet {
   });
 }
 
+function parseItemSourceReference(value: unknown, path: string): ItemSourceReference | null {
+  if (value === undefined || value === null) {
+    return null;
+  }
+
+  const record = requireRecord(value, path);
+  const crop = requireRecord(record.cropMillionths, `${path}.cropMillionths`);
+
+  return ItemSourceReference.create({
+    sourceId: requireString(record.sourceId, `${path}.sourceId`),
+    sourcePageId: requireString(record.sourcePageId, `${path}.sourcePageId`),
+    crop: SourceCrop.create({
+      xMillionths: requireSafeInteger(crop.x, `${path}.cropMillionths.x`),
+      yMillionths: requireSafeInteger(crop.y, `${path}.cropMillionths.y`),
+      widthMillionths: requireSafeInteger(crop.width, `${path}.cropMillionths.width`),
+      heightMillionths: requireSafeInteger(crop.height, `${path}.cropMillionths.height`),
+    }),
+  });
+}
+
 function parseItem(value: unknown, path: string): Item {
   const record = requireRecord(value, path);
 
   return Item.create({
     id: requireString(record.id, `${path}.id`),
     size: parseSize(record.sizeUm, `${path}.sizeUm`),
+    sourceRef: parseItemSourceReference(record.sourceRef, `${path}.sourceRef`),
   });
 }
 
