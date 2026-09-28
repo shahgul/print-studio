@@ -35,6 +35,32 @@ function getPlacements(sheet: Sheet): ReadonlyArray<Placement> {
     : [...sheet.front.placements, ...sheet.back.placements];
 }
 
+function validateItemSourceReferences(
+  items: ReadonlyArray<Item>,
+  sources: ReadonlyArray<Source>,
+): void {
+  const sourcesById = new Map(sources.map((source) => [source.id, source]));
+
+  for (const item of items) {
+    if (item.sourceRef === null) {
+      continue;
+    }
+
+    const source = sourcesById.get(item.sourceRef.sourceId);
+    if (source === undefined) {
+      throw new RangeError(
+        `item ${item.id} references unknown source ${item.sourceRef.sourceId}`,
+      );
+    }
+
+    if (!source.pages.some((page) => page.id === item.sourceRef?.sourcePageId)) {
+      throw new RangeError(
+        `item ${item.id} references unknown source page ${item.sourceRef.sourcePageId} in source ${source.id}`,
+      );
+    }
+  }
+}
+
 export class Project {
   private constructor(
     readonly id: string,
@@ -51,6 +77,8 @@ export class Project {
     requireUniqueIds(items, (item) => item.id, 'item');
     requireUniqueIds(sheets, (sheet) => sheet.id, 'sheet');
     requireUniqueIds(sources, (source) => source.id, 'source');
+
+    validateItemSourceReferences(items, sources);
 
     const itemIds = new Set(items.map((item) => item.id));
     const allPlacements = sheets.flatMap((sheet) => getPlacements(sheet));
