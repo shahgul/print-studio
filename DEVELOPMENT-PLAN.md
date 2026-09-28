@@ -275,8 +275,14 @@ without depending on screen pixels or a PDF library.
 - [x] Migrate schema V1 → V2 by adding an empty source collection.
 - [x] Preserve original source fingerprint/page metadata when external bytes change.
 - [x] Distinguish missing files from read/permission failures.
-- [ ] Manual Windows persistence/revalidation checkpoint.
-- [ ] Non-destructive crop metadata.
+- [x] Manual Windows persistence/revalidation checkpoint.
+- [x] Add native live source monitoring with debounced revalidation and focus-time fallback.
+- [ ] Manual Windows live-source monitoring checkpoint.
+- [x] Non-destructive crop metadata.
+  - source-backed Items reference both Source ID and SourcePage ID;
+  - crop is a normalized integer-millionths rectangle relative to the original source page;
+  - Project construction validates source/page references;
+  - schema-V2 persistence remains additive and accepts older V2 Items without `sourceRef`.
 - [x] Basic PNG/JPEG metadata import from raw bytes.
 - [x] Basic PDF page-count/physical-size import from raw bytes.
 - [x] Malformed/unsupported input error contracts with typed codes.
@@ -296,11 +302,11 @@ Verified manually on 28 September 2026:
 
 Result: **passed**.
 
-This checkpoint validates source inspection only. M1.5 still needs source persistence/revalidation before it can close; placement on a physical sheet begins in M1.6.
+This checkpoint validates source inspection. Source persistence/revalidation was verified separately below.
 
-### Hands-on source persistence/revalidation checkpoint
+### Hands-on source persistence/revalidation checkpoint — passed on Windows
 
-Pending Windows verification:
+Verified manually on 28 September 2026:
 
 1. Import a real JPG or PDF.
 2. **Save As…** a `.printstudio` project.
@@ -313,7 +319,26 @@ Pending Windows verification:
 9. Confirm the source reports **CHANGED** and Print Studio does not silently replace the stored fingerprint/metadata.
 10. Restore the original file bytes and confirm a later reopen returns to **AVAILABLE**.
 
+Result: **passed** — the sequence returned **AVAILABLE → MISSING → CHANGED → AVAILABLE** while preserving last-known source metadata.
+
 Only a genuinely absent path is classified as MISSING. If the file exists but cannot be read, the app should surface the I/O failure.
+
+### Hands-on live-source monitoring checkpoint
+
+Pending Windows verification:
+
+1. `git pull` and run `run.bat`.
+2. Import a real JPG or PDF and save the project.
+3. Keep Print Studio open.
+4. Rename or move the referenced source file without reopening the project.
+5. Confirm the open app changes the source state to **MISSING** after the watcher/debounce runs.
+6. Put different bytes at the original source path.
+7. Confirm the open app changes the source state to **CHANGED**.
+8. Restore the original source bytes at the original path.
+9. Confirm the open app returns to **AVAILABLE**.
+10. As a fallback check, change the source while Print Studio is unfocused, return to the app, and confirm focus-time revalidation catches the current state.
+
+M1.5 remains open until this live-monitoring checkpoint passes. After that, close M1.5 and begin M1.6 physical-sheet canvas work.
 
 ## M1.6 — Physical Sheet Canvas
 
