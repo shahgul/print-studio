@@ -20,7 +20,8 @@ export interface SourceWatchService {
 
 const defaultDependencies: SourceWatchDependencies = {
   invoke: (command, args) => invoke(command, args),
-  listen: (event, handler) => listen(event, (nativeEvent) => handler({ payload: nativeEvent.payload })),
+  listen: (event, handler) =>
+    listen(event, (nativeEvent) => handler({ payload: nativeEvent.payload })),
   onFocusChanged: (handler) =>
     getCurrentWindow().onFocusChanged((event) => handler({ payload: event.payload })),
 };

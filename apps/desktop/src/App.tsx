@@ -69,7 +69,6 @@ export function App() {
   const item = project.items[0];
   const placement = sheet?.front.placements[0];
 
-
   useEffect(() => {
     let disposed = false;
     let stopMonitor: (() => Promise<void>) | null = null;
