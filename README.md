@@ -52,6 +52,17 @@ not merely:
 
 The repository is deliberately documentation-heavy before implementation. Read the relevant canonical docs rather than expanding README into a duplicate specification.
 
+### Development coordination
+
+The GitHub repository is the source of truth across development environments. Local Codex sessions, ChatGPT discussions, and other tools should reconstruct project context from the repository rather than relying on conversation history.
+
+Recommended split:
+- use **Codex on the development PC** for implementation, local tests, Tauri/Windows work, debugging, and commits;
+- use **ChatGPT discussions** for product direction, architecture, UX, research, and planning;
+- write any accepted decision or completed verification back into the appropriate repository document so the next session can recover the same state.
+
+Start every implementation session from `AGENTS.md`, `DEVELOPMENT-PLAN.md`, `TODO.md`, and the specialist docs for the area being changed.
+
 ### Product and research
 
 - [Product](docs/PRODUCT.md) — vision, audiences, jobs-to-be-done, product pillars, scope and non-goals.
