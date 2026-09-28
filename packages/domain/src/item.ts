@@ -93,10 +93,6 @@ export class Item {
       throw new RangeError('item size must have positive dimensions');
     }
 
-    return new Item(
-      requireNonEmptyId(input.id, 'item id'),
-      input.size,
-      input.sourceRef ?? null,
-    );
+    return new Item(requireNonEmptyId(input.id, 'item id'), input.size, input.sourceRef ?? null);
   }
 }
