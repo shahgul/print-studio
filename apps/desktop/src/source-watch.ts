@@ -127,6 +127,5 @@ export async function createLiveSourceMonitor({
     }
     stopChanges();
     stopFocus();
-    await service.configure([]);
   };
 }

@@ -2,7 +2,7 @@ import { importSourceBytes } from '@print-studio/document-import';
 import { Project, type Source } from '@print-studio/domain';
 import { ProjectPersistence } from '@print-studio/project-file';
 import { open, save } from '@tauri-apps/plugin-dialog';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { createTauriProjectTextStore, ensureProjectExtension } from './project-io';
 import { createTauriSourceBytesReader } from './source-io';
@@ -60,6 +60,9 @@ export function App() {
   const sourceReader = useMemo(() => createTauriSourceBytesReader(), []);
   const sourceWatch = useMemo(() => createTauriSourceWatchService(), []);
   const [project, setProject] = useState(createStarterProject);
+  const projectRef = useRef(project);
+  projectRef.current = project;
+  const sourcePathsKey = JSON.stringify(project.sources.map((candidate) => candidate.filePath));
   const [projectPath, setProjectPath] = useState<string | null>(null);
   const [source, setSource] = useState<Source | null>(null);
   const [status, setStatus] = useState('M1.5 is ready to inspect a real PNG, JPEG, or PDF.');
@@ -78,6 +81,7 @@ export function App() {
         return;
       }
 
+      projectRef.current = revalidated;
       setProject(revalidated);
       setSource((current) => {
         if (current) {
@@ -104,9 +108,9 @@ export function App() {
     };
 
     void createLiveSourceMonitor({
-      project,
+      project: projectRef.current,
       service: sourceWatch,
-      revalidate: () => revalidateProjectSources(project, sourceReader),
+      revalidate: () => revalidateProjectSources(projectRef.current, sourceReader),
       onProject: updateFromLiveCheck,
       onError: (error) => {
         if (!disposed) {
@@ -127,7 +131,7 @@ export function App() {
         void stopMonitor();
       }
     };
-  }, [project, sourceReader, sourceWatch]);
+  }, [sourcePathsKey, sourceReader, sourceWatch]);
 
   async function saveTo(path: string) {
     const normalizedPath = ensureProjectExtension(path);
