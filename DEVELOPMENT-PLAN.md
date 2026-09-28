@@ -550,11 +550,15 @@ These are intentionally tracked but not scheduled into the initial six-month gat
 
 Every implementation session should:
 
-1. Read the active section in this file.
-2. Check `TODO.md` for relevant promoted/new items.
-3. Follow RED → GREEN → REFACTOR for behavior.
-4. Update the owning canonical documentation when a design decision changes.
-5. Mark an item complete only after the relevant verification passes.
-6. Add newly discovered unscheduled ideas to `TODO.md`, not randomly to code comments.
-7. Promote a TODO into this plan when it is scheduled.
-8. Keep `docs/ROADMAP.md` high-level; do not duplicate this execution ledger there.
+1. Treat the latest repository state as authoritative; do not rely on previous ChatGPT/Codex conversation memory.
+2. Inspect the current branch/worktree and recent relevant changes before editing.
+3. Read the active section in this file.
+4. Check `TODO.md` for relevant promoted/new items.
+5. Read the relevant canonical/specification docs for the area being changed.
+6. Follow RED → GREEN → REFACTOR for behavior.
+7. Update the owning canonical documentation when a design decision changes.
+8. Mark an item complete only after the relevant verification passes.
+9. Add newly discovered unscheduled ideas to `TODO.md`, not randomly to code comments.
+10. Promote a TODO into this plan when it is scheduled.
+11. Keep `docs/ROADMAP.md` high-level; do not duplicate this execution ledger there.
+12. Before handing work to another environment/thread, commit or otherwise clearly record the authoritative state in the repository.
