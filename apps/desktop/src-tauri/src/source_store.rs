@@ -41,7 +41,7 @@ fn read_source_bytes_with_limit(path: &Path, max_bytes: u64) -> io::Result<Vec<u
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::fs;
+    use std::{fs, path::PathBuf};
     use tempfile::tempdir;
 
     #[test]
@@ -53,6 +53,29 @@ mod tests {
 
         assert!(source_file_exists(&existing).expect("probe existing source"));
         assert!(!source_file_exists(&missing).expect("probe missing source"));
+    }
+
+    #[test]
+    fn derives_unique_parent_directories_for_source_watching() {
+        let paths = vec![
+            PathBuf::from(r"C:\\photos\\a.jpg"),
+            PathBuf::from(r"C:\\photos\\b.jpg"),
+            PathBuf::from(r"C:\\jobs\\c.pdf"),
+        ];
+
+        let directories = source_watch_directories(&paths);
+
+        assert_eq!(
+            directories,
+            vec![PathBuf::from(r"C:\\jobs"), PathBuf::from(r"C:\\photos")]
+        );
+    }
+
+    #[test]
+    fn ignores_paths_without_a_parent_directory_for_source_watching() {
+        let directories = source_watch_directories(&[PathBuf::from("relative-file.jpg")]);
+
+        assert!(directories.is_empty());
     }
 
     #[test]
