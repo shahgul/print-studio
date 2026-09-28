@@ -46,7 +46,7 @@ The detailed checkpoints are below under **Milestone ledger and next work**.
 
 ## M1.6 — Physical Sheet Canvas
 
-**Status:** Implemented; focused tests, local TypeScript pipeline, and prior CI passed. Browser E2E covers exact geometry and mocked Save/Open. Native Save → restart → Open remains pending.
+**Status:** Implemented; focused tests, local TypeScript pipeline, and CI passed. Browser E2E covers exact geometry and mocked Save/Open. Native Save → restart → Open remains pending.
 
 The detailed checklist and verification record are below under **Milestone ledger and next work**.
 
@@ -54,7 +54,7 @@ The detailed checklist and verification record are below under **Milestone ledge
 
 ## M1.5 — Image/PDF Source Model
 
-**Status:** Complete. Automated source monitoring tests, prior CI, and agent-operated Windows runtime verification passed. This is not a claim of user manual verification.
+**Status:** Complete. Automated source monitoring tests, CI, and agent-operated Windows runtime verification passed. This is not a claim of user manual verification.
 
 The detailed verification record is below under **Milestone ledger and next work**.
 
@@ -273,7 +273,7 @@ without depending on screen pixels or a PDF library.
 
 ## M1.5 — Image/PDF Source Model
 
-**Status:** Complete; automated checks, prior CI, and agent-operated Windows live-monitoring verification passed.
+**Status:** Complete; automated checks, CI, and agent-operated Windows live-monitoring verification passed.
 
 - [x] Implement `Source` / `SourcePage` minimal domain.
 - [x] Represent image intrinsic pixel dimensions without inventing DPI.
@@ -383,7 +383,7 @@ Focused RED tests preceded the viewport and edit implementation, including a rep
 
 Codex-operated Windows/Tauri observation on 28 September 2026 exercised drag, resize, quarter-turn rotation, keyboard nudge, numeric entry, zoom, fit, pan, and Save → reopen on the starter A4 sheet. The resulting schema-V2 file contained `originUm: {x: 45500, y: 38422}`, `sizeUm: {width: 59220, height: 58866}`, and `rotation: 90`. A later agent-operated smoke check also observed drag, resize, rotation, and off-sheet edit rejection. Browser E2E verifies exact X=25, Y=35, width=60, height=40 mm, and rotation=90° through Save/Open UI with mocked Tauri file commands. Native WebDriver currently verifies compiled app launch only; WebView2 element interaction calls timed out locally, and the native file picker did not complete under scripted dialog interception. The exact values have not yet been verified through a real native file Save → restart → Open cycle. No physical printer output was measured.
 
-GitHub Actions [CI run 36384393298](https://github.com/shahgul/print-studio/actions/runs/36384393298) passed both the TypeScript quality job and the native Windows job for commit `549be19`.
+GitHub Actions [CI run 36418387604](https://github.com/shahgul/print-studio/actions/runs/36418387604) passed the TypeScript quality job, including browser E2E, and the native Windows Rust job for commit `2eecdef`. The native WebView2 smoke test passed locally and is not part of CI.
 
 ### Native Windows persistence gate — pending
 

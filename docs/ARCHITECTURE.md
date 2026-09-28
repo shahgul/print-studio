@@ -273,7 +273,7 @@ Still required in later autosave/crash-recovery work:
 - untitled-session recovery;
 - recovery prompts and conflict UX.
 
-M1.5 adds source fingerprinting, explicit availability states, schema V1 → V2 migration fixtures, and source-item crop metadata without depending on temporary browser object URLs. The native watcher and focus-time fallback revalidate source paths while the project is open. Automated checks, prior CI, and agent-operated Windows live-monitoring verification passed.
+M1.5 adds source fingerprinting, explicit availability states, schema V1 → V2 migration fixtures, and source-item crop metadata without depending on temporary browser object URLs. The native watcher and focus-time fallback revalidate source paths while the project is open. Automated checks, CI, and agent-operated Windows live-monitoring verification passed.
 
 ## Worker / performance model
 
