@@ -9,6 +9,7 @@ import { createTauriSourceBytesReader } from './source-io';
 import { revalidateProjectSources } from './source-revalidation';
 import { createLiveSourceMonitor, createTauriSourceWatchService } from './source-watch';
 import { createStarterProject } from './starter-project';
+import { SheetCanvas } from './SheetCanvas';
 
 const PROJECT_FILTER = [
   {
@@ -65,7 +66,7 @@ export function App() {
   const sourcePathsKey = JSON.stringify(project.sources.map((candidate) => candidate.filePath));
   const [projectPath, setProjectPath] = useState<string | null>(null);
   const [source, setSource] = useState<Source | null>(null);
-  const [status, setStatus] = useState('M1.5 is ready to inspect a real PNG, JPEG, or PDF.');
+  const [status, setStatus] = useState('The A4 sheet shows canonical physical geometry.');
   const [isBusy, setIsBusy] = useState(false);
 
   const sheet = project.sheets[0];
@@ -256,12 +257,11 @@ export function App() {
       <section className="project-panel" aria-labelledby="app-title">
         <div className="project-heading">
           <div>
-            <p className="eyebrow">Print Studio · M1.5 source import</p>
-            <h1 id="app-title">Inspect the source.</h1>
+            <p className="eyebrow">Print Studio · M1.6 physical sheet</p>
+            <h1 id="app-title">Work on the sheet.</h1>
             <p className="lede">
-              Import a real PNG, JPEG, or PDF. Print Studio reads the file signature, fingerprints
-              the exact bytes, and reports intrinsic metadata without inventing physical dimensions
-              when an image has no trustworthy DPI.
+              Arrange objects on a real-size sheet. Screen zoom changes the view; the project keeps
+              positions and dimensions in millimetres.
             </p>
           </div>
 
@@ -280,6 +280,8 @@ export function App() {
             </button>
           </div>
         </div>
+
+        <SheetCanvas project={project} onProjectChange={setProject} onStatus={setStatus} />
 
         <section className="checkpoint" aria-labelledby="source-heading">
           <div className="section-heading">
@@ -366,11 +368,7 @@ export function App() {
           {isBusy ? 'Working…' : status}
         </div>
 
-        <p className="test-note">
-          M1.5 live-source checkpoint: keep this project open, then move/rename the source to see
-          MISSING, place different bytes at the same path to see CHANGED, and restore the original
-          file to return to AVAILABLE. Revalidation also runs when this window regains focus.
-        </p>
+        <p className="test-note">Source availability remains live while you work on the sheet.</p>
       </section>
     </main>
   );

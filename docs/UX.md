@@ -131,6 +131,12 @@ Proposed desktop structure:
 
 The actual visual design can evolve, but physical state and warnings must remain easy to inspect.
 
+### Current physical-sheet canvas (M1.6)
+
+The desktop workspace currently shows the first sheet's front side, its physical boundary, 10 mm ruler ticks, layout-margin guide, and placement outlines from canonical geometry. The geometry inspector edits X/Y/width/height in millimetres and quarter-turn rotation. Users can select and drag a placement, resize its corner, pan blank canvas space, zoom, and fit the sheet. A focused canvas nudges the selected placement by 1 mm with arrow keys, 10 mm with Shift, or 0.1 mm with Alt.
+
+Viewport scale is displayed in screen pixels per millimetre and does not change saved physical dimensions. Edits that extend beyond the physical sheet report an error rather than clipping silently. Resizing an Item used by another placement reports an error; independent per-placement size is not yet modeled. Source-content imagery is not yet rendered inside placement outlines.
+
 ## Smart Layout UX
 
 Smart Layout should not be a mysterious “AI” button.

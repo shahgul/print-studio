@@ -231,6 +231,8 @@ Good:
 - print renderer maps physical → target format;
 - all paths share tests.
 
+The M1.6 desktop canvas uses `canvas-model.ts` for the pure physical-to-screen viewport transform and `canvas-project.ts` for validated immutable Project edits. React/SVG handles display and pointer/keyboard input. Fit, zoom, and pan change only viewport state; saved projects and PDF output still use canonical micrometres. The first canvas displays the first sheet's front side and geometry placeholders for placements; source-content preview remains future work.
+
 ## Persistence
 
 The first persistence boundary is implemented in `packages/project-file`.

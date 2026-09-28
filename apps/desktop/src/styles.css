@@ -58,12 +58,12 @@ button:disabled {
 .shell {
   display: grid;
   min-height: 100vh;
-  place-items: center;
+  justify-items: center;
   padding: 32px;
 }
 
 .project-panel {
-  width: min(980px, 100%);
+  width: min(1440px, 100%);
 }
 
 .project-heading {
@@ -203,6 +203,174 @@ h1 {
   line-height: 1.6;
 }
 
+.canvas-section {
+  margin-top: 40px;
+  padding: 20px;
+  border: 1px solid #ddddda;
+  border-radius: 18px;
+  background: #ededeb;
+}
+
+.canvas-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.canvas-header .eyebrow {
+  margin-bottom: 8px;
+}
+
+.canvas-header h2 {
+  margin: 0;
+  font-size: 27px;
+}
+
+.canvas-header p:last-child {
+  margin: 6px 0 0;
+  color: #64645e;
+  font-size: 13px;
+}
+
+.canvas-tools {
+  display: flex;
+  gap: 6px;
+}
+
+.canvas-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 16px;
+}
+
+.sheet-canvas {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #d0d0cb;
+  border-radius: 12px;
+  background: #d9d9d5;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.sheet-canvas:active {
+  cursor: grabbing;
+}
+
+.sheet-canvas:focus-visible {
+  outline: 3px solid #3176b3;
+  outline-offset: 2px;
+}
+
+.sheet-paper {
+  fill: #fff;
+  stroke: #85857e;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.sheet-guide {
+  fill: none;
+  stroke: #7c9ea7;
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.ruler-tick {
+  stroke: #a1a19a;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.ruler-label {
+  fill: #85857d;
+  pointer-events: none;
+}
+
+.canvas-item {
+  fill: #d6e7eb;
+  stroke: #457782;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  cursor: move;
+}
+
+.canvas-item.selected {
+  fill: #bcdbe2;
+  stroke: #155c70;
+  stroke-width: 2;
+}
+
+.item-label {
+  fill: #19434e;
+  font-weight: 700;
+}
+
+.resize-handle {
+  fill: #155c70;
+  stroke: #fff;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  cursor: nwse-resize;
+}
+
+.geometry-inspector {
+  padding: 18px;
+  border: 1px solid #d0d0cb;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.geometry-inspector .eyebrow {
+  margin-bottom: 8px;
+}
+
+.geometry-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 8px;
+  margin-top: 18px;
+}
+
+.geometry-fields label {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.geometry-fields input,
+.geometry-fields select {
+  min-width: 0;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #c4c4be;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.canvas-help {
+  margin-top: 20px;
+  color: #64645e;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.canvas-empty {
+  margin-top: 40px;
+  padding: 80px;
+  border: 1px dashed #aaa;
+  text-align: center;
+}
+
 @media (max-width: 760px) {
   .project-heading {
     align-items: stretch;
@@ -215,6 +383,15 @@ h1 {
 
   .truth-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .canvas-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .canvas-layout {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -242,6 +419,28 @@ h1 {
 
   .checkpoint {
     border-color: #35352f;
+  }
+
+  .canvas-section {
+    border-color: #35352f;
+    background: #1b1b19;
+  }
+
+  .canvas-header p:last-child,
+  .canvas-help {
+    color: #a7a79f;
+  }
+
+  .geometry-inspector {
+    border-color: #35352f;
+    background: #191917;
+  }
+
+  .geometry-fields input,
+  .geometry-fields select {
+    color: #f0f0ec;
+    border-color: #55554f;
+    background: #272724;
   }
 
   button:hover:not(:disabled) {

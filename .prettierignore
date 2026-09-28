@@ -1,3 +1,4 @@
 **/*.md
 pnpm-lock.yaml
 pnpm-workspace.yaml
+apps/desktop/src-tauri/gen/

@@ -34,7 +34,7 @@ A task is not marked complete merely because code exists. Relevant tests, type c
 
 ## M1.6 — Physical Sheet Canvas
 
-**Status:** In progress.
+**Status:** Implementation and Windows runtime verification complete; awaiting GitHub CI.
 
 **Goal:** Display and edit canonical physical sheet geometry through an explicit screen viewport transform.
 
@@ -348,21 +348,29 @@ Result: **passed**. A local PNG was imported and saved in a `.printstudio` proje
 
 ## M1.6 — Physical Sheet Canvas
 
-- [ ] Define viewport transform physical → screen.
-- [ ] Render real A4 sheet from domain model.
-- [ ] Zoom/pan.
-- [ ] Fit sheet.
-- [ ] Render placement from canonical geometry.
-- [ ] Numeric physical coordinates remain unchanged through zoom/window resize.
-- [ ] selection.
-- [ ] drag.
-- [ ] resize.
-- [ ] rotate.
-- [ ] rulers.
-- [ ] basic guides.
-- [ ] keyboard nudge.
-- [ ] UI/runtime verification.
+- [x] Define viewport transform physical → screen.
+- [x] Render real A4 sheet from domain model.
+- [x] Zoom/pan.
+- [x] Fit sheet.
+- [x] Render placement from canonical geometry.
+- [x] Numeric physical coordinates remain unchanged through zoom/window resize.
+- [x] Selection.
+- [x] Drag.
+- [x] Resize.
+- [x] Rotate.
+- [x] Rulers.
+- [x] Basic guides.
+- [x] Keyboard nudge.
+- [x] UI/runtime verification.
 - [ ] CI green.
+
+### M1.6 verification record
+
+The canvas maps canonical millimetres to screen pixels through an explicit viewport transform. The React/SVG view never writes screen coordinates into the Project. `canvas-project` reconstructs validated domain objects for edits and rejects physical-sheet overflow. Resizing an Item shared by multiple placements is rejected explicitly to avoid changing another placement's physical size without warning.
+
+Focused RED tests preceded the viewport and edit implementation, including a reproducing test for shared-Item resizing. The full local TypeScript pipeline passed: formatting, lint, typecheck, 136 tests, and build.
+
+Windows/Tauri runtime verification on 28 September 2026 used the starter A4 sheet and confirmed drag, resize, quarter-turn rotation, keyboard nudge, numeric entry, zoom, fit, and pan. View changes left the numeric placement unchanged. The edited project was saved and reopened; its schema-V2 file contained `originUm: {x: 45500, y: 38422}`, `sizeUm: {width: 59220, height: 58866}`, and `rotation: 90`. This verifies project geometry persistence and canvas independence from view scale; it is not a physical printer-output measurement.
 
 ## M1.7 — Undo/Redo + Project Editing Foundation
 
