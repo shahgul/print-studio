@@ -151,6 +151,6 @@ This checkpoint passed on Windows: the saved `.printstudio` project reopened wit
 
 **Month 1 implementation is active; M1.1–M1.4 are complete and M1.5 source import is in progress.**
 
-The repository now has deterministic physical geometry, a headless PDF renderer, schema-V2 `.printstudio` serialization, native atomic project storage, PNG/JPEG/PDF metadata import, persisted external source references, and reopen-time AVAILABLE/MISSING/CHANGED fingerprint revalidation. M1.5 still needs its final crop/source-item metadata slice before closure.
+The repository now has deterministic physical geometry, a headless PDF renderer, schema-V2 `.printstudio` serialization, native atomic project storage, PNG/JPEG/PDF metadata import, persisted external source references, reopen-time and live AVAILABLE/MISSING/CHANGED fingerprint revalidation, and non-destructive source-item crop metadata. M1.5 is awaiting its final Windows live-monitoring checkpoint before closure.
 
 Start with [DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md), [TODO.md](TODO.md), and [AGENTS.md](AGENTS.md) before writing application code.
