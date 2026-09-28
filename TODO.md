@@ -238,7 +238,8 @@ Do not use TODO as a substitute for:
 
 - [>] Source import model.
   - Scheduled as M1.5 in `DEVELOPMENT-PLAN.md`.
-  - Source persistence/revalidation now implemented in schema V2; crop/source-item metadata remains.
+  - Source persistence/revalidation and non-destructive crop/source-item metadata are implemented.
+  - Final remaining M1.5 gate: manual Windows live-source monitoring verification while the app remains open.
 
 - [>] Physical sheet canvas.
   - Scheduled as M1.6 in `DEVELOPMENT-PLAN.md`.
