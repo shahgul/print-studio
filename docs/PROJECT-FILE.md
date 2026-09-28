@@ -47,10 +47,11 @@ Simplified example:
 ```json
 {
   "format": "print-studio-project",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "physicalUnit": "MICROMETRE",
   "project": {
     "id": "project-1",
+    "sources": [],
     "items": [
       {
         "id": "item-1",

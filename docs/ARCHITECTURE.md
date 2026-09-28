@@ -237,7 +237,7 @@ The first persistence boundary is implemented in `packages/project-file`.
 
 Current rules:
 - format identity: `print-studio-project`;
-- current schema version: 1;
+- current schema version: 2;
 - canonical persisted physical unit: integer micrometres;
 - project files are treated as untrusted input and validated at load time;
 - unknown additive fields are tolerated inside a supported schema version;
@@ -271,10 +271,7 @@ Still required in later autosave/crash-recovery work:
 - untitled-session recovery;
 - recovery prompts and conflict UX.
 
-M1.5 now owns:
-- source fingerprinting and explicit missing-source state once Source/SourcePage exists;
-- migration fixtures when the first real schema migration is introduced;
-- no hidden dependence on temporary browser object URLs.
+M1.5 adds source fingerprinting, explicit availability states, schema V1 → V2 migration fixtures, and source-item crop metadata without depending on temporary browser object URLs. The native watcher and focus-time fallback revalidate source paths while the project is open; the manual Windows live-monitoring gate remains pending.
 
 ## Worker / performance model
 
