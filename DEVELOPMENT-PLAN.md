@@ -32,17 +32,23 @@ A task is not marked complete merely because code exists. Relevant tests, type c
 
 # Current milestone
 
-## M1.5 — Image/PDF Source Model
+## M1.6 — Physical Sheet Canvas
 
 **Status:** In progress.
 
-**Goal:** Represent imported PDFs and images as validated, immutable source metadata without inventing physical size when the source does not provide it.
+**Goal:** Display and edit canonical physical sheet geometry through an explicit screen viewport transform.
 
-The detailed M1.5 checklist is below under **Next milestones**.
+The detailed M1.6 checklist is below under **Milestone ledger and next work**.
 
 ---
 
 # Completed milestones
+
+## M1.5 — Image/PDF Source Model
+
+**Status:** Complete and verified on Windows, 28 September 2026.
+
+The detailed checklist and live-monitoring verification record are below under **Milestone ledger and next work**.
 
 ## M1.4 — Project Schema + Persistence
 
@@ -255,11 +261,11 @@ without depending on screen pixels or a PDF library.
 
 ---
 
-# Next milestones
+# Milestone ledger and next work
 
 ## M1.5 — Image/PDF Source Model
 
-**Status:** In progress.
+**Status:** Complete and verified.
 
 - [x] Implement `Source` / `SourcePage` minimal domain.
 - [x] Represent image intrinsic pixel dimensions without inventing DPI.
@@ -277,7 +283,7 @@ without depending on screen pixels or a PDF library.
 - [x] Distinguish missing files from read/permission failures.
 - [x] Manual Windows persistence/revalidation checkpoint.
 - [x] Add native live source monitoring with debounced revalidation and focus-time fallback.
-- [ ] Manual Windows live-source monitoring checkpoint.
+- [x] Manual Windows live-source monitoring checkpoint.
 - [x] Non-destructive crop metadata.
   - source-backed Items reference both Source ID and SourcePage ID;
   - crop is a normalized integer-millionths rectangle relative to the original source page;
@@ -323,9 +329,9 @@ Result: **passed** — the sequence returned **AVAILABLE → MISSING → CHANGED
 
 Only a genuinely absent path is classified as MISSING. If the file exists but cannot be read, the app should surface the I/O failure.
 
-### Hands-on live-source monitoring checkpoint
+### Hands-on live-source monitoring checkpoint — passed on Windows
 
-Pending Windows verification:
+Verified in the running Tauri app on 28 September 2026:
 
 1. `git pull` and run `run.bat`.
 2. Import a real JPG or PDF and save the project.
@@ -338,7 +344,7 @@ Pending Windows verification:
 9. Confirm the open app returns to **AVAILABLE**.
 10. As a fallback check, change the source while Print Studio is unfocused, return to the app, and confirm focus-time revalidation catches the current state.
 
-M1.5 remains open until this live-monitoring checkpoint passes. After that, close M1.5 and begin M1.6 physical-sheet canvas work.
+Result: **passed**. A local PNG was imported and saved in a `.printstudio` project. With the app open, moving the file showed **MISSING**, writing different bytes at the original path showed **CHANGED**, and restoring the original bytes showed **AVAILABLE**. The original fingerprint and intrinsic metadata remained visible throughout. Changing the file while the app was unfocused and returning to it showed the current **CHANGED** state. The temporary source and project files were removed after verification.
 
 ## M1.6 — Physical Sheet Canvas
 
