@@ -32,17 +32,23 @@ A task is not marked complete merely because code exists. Relevant tests, type c
 
 # Current milestone
 
-## M1.6 — Physical Sheet Canvas
+## M1.7 — Undo/Redo + Project Editing Foundation
 
-**Status:** Implementation and Windows runtime verification complete; awaiting GitHub CI.
+**Status:** Planned; next implementation milestone.
 
-**Goal:** Display and edit canonical physical sheet geometry through an explicit screen viewport transform.
+**Goal:** Make physical project edits reversible without putting renderer or native state into the undo model.
 
-The detailed M1.6 checklist is below under **Milestone ledger and next work**.
+The detailed M1.7 checklist is below under **Milestone ledger and next work**.
 
 ---
 
 # Completed milestones
+
+## M1.6 — Physical Sheet Canvas
+
+**Status:** Complete and verified on Windows, 28 September 2026.
+
+The detailed checklist and verification record are below under **Milestone ledger and next work**.
 
 ## M1.5 — Image/PDF Source Model
 
@@ -362,7 +368,7 @@ Result: **passed**. A local PNG was imported and saved in a `.printstudio` proje
 - [x] Basic guides.
 - [x] Keyboard nudge.
 - [x] UI/runtime verification.
-- [ ] CI green.
+- [x] CI green.
 
 ### M1.6 verification record
 
@@ -371,6 +377,8 @@ The canvas maps canonical millimetres to screen pixels through an explicit viewp
 Focused RED tests preceded the viewport and edit implementation, including a reproducing test for shared-Item resizing. The full local TypeScript pipeline passed: formatting, lint, typecheck, 136 tests, and build.
 
 Windows/Tauri runtime verification on 28 September 2026 used the starter A4 sheet and confirmed drag, resize, quarter-turn rotation, keyboard nudge, numeric entry, zoom, fit, and pan. View changes left the numeric placement unchanged. The edited project was saved and reopened; its schema-V2 file contained `originUm: {x: 45500, y: 38422}`, `sizeUm: {width: 59220, height: 58866}`, and `rotation: 90`. This verifies project geometry persistence and canvas independence from view scale; it is not a physical printer-output measurement.
+
+GitHub Actions [CI run 36384393298](https://github.com/shahgul/print-studio/actions/runs/36384393298) passed both the TypeScript quality job and the native Windows job for commit `549be19`.
 
 ## M1.7 — Undo/Redo + Project Editing Foundation
 

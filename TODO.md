@@ -240,8 +240,8 @@ Do not use TODO as a substitute for:
   - Completed and Windows-verified as M1.5 in `DEVELOPMENT-PLAN.md`.
   - Source persistence/revalidation, non-destructive crop/source-item metadata, and live-source monitoring are implemented.
 
-- [>] Physical sheet canvas.
-  - Scheduled as M1.6 in `DEVELOPMENT-PLAN.md`.
+- [x] Physical sheet canvas.
+  - Completed and Windows-verified as M1.6 in `DEVELOPMENT-PLAN.md`.
 
 ---
 
