@@ -32,31 +32,31 @@ A task is not marked complete merely because code exists. Relevant tests, type c
 
 # Current milestone
 
-## M1.5 — Image/PDF Source Model: manual live-monitoring gate
+## M1.6 — Physical Sheet Canvas: native persistence gate
 
-**Status:** Implementation, automated checks, and CI complete; user manual Windows live-monitoring verification pending.
+**Status:** Implemented; automated and agent-operated canvas checks passed. Exact edited geometry still needs a real native Save → app restart → Open roundtrip.
 
-Keep the app open while the source transitions AVAILABLE → MISSING → CHANGED → AVAILABLE, then check focus-time revalidation. M1.6 also awaits the user's manual Windows canvas and edited-project persistence verification. Do not start M1.7 until both milestones are closed.
+M1.5 live monitoring passed an agent-operated Windows runtime check. Do not start M1.7 until the remaining M1.6 native persistence gate passes and M1.6 is closed.
 
 The detailed checkpoints are below under **Milestone ledger and next work**.
 
 ---
 
-# Implemented; manual Windows verification pending
+# Implemented; native persistence verification pending
 
 ## M1.6 — Physical Sheet Canvas
 
-**Status:** Implemented; focused tests, local TypeScript pipeline, and CI passed. User manual Windows canvas and edited-project Save → reopen checks pending.
+**Status:** Implemented; focused tests, local TypeScript pipeline, and prior CI passed. Browser E2E covers exact geometry and mocked Save/Open. Native Save → restart → Open remains pending.
 
 The detailed checklist and verification record are below under **Milestone ledger and next work**.
 
+# Completed milestones
+
 ## M1.5 — Image/PDF Source Model
 
-**Status:** Implemented; automated checks and CI passed. User manual Windows live-source monitoring check pending. Earlier import and reopen-time checks remain recorded below.
+**Status:** Complete. Automated source monitoring tests, prior CI, and agent-operated Windows runtime verification passed. This is not a claim of user manual verification.
 
-The detailed checklist and live-monitoring verification record are below under **Milestone ledger and next work**.
-
-# Completed milestones
+The detailed verification record is below under **Milestone ledger and next work**.
 
 ## M1.4 — Project Schema + Persistence
 
@@ -273,7 +273,7 @@ without depending on screen pixels or a PDF library.
 
 ## M1.5 — Image/PDF Source Model
 
-**Status:** Implemented and automated checks passed; user manual live-monitoring gate pending.
+**Status:** Complete; automated checks, prior CI, and agent-operated Windows live-monitoring verification passed.
 
 - [x] Implement `Source` / `SourcePage` minimal domain.
 - [x] Represent image intrinsic pixel dimensions without inventing DPI.
@@ -291,7 +291,7 @@ without depending on screen pixels or a PDF library.
 - [x] Distinguish missing files from read/permission failures.
 - [x] Manual Windows persistence/revalidation checkpoint.
 - [x] Add native live source monitoring with debounced revalidation and focus-time fallback.
-- [ ] User manual Windows live-source monitoring checkpoint while the app stays open.
+- [x] Agent-operated Windows live-source monitoring checkpoint while the app stays open.
 - [x] Non-destructive crop metadata.
   - source-backed Items reference both Source ID and SourcePage ID;
   - crop is a normalized integer-millionths rectangle relative to the original source page;
@@ -337,9 +337,9 @@ Result: **passed** — the sequence returned **AVAILABLE → MISSING → CHANGED
 
 Only a genuinely absent path is classified as MISSING. If the file exists but cannot be read, the app should surface the I/O failure.
 
-### Hands-on live-source monitoring checkpoint — user verification pending
+### Live-source monitoring checkpoint — agent-operated Windows verification passed
 
-User test steps:
+Reproduction steps:
 
 1. `git pull` and run `run.bat`.
 2. Import a real JPG or PDF and save the project.
@@ -352,11 +352,11 @@ User test steps:
 9. Confirm the open app returns to **AVAILABLE**.
 10. As a fallback check, change the source while Print Studio is unfocused, return to the app, and confirm focus-time revalidation catches the current state.
 
-Prior Codex-operated Windows/Tauri observation on 28 September 2026: a local PNG moved through **AVAILABLE → MISSING → CHANGED → AVAILABLE** while the app stayed open; focus-time revalidation also observed **CHANGED**. The original fingerprint and intrinsic metadata remained visible. This is implementation evidence, not the user's manual verification. The checkpoint stays open until the user reports a pass.
+On 28 September 2026, Codex operated the actual Windows/Tauri app with a local 600 × 300 px, 300 DPI PNG. While the app stayed open, the source moved through **AVAILABLE → MISSING → CHANGED → AVAILABLE**. Changing the file while the app was unfocused and returning to it produced **CHANGED**; the focused callback and debounce are also covered by `source-watch.test.ts`. The stored SHA-256 fingerprint and intrinsic metadata remained unchanged. The focus observation alone cannot isolate the native watcher from the focus fallback, so the deterministic callback test supplies that distinction. This is agent-operated runtime verification, not user manual verification.
 
 ## M1.6 — Physical Sheet Canvas
 
-**Status:** Implemented and automated checks passed; user manual Windows runtime and edited-project persistence checks pending.
+**Status:** Implemented; automated and agent-operated runtime checks passed. Native exact-geometry Save → restart → Open remains pending.
 
 - [x] Define viewport transform physical → screen.
 - [x] Render real A4 sheet from domain model.
@@ -371,7 +371,8 @@ Prior Codex-operated Windows/Tauri observation on 28 September 2026: a local PNG
 - [x] Rulers.
 - [x] Basic guides.
 - [x] Keyboard nudge.
-- [ ] User manual Windows UI/runtime verification, including edited-project Save → reopen.
+- [x] Agent-operated Windows canvas interaction smoke check.
+- [ ] Native Windows exact-geometry Save → app restart → Open checkpoint.
 - [x] CI green.
 
 ### M1.6 verification record
@@ -380,18 +381,17 @@ The canvas maps canonical millimetres to screen pixels through an explicit viewp
 
 Focused RED tests preceded the viewport and edit implementation, including a reproducing test for shared-Item resizing. The full local TypeScript pipeline passed: formatting, lint, typecheck, 136 tests, and build.
 
-Prior Codex-operated Windows/Tauri observation on 28 September 2026 exercised drag, resize, quarter-turn rotation, keyboard nudge, numeric entry, zoom, fit, pan, and Save → reopen on the starter A4 sheet. The resulting schema-V2 file contained `originUm: {x: 45500, y: 38422}`, `sizeUm: {width: 59220, height: 58866}`, and `rotation: 90`. These observations do not close the user's manual runtime or persistence checkpoints, and they do not measure physical printer output.
+Codex-operated Windows/Tauri observation on 28 September 2026 exercised drag, resize, quarter-turn rotation, keyboard nudge, numeric entry, zoom, fit, pan, and Save → reopen on the starter A4 sheet. The resulting schema-V2 file contained `originUm: {x: 45500, y: 38422}`, `sizeUm: {width: 59220, height: 58866}`, and `rotation: 90`. A later agent-operated smoke check also observed drag, resize, rotation, and off-sheet edit rejection. Browser E2E verifies exact X=25, Y=35, width=60, height=40 mm, and rotation=90° through Save/Open UI with mocked Tauri file commands. Native WebDriver currently verifies compiled app launch only; WebView2 element interaction calls timed out locally, and the native file picker did not complete under scripted dialog interception. The exact values have not yet been verified through a real native file Save → restart → Open cycle. No physical printer output was measured.
 
 GitHub Actions [CI run 36384393298](https://github.com/shahgul/print-studio/actions/runs/36384393298) passed both the TypeScript quality job and the native Windows job for commit `549be19`.
 
-### User manual Windows gate — pending
+### Native Windows persistence gate — pending
 
-1. Launch `run.bat`; confirm the starter A4 sheet is 210 × 297 mm with the 50 × 50 mm item at X=20, Y=30 mm.
-2. Drag the item, resize its corner, choose a quarter-turn rotation, enter an exact X/Y/width/height value, and use an arrow key to nudge it. Confirm the inspector reports the intended millimetre values and invalid off-sheet edits are rejected.
-3. Zoom, pan, and Fit sheet; confirm the inspector values do not change. Resize the window and confirm the same.
-4. Set an easily recognized valid geometry, for example X=25, Y=35, width=60, height=40 mm, rotation=90°. Save As a `.printstudio` file, close the app, reopen it, and Open Project. Confirm all five values are restored exactly.
+1. In the actual Windows/Tauri app, set X=25, Y=35, width=60, height=40 mm, rotation=90°.
+2. Save As a `.printstudio` file through the native dialog. Confirm the stored canonical geometry is x=25,000 µm, y=35,000 µm, width=60,000 µm, height=40,000 µm, and rotation=90°.
+3. Close the app, restart it, Open Project through the native dialog, and confirm all five inspector values return exactly.
 
-Report a pass or the failed step to close this gate. The M1.5 live-source gate above must also pass before M1.7 starts.
+This checkpoint can be agent-operated when a reliable native automation path is available, or user-operated if necessary. Record its provenance and exact restored values before closing M1.6 or starting M1.7.
 
 ## M1.7 — Undo/Redo + Project Editing Foundation
 

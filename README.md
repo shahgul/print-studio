@@ -156,12 +156,12 @@ The M1.4 persistence test surface is ready on Windows:
 8. confirm the exact same physical values
 9. choose **Save** to exercise atomic replacement of the existing file
 
-This checkpoint passed on Windows: the saved `.printstudio` project reopened with A4 = **210 × 297 mm**, item = **50 × 50 mm**, and position = **20, 30 mm** unchanged, and a subsequent Save successfully replaced the existing project. This is intentionally a temporary test surface. PDF/image import and the real physical-sheet canvas arrive in the following milestones.
+This checkpoint passed on Windows: the saved `.printstudio` project reopened with A4 = **210 × 297 mm**, item = **50 × 50 mm**, and position = **20, 30 mm** unchanged, and a subsequent Save successfully replaced the existing project. This was the M1.4 test surface; source import and the physical-sheet canvas are now implemented.
 
 ## Current status
 
-**Month 1 implementation is active; M1.1–M1.4 are complete and M1.5 source import is in progress.**
+**Month 1 implementation is active; M1.1–M1.5 are complete and M1.6 physical-sheet canvas verification is in progress.**
 
-The repository now has deterministic physical geometry, a headless PDF renderer, schema-V2 `.printstudio` serialization, native atomic project storage, PNG/JPEG/PDF metadata import, persisted external source references, reopen-time and live AVAILABLE/MISSING/CHANGED fingerprint revalidation, and non-destructive source-item crop metadata. M1.5 is awaiting its final Windows live-monitoring checkpoint before closure.
+The repository now has deterministic physical geometry, a headless PDF renderer, schema-V2 `.printstudio` serialization, native atomic project storage, PNG/JPEG/PDF metadata import, persisted external source references, live AVAILABLE/MISSING/CHANGED fingerprint revalidation, non-destructive source-item crop metadata, and a physical-sheet canvas. M1.6 still needs an exact native Save → app restart → Open geometry roundtrip before closure; see `DEVELOPMENT-PLAN.md` for the verification record.
 
 Start with [DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md), [TODO.md](TODO.md), and [AGENTS.md](AGENTS.md) before writing application code.

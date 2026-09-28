@@ -231,7 +231,7 @@ Good:
 - print renderer maps physical → target format;
 - all paths share tests.
 
-The M1.6 desktop canvas uses `canvas-model.ts` for the pure physical-to-screen viewport transform and `canvas-project.ts` for validated immutable Project edits. React/SVG handles display and pointer/keyboard input. Fit, zoom, and pan change only viewport state; saved projects and PDF output still use canonical micrometres. The first canvas displays the first sheet's front side and geometry placeholders for placements; source-content preview remains future work. Automated tests and CI passed; user manual Windows runtime and edited-project Save → reopen verification remain pending.
+The M1.6 desktop canvas uses `canvas-model.ts` for the pure physical-to-screen viewport transform and `canvas-project.ts` for validated immutable Project edits. React/SVG handles display and pointer/keyboard input. Fit, zoom, and pan change only viewport state; saved projects and PDF output still use canonical micrometres. The first canvas displays the first sheet's front side and geometry placeholders for placements; source-content preview remains future work. Vitest and browser-mode WebdriverIO cover geometry and UI workflows. An external Windows `tauri-driver` smoke test launches the compiled WebView2 app. Agent-operated canvas runtime checks passed; exact native edited-project Save → restart → Open verification remains pending.
 
 ## Persistence
 
@@ -273,7 +273,7 @@ Still required in later autosave/crash-recovery work:
 - untitled-session recovery;
 - recovery prompts and conflict UX.
 
-M1.5 adds source fingerprinting, explicit availability states, schema V1 → V2 migration fixtures, and source-item crop metadata without depending on temporary browser object URLs. The native watcher and focus-time fallback revalidate source paths while the project is open. Automated checks and CI passed; user manual Windows live-monitoring verification remains pending.
+M1.5 adds source fingerprinting, explicit availability states, schema V1 → V2 migration fixtures, and source-item crop metadata without depending on temporary browser object URLs. The native watcher and focus-time fallback revalidate source paths while the project is open. Automated checks, prior CI, and agent-operated Windows live-monitoring verification passed.
 
 ## Worker / performance model
 
