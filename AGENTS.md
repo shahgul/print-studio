@@ -2,6 +2,19 @@
 
 This repository is the canonical source of truth for **Print Studio**. Read this file and the relevant docs before making implementation or product changes.
 
+## Working model and source of truth
+
+Print Studio development may span Codex on the local PC, ChatGPT discussions, GitHub, and other tools. The repository is the coordination boundary between them.
+
+- **Repository/GitHub is authoritative.** Code, tests, tracked milestone state, accepted decisions, and canonical documentation in the repository override conversational memory or a copied prompt.
+- **Codex/local PC is the primary implementation environment.** Use it for editing, running tests, Tauri/Windows verification, debugging, refactoring, and commits.
+- **ChatGPT discussions are for product/architecture/research decisions.** A discussion is not authoritative until the relevant repository document is updated.
+- A new agent/thread must not assume it has previous chat context. Reconstruct context from the repository before acting.
+- Before implementation, pull/inspect the latest repository state and check the current branch/worktree so stale chat instructions do not overwrite newer work.
+- If a prompt conflicts with the repository, stop and reconcile the conflict using the repository as the default authority.
+- Important decisions discovered during implementation must be written back to the owning Markdown document in the same change.
+- Do not use chat history as the only record of milestone completion, manual verification, architecture, or product decisions.
+
 ## Product identity
 
 Print Studio is a **physical-layout and print-production platform**, not merely a PDF printer or another settings dialog.
@@ -63,7 +76,9 @@ For strategy/scope work also read:
 For behavior changes follow **red → green → refactor**.
 
 Before implementing:
+- inspect the latest repository state, current branch/worktree, and recent relevant changes;
 - discover the actual stack and test commands from the repo;
+- read the active milestone and relevant canonical docs instead of relying on remembered chat context;
 - define or update the relevant contract first;
 - add the failing test or golden fixture;
 - make the smallest implementation that satisfies the contract;
