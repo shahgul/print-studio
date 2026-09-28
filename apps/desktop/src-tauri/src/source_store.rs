@@ -1,4 +1,4 @@
-use std::{fs, io, path::Path};
+use std::{fs, io, path::{Path, PathBuf}};
 
 pub(crate) const MAX_SOURCE_FILE_BYTES: u64 = 256 * 1024 * 1024;
 
@@ -8,6 +8,19 @@ pub(crate) fn source_file_exists(path: &Path) -> io::Result<bool> {
         Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(false),
         Err(error) => Err(error),
     }
+}
+
+pub(crate) fn source_watch_directories(paths: &[PathBuf]) -> Vec<PathBuf> {
+    let mut directories = paths
+        .iter()
+        .filter_map(|path| path.parent())
+        .filter(|parent| !parent.as_os_str().is_empty())
+        .map(Path::to_path_buf)
+        .collect::<Vec<_>>();
+
+    directories.sort();
+    directories.dedup();
+    directories
 }
 
 pub(crate) fn read_source_bytes(path: &Path) -> io::Result<Vec<u8>> {

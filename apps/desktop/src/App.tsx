@@ -2,11 +2,12 @@ import { importSourceBytes } from '@print-studio/document-import';
 import { Project, type Source } from '@print-studio/domain';
 import { ProjectPersistence } from '@print-studio/project-file';
 import { open, save } from '@tauri-apps/plugin-dialog';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { createTauriProjectTextStore, ensureProjectExtension } from './project-io';
 import { createTauriSourceBytesReader } from './source-io';
 import { revalidateProjectSources } from './source-revalidation';
+import { createLiveSourceMonitor, createTauriSourceWatchService } from './source-watch';
 import { createStarterProject } from './starter-project';
 
 const PROJECT_FILTER = [
@@ -57,6 +58,7 @@ function formatDensity(source: Source): string {
 export function App() {
   const persistence = useMemo(() => new ProjectPersistence(createTauriProjectTextStore()), []);
   const sourceReader = useMemo(() => createTauriSourceBytesReader(), []);
+  const sourceWatch = useMemo(() => createTauriSourceWatchService(), []);
   const [project, setProject] = useState(createStarterProject);
   const [projectPath, setProjectPath] = useState<string | null>(null);
   const [source, setSource] = useState<Source | null>(null);
@@ -66,6 +68,67 @@ export function App() {
   const sheet = project.sheets[0];
   const item = project.items[0];
   const placement = sheet?.front.placements[0];
+
+
+  useEffect(() => {
+    let disposed = false;
+    let stopMonitor: (() => Promise<void>) | null = null;
+
+    const updateFromLiveCheck = (revalidated: Project) => {
+      if (disposed) {
+        return;
+      }
+
+      setProject(revalidated);
+      setSource((current) => {
+        if (current) {
+          return (
+            revalidated.sources.find((candidate) => candidate.id === current.id) ??
+            revalidated.sources.at(-1) ??
+            null
+          );
+        }
+
+        return revalidated.sources.at(-1) ?? null;
+      });
+
+      const missing = revalidated.sources.filter(
+        (candidate) => candidate.availability === 'MISSING',
+      ).length;
+      const changed = revalidated.sources.filter(
+        (candidate) => candidate.availability === 'CHANGED',
+      ).length;
+
+      setStatus(
+        `Live source check: ${revalidated.sources.length} source(s); ${missing} missing, ${changed} changed.`,
+      );
+    };
+
+    void createLiveSourceMonitor({
+      project,
+      service: sourceWatch,
+      revalidate: () => revalidateProjectSources(project, sourceReader),
+      onProject: updateFromLiveCheck,
+      onError: (error) => {
+        if (!disposed) {
+          setStatus(`Live source check failed: ${String(error)}`);
+        }
+      },
+    }).then((stop) => {
+      if (disposed) {
+        void stop();
+      } else {
+        stopMonitor = stop;
+      }
+    });
+
+    return () => {
+      disposed = true;
+      if (stopMonitor) {
+        void stopMonitor();
+      }
+    };
+  }, [project, sourceReader, sourceWatch]);
 
   async function saveTo(path: string) {
     const normalizedPath = ensureProjectExtension(path);
@@ -301,9 +364,9 @@ export function App() {
         </div>
 
         <p className="test-note">
-          M1.5 persistence checkpoint: import a source, Save As, close the app, reopen the project,
-          and confirm the source is restored as AVAILABLE. Then rename/move the external source and
-          reopen to verify MISSING, or modify the file and reopen to verify CHANGED.
+          M1.5 live-source checkpoint: keep this project open, then move/rename the source to see
+          MISSING, place different bytes at the same path to see CHANGED, and restore the original
+          file to return to AVAILABLE. Revalidation also runs when this window regains focus.
         </p>
       </section>
     </main>
