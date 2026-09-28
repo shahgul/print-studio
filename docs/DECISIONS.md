@@ -125,6 +125,15 @@ A CHANGED source keeps the original stored fingerprint and last-known intrinsic 
 
 **Why:** A project must remember what was imported without silently accepting mutated external files as the same content. This preserves traceability and makes relinking/reimport behavior explicit.
 
+### D-022 — Source-item crop uses normalized integer millionths
+**Decision:** A source-backed Item references both a Source ID and SourcePage ID. Its non-destructive crop is stored as a normalized rectangle using integer millionths of the original source page, where `1_000_000` represents the full width or height.
+
+**Why:** Crop intent must work consistently for raster images and PDF pages without depending on screen pixels, item output dimensions, or invented image DPI. Integer normalization also keeps project persistence deterministic.
+
+**Validation:** Crop width/height must be positive, the normalized rectangle must remain within the source page, and Project construction rejects source/page references that do not resolve.
+
+**Compatibility:** Schema-V2 files created before this decision may omit `sourceRef`; they load as source-less Items. The new field is additive within schema V2.
+
 ### D-019 — Initial PDF adapter is @cantoo/pdf-lib behind pdf-engine
 **Decision:** Use `@cantoo/pdf-lib` as the first PDF creation/manipulation adapter inside `packages/pdf-engine`, while keeping domain and layout contracts independent of it.
 
