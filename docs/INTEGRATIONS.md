@@ -265,3 +265,15 @@ physical output
 ```
 
 Each product remains independently useful and owns a distinct layer.
+
+
+## Folixa and Shadcn Labs
+
+Folixa is the preferred shared boundary for generated documents. Print Studio should consume generated PDF/file output first and only consider direct Folixa Engine embedding when a concrete editing/generation workflow requires it.
+
+Shadcn Labs projects are references, not Print Studio dependencies:
+- **pdfcn** belongs behind Folixa's renderer abstraction rather than being integrated independently here.
+- **editorcn** may inform future text/content editing UX, but Print Studio's precision canvas, geometry, preflight, imposition and printer workflow remain native Print Studio concerns.
+- **startercn / skills / agentcn / mcpcn** are not current Print Studio requirements.
+
+This prevents renderer choices from leaking into the print-production domain and keeps Folixa and Print Studio independently evolvable.
