@@ -2,7 +2,7 @@
 
 > **Living inbox for Print Studio ideas, discoveries, follow-ups, and important unscheduled work.**
 
-Last updated: 28 September 2026.
+Last updated: 4 October 2026.
 
 This file is intentionally an **inbox**, not the execution plan.
 
@@ -170,6 +170,14 @@ Do not use TODO as a substitute for:
 - [ ] Validate a free tier that is genuinely useful without giving away all recurring/automation value.
 
 ## Engineering
+
+- [ ] Normalize JPEG EXIF rotation/mirroring consistently across import, preview, crop, and export.
+  - M1.8 rejects nontrivial EXIF orientation to avoid browser/PDF divergence.
+  - Preserve original fingerprint and make derived orientation/geometry explicit; include phone-photo fixtures.
+
+- [ ] Add placed PDF source content preview/export.
+  - PDF metadata import is implemented; M1.8 renders PNG/JPEG content only and explicitly rejects placed PDF sources.
+  - Requires consistent page boxes, intrinsic page rotation, crop, and vector embedding semantics.
 
 - [ ] Source relink/reimport UX.
   - Core M1.5 states now distinguish AVAILABLE / MISSING / CHANGED.

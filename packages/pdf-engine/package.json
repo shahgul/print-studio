@@ -11,6 +11,7 @@
     "typecheck": "tsc -p tsconfig.json --pretty false"
   },
   "dependencies": {
+    "@print-studio/document-import": "workspace:*",
     "@cantoo/pdf-lib": "^2.11.1",
     "@print-studio/domain": "workspace:*",
     "@print-studio/units-geometry": "workspace:*"

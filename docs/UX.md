@@ -135,7 +135,13 @@ The actual visual design can evolve, but physical state and warnings must remain
 
 The desktop workspace currently shows the first sheet's front side, its physical boundary, 10 mm ruler ticks, layout-margin guide, and placement outlines from canonical geometry. The geometry inspector edits X/Y/width/height in millimetres and quarter-turn rotation. Users can select and drag a placement, resize its corner, pan blank canvas space, zoom, and fit the sheet. A focused canvas nudges the selected placement by 1 mm with arrow keys, 10 mm with Shift, or 0.1 mm with Alt.
 
-Viewport scale is displayed in screen pixels per millimetre and does not change saved physical dimensions. Edits that extend beyond the physical sheet report an error rather than clipping silently. Resizing an Item used by another placement reports an error; independent per-placement size is not yet modeled. Source-content imagery is not yet rendered inside placement outlines.
+Viewport scale is displayed in screen pixels per millimetre and does not change saved physical dimensions. Edits that extend beyond the physical sheet report an error rather than clipping silently. Resizing an Item used by another placement reports an error; independent per-placement size is not yet modeled. M1.8 renders verified PNG/JPEG content inside source-backed placements.
+
+### Exact-size image output (M1.8)
+
+Import a PNG/JPEG, select its source, enter width/height in millimetres, and choose **Place image on sheet**. Width entry suggests a proportional height; both physical values are visible before placement. Placement preserves aspect, retains existing objects, starts at 20,30 mm on the first front side, selects the new Item, and is undoable. Overflow or mismatched aspect reports an error instead of fitting/stretching automatically.
+
+Preview reflects the Item's crop, size, and clockwise quarter-turn rotation using fingerprint-verified local bytes. Unavailable or incompatible content keeps its placement outline and explains the failure. Export PDF uses the current canonical Project and writes through the native save dialog; image selection outlines/rulers are not exported. Print at Actual Size/100%; printer margins and downstream scaling are unverified until measured. Placed PDF content and JPEG EXIF rotation/mirroring are explicitly unsupported in this first image checkpoint.
 
 Agent-operated Windows runtime checks passed for canvas interactions and for M1.5 live source-state changes while the app stayed open. Browser E2E covers exact geometry edits and Save/Open with mocked Tauri file commands. Exact edited geometry through native Save → app restart → Open remains the M1.6 verification gate.
 
@@ -324,6 +330,10 @@ Every finding should say:
 Avoid a generic “print score” that can hide critical failures.
 
 ## Keyboard / power-user behavior
+
+### Current undo/redo foundation (M1.7)
+
+Undo/Redo buttons and Ctrl+Z, Ctrl+Shift+Z, and Ctrl+Y apply to physical placement edits. Shortcuts leave native text-field editing alone. Each completed drag or resize gesture is one action; numeric edits, quarter-turn rotation, and keyboard nudges are separate actions. View changes do not enter history. Rejected/unchanged edits retain the redo branch. Open Project and successful source import reset session history; saving retains it. Undoing geometry preserves current external-source availability. History retains the latest 100 actions and is not persisted on restart.
 
 Expected:
 - undo/redo;

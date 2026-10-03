@@ -24,7 +24,80 @@ async function replaceField(name, value) {
 }
 
 describe('physical sheet canvas', () => {
+  it('undoes and redoes edits, groups drags, and discards a redo branch', async () => {
+    await browser.refresh();
+    await browser.setWindowSize(1440, 1100);
+    const undo = await browser.$('button=Undo');
+    const redo = await browser.$('button=Redo');
+    assert.equal(await undo.isEnabled(), false);
+    await replaceField('X (mm)', '25');
+    await replaceField('WIDTH (mm)', '60');
+    await undo.click();
+    assert.equal((await geometry()).width, '50');
+    assert.equal((await geometry()).x, '25');
+    await browser.keys(['Control', 'z']);
+    await browser.releaseActions();
+    assert.equal((await geometry()).x, '20');
+    await browser.keys(['Control', 'Shift', 'Z']);
+    await browser.releaseActions();
+    assert.equal((await geometry()).x, '25');
+    await browser.keys(['Control', 'z']);
+    await browser.releaseActions();
+    await browser.keys(['Control', 'y']);
+    await browser.releaseActions();
+    assert.equal((await geometry()).x, '25');
+    await redo.click();
+    assert.equal((await geometry()).width, '60');
+
+    const beforeDrag = await geometry();
+    const canvasItem = await browser.$('.canvas-item');
+    await canvasItem.scrollIntoView();
+    const location = await browser.execute((element) => {
+      const bounds = element.getBoundingClientRect();
+      return { x: bounds.x, y: bounds.y };
+    }, canvasItem);
+    await browser.performActions([
+      {
+        type: 'pointer',
+        id: 'mouse',
+        parameters: { pointerType: 'mouse' },
+        actions: [
+          {
+            type: 'pointerMove',
+            duration: 0,
+            x: Math.round(location.x + 15),
+            y: Math.round(location.y + 15),
+          },
+          { type: 'pointerDown', button: 0 },
+          {
+            type: 'pointerMove',
+            duration: 100,
+            x: Math.round(location.x + 25),
+            y: Math.round(location.y + 20),
+          },
+          {
+            type: 'pointerMove',
+            duration: 100,
+            x: Math.round(location.x + 35),
+            y: Math.round(location.y + 25),
+          },
+          { type: 'pointerUp', button: 0 },
+        ],
+      },
+    ]);
+    await browser.releaseActions();
+    assert.notDeepEqual(await geometry(), beforeDrag);
+    await undo.click();
+    assert.deepEqual(await geometry(), beforeDrag);
+    await replaceField('Y (mm)', '35');
+    assert.equal(await redo.isEnabled(), false);
+    await replaceField('X (mm)', '500');
+    await undo.click();
+    assert.equal((await geometry()).y, '30');
+  });
+
   it('launches with canonical A4 geometry and keeps edits independent of view changes', async () => {
+    await browser.refresh();
     assert.equal(await (await browser.$('#canvas-title')).getText(), 'A4 · front');
     assert.equal(await (await browser.$('.sheet-canvas')).isExisting(), true);
     assert.deepEqual(await geometry(), {
@@ -61,6 +134,8 @@ describe('physical sheet canvas', () => {
     await replaceField('WIDTH (mm)', '60');
     await replaceField('HEIGHT (mm)', '40');
     await (await browser.$('select')).selectByAttribute('value', '90');
+    await (await browser.$('button=Undo')).click();
+    await (await browser.$('button=Redo')).click();
     const expected = { x: '25', y: '35', width: '60', height: '40', rotation: '90' };
     assert.deepEqual(await geometry(), expected);
 
@@ -80,5 +155,6 @@ describe('physical sheet canvas', () => {
     await readProject.mockResolvedValue(saved.content);
     await (await browser.$('button*=Open Project')).click();
     assert.deepEqual(await geometry(), expected);
+    assert.equal(await (await browser.$('button=Undo')).isEnabled(), false);
   });
 });

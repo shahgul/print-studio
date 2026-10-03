@@ -1,8 +1,26 @@
+mod pdf_store;
 mod project_store;
 mod source_store;
 mod source_watch;
 
 use std::path::Path;
+
+#[tauri::command]
+fn write_pdf_bytes_atomic(request: tauri::ipc::Request<'_>) -> Result<(), String> {
+    let encoded = request
+        .headers()
+        .get("x-print-studio-path")
+        .and_then(|value| value.to_str().ok())
+        .ok_or("missing encoded PDF output path")?;
+    let path = pdf_store::decode_export_path(encoded).map_err(|error| error.to_string())?;
+    match request.body() {
+        tauri::ipc::InvokeBody::Raw(bytes) => {
+            pdf_store::write_pdf_bytes_atomic(Path::new(&path), bytes)
+                .map_err(|error| error.to_string())
+        }
+        _ => Err("PDF output requires raw binary IPC".to_string()),
+    }
+}
 
 #[tauri::command]
 fn set_source_watch_paths(
@@ -52,6 +70,7 @@ pub fn run() {
             set_source_watch_paths,
             source_file_exists,
             remove_project_text,
+            write_pdf_bytes_atomic,
             write_project_text_atomic
         ])
         .run(tauri::generate_context!())

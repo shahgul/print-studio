@@ -132,6 +132,10 @@ Do not add a dependency only because it is technically powerful; licensing, plat
 
 ## Core boundaries
 
+### Project editing history (M1.7 contract)
+
+The desktop editing history is a headless TypeScript module. Actions record validated canonical Item/Sheet geometry; undo and redo restore that geometry while retaining current Source metadata and availability. It contains no React, viewport, renderer, native file paths, or source bytes. A drag/resize gesture is one action; numeric edits, rotation, and keyboard nudges are separate actions. Rejected and unchanged edits do not enter history, and a new edit after undo discards the redo branch. History is bounded to 100 actions and is session-only. Successful Open or source import starts a fresh history; Save does not clear it. Existing project serialization and atomic recovery snapshots persist the current Project, not the history.
+
 ### Domain
 Pure types and invariants. No React, no filesystem, no printer IO.
 
@@ -176,6 +180,16 @@ Converts canonical sheet sides into visual/output representations. Renderer must
 
 ### PDF engine
 PDF-specific reading/writing/page-box operations behind an abstraction.
+
+#### M1.8 image output contract
+
+`renderProjectToPdf(project, { resolveSourceBytes })` accepts a caller-owned local source resolver. Placed PNG/JPEG Items render actual image content; source-less geometry fixtures retain their vector rectangles. Referenced image bytes are bounded and re-inspected through `document-import`, and their SHA-256 identity and intrinsic dimensions must match the Project. Missing/changed sources, absent resolvers, malformed content, unsupported placed PDF sources, and resource-limit violations fail with typed errors rather than exporting placeholders. Unplaced sources are not read. Each distinct placed source is resolved/embedded once per export.
+
+Normalized crop is applied through a clip and image transform, without rewriting source bytes. Quarter-turn rotation is clockwise in sheet coordinates. Item size and position remain canonical; no DPI is assumed. The cropped raster aspect must agree with the Item within 1 µm of dimension quantization; unsupported distortion fails explicitly. Preview uses the same crop, rotation, and Item dimensions. PDF output does not contain selection outlines/rulers.
+
+Nontrivial JPEG EXIF orientation is rejected explicitly because browser auto-orientation would otherwise differ from raw JPEG embedding. Native PDF output is capped at 64 MiB; source decoding retains the existing 256 MiB/250 MP import limits. These are bounds, not a claim of constant memory or full decompression sandboxing.
+
+Desktop image placement requires explicit width/height in millimetres and preserves source aspect. It appends a source-backed Item at 20,30 mm on the first sheet's front; overflow fails instead of fitting automatically. Existing geometry is retained. Native PDF export uses a bounded, `.pdf`-only atomic binary writer, raw binary IPC, and a user-selected save path. Physical print measurement and driver scaling remain manual verification gates.
 
 ### Recipes
 Versioned serialization and application of reusable production intent.
@@ -231,7 +245,7 @@ Good:
 - print renderer maps physical → target format;
 - all paths share tests.
 
-The M1.6 desktop canvas uses `canvas-model.ts` for the pure physical-to-screen viewport transform and `canvas-project.ts` for validated immutable Project edits. React/SVG handles display and pointer/keyboard input. Fit, zoom, and pan change only viewport state; saved projects and PDF output still use canonical micrometres. The first canvas displays the first sheet's front side and geometry placeholders for placements; source-content preview remains future work. Vitest and browser-mode WebdriverIO cover geometry and UI workflows. An external Windows `tauri-driver` smoke test launches the compiled WebView2 app. Agent-operated canvas runtime checks passed; exact native edited-project Save → restart → Open verification remains pending.
+The M1.6 desktop canvas uses `canvas-model.ts` for the pure physical-to-screen viewport transform and `canvas-project.ts` for validated immutable Project edits. React/SVG handles display and pointer/keyboard input. Fit, zoom, and pan change only viewport state; saved projects and PDF output still use canonical micrometres. The canvas displays the first sheet's front side. M1.8 resolves verified local image bytes through `image-previews.ts`, manages Blob URL lifetime, and renders source-backed PNG/JPEG placements with canonical crop/rotation; other geometry keeps its outline. Vitest and browser-mode WebdriverIO cover geometry and UI workflows. An external Windows `tauri-driver` smoke test launches the compiled WebView2 app. Agent-operated canvas runtime checks passed; exact native edited-project Save → restart → Open and native image export acceptance remain pending.
 
 ## Persistence
 

@@ -1,4 +1,5 @@
-import { getPlacementBounds, type Project } from '@print-studio/domain';
+import { getPlacementBounds, type Item, type Project } from '@print-studio/domain';
+import { assertImageAspect } from '@print-studio/pdf-engine';
 import { Length, QuarterTurn } from '@print-studio/units-geometry';
 import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 
@@ -10,11 +11,13 @@ import {
   type SheetViewport,
 } from './canvas-model';
 import { editCanvasItem, type CanvasItemEdit } from './canvas-project';
+import type { ImagePreview } from './image-previews';
 
 type Props = Readonly<{
   project: Project;
-  onProjectChange: (project: Project) => void;
+  onProjectChange: (project: Project, group?: object) => void;
   onStatus: (message: string) => void;
+  imagePreviews?: Readonly<Record<string, ImagePreview>>;
 }>;
 
 type Interaction =
@@ -25,6 +28,7 @@ type Interaction =
       viewport: SheetViewport;
       project: Project;
       placementId: string;
+      group: object;
     }>;
 
 type NumericField = 'x' | 'y' | 'width' | 'height';
@@ -38,7 +42,19 @@ function formatMillimetres(value: Length): string {
   return Number(value.toMillimetres().toFixed(3)).toString();
 }
 
-export function SheetCanvas({ project, onProjectChange, onStatus }: Props) {
+function aspectError(item: Item, project: Project): string | null {
+  if (!item.sourceRef) return null;
+  const source = project.sources.find((candidate) => candidate.id === item.sourceRef?.sourceId);
+  if (!source) return 'Image source unavailable';
+  try {
+    assertImageAspect(item, source);
+    return null;
+  } catch (error) {
+    return String(error);
+  }
+}
+
+export function SheetCanvas({ project, onProjectChange, onStatus, imagePreviews = {} }: Props) {
   const sheet = project.sheets[0];
   const svgRef = useRef<SVGSVGElement>(null);
   const interaction = useRef<Interaction | null>(null);
@@ -76,6 +92,12 @@ export function SheetCanvas({ project, onProjectChange, onStatus }: Props) {
     }
   }, [sheet, selectedId]);
 
+  const placementCount = sheet?.front.placements.length;
+  useEffect(() => {
+    setSelectedId(sheet?.front.placements.at(-1)?.id ?? null);
+    setNumericDraft(null);
+  }, [placementCount]);
+
   if (!sheet || !viewport) {
     return <section className="canvas-empty">Add a sheet to see the physical canvas.</section>;
   }
@@ -89,7 +111,11 @@ export function SheetCanvas({ project, onProjectChange, onStatus }: Props) {
 
   const commitEdit = (placementId: string, edit: CanvasItemEdit, base = project) => {
     try {
-      onProjectChange(editCanvasItem(base, placementId, edit));
+      const active = interaction.current;
+      onProjectChange(
+        editCanvasItem(base, placementId, edit),
+        active && active.kind !== 'pan' ? active.group : undefined,
+      );
       onStatus('Physical geometry updated. Save to persist the project.');
     } catch (error) {
       onStatus(`Placement unchanged: ${String(error)}`);
@@ -104,6 +130,7 @@ export function SheetCanvas({ project, onProjectChange, onStatus }: Props) {
   const handlePointerDown = (event: PointerEvent<SVGSVGElement>) => {
     if (event.button !== 0) return;
     event.preventDefault();
+    event.currentTarget.focus();
     const target = event.target as Element;
     const placementId = target.getAttribute('data-placement-id');
     const start = localPoint(event);
@@ -115,6 +142,7 @@ export function SheetCanvas({ project, onProjectChange, onStatus }: Props) {
         viewport,
         project,
         placementId,
+        group: {},
       };
     } else {
       interaction.current = { kind: 'pan', start, viewport };
@@ -227,6 +255,9 @@ export function SheetCanvas({ project, onProjectChange, onStatus }: Props) {
           onPointerCancel={() => {
             interaction.current = null;
           }}
+          onLostPointerCapture={() => {
+            interaction.current = null;
+          }}
           onKeyDown={(event) => {
             if (
               !selectedPlacement ||
@@ -300,6 +331,19 @@ export function SheetCanvas({ project, onProjectChange, onStatus }: Props) {
               const height = bounds.size.height.toMillimetres();
               const selected = placement.id === selectedId;
               const handleSize = 12 / viewport.pixelsPerMillimetre;
+              const reference = item.sourceRef;
+              const imageAspectError = aspectError(item, project);
+              const preview = reference ? imagePreviews[reference.sourceId] : undefined;
+              const itemWidth = item.size.width.toMillimetres();
+              const itemHeight = item.size.height.toMillimetres();
+              const imageTransform =
+                placement.rotation === 90
+                  ? `matrix(0 1 -1 0 ${x + itemHeight} ${y})`
+                  : placement.rotation === 180
+                    ? `matrix(-1 0 0 -1 ${x + itemWidth} ${y + itemHeight})`
+                    : placement.rotation === 270
+                      ? `matrix(0 -1 1 0 ${x} ${y + itemWidth})`
+                      : `translate(${x} ${y})`;
               return (
                 <g key={placement.id}>
                   <rect
@@ -310,6 +354,30 @@ export function SheetCanvas({ project, onProjectChange, onStatus }: Props) {
                     width={width}
                     height={height}
                   />
+                  {reference && preview?.url && !imageAspectError && (
+                    <g transform={imageTransform} pointerEvents="none">
+                      <svg
+                        width={itemWidth}
+                        height={itemHeight}
+                        viewBox={`${reference.crop.xMillionths} ${reference.crop.yMillionths} ${reference.crop.widthMillionths} ${reference.crop.heightMillionths}`}
+                        preserveAspectRatio="none"
+                        overflow="hidden"
+                      >
+                        <image
+                          className="source-image"
+                          href={preview.url}
+                          width="1000000"
+                          height="1000000"
+                          preserveAspectRatio="none"
+                          onError={() =>
+                            onStatus(
+                              'Image preview decoding failed. PDF export will validate the source independently.',
+                            )
+                          }
+                        />
+                      </svg>
+                    </g>
+                  )}
                   <text
                     className="item-label"
                     x={x + 4}
@@ -317,7 +385,11 @@ export function SheetCanvas({ project, onProjectChange, onStatus }: Props) {
                     fontSize={11 / viewport.pixelsPerMillimetre}
                     pointerEvents="none"
                   >
-                    {item.id}
+                    {imageAspectError
+                      ? 'Image aspect mismatch'
+                      : reference && !preview?.url
+                        ? 'Image unavailable'
+                        : item.id}
                   </text>
                   {selected && (
                     <rect
@@ -340,6 +412,13 @@ export function SheetCanvas({ project, onProjectChange, onStatus }: Props) {
           {selectedPlacement && selectedItem ? (
             <>
               <strong>{selectedItem.id}</strong>
+              {selectedItem.sourceRef && (
+                <p className="canvas-help">
+                  {aspectError(selectedItem, project) ??
+                    imagePreviews[selectedItem.sourceRef.sourceId]?.error ??
+                    'Source image · exact physical size'}
+                </p>
+              )}
               <div className="geometry-fields">
                 {(
                   [

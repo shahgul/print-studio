@@ -21,9 +21,12 @@ The project should be usable internally throughout development, but the final mo
 - [x] first golden geometry fixture
 - [x] headless PDF renderer with PDF-coordinate transform
 - [x] serialized PDF page geometry re-opened and verified
-- [x] first physically verified PDF export
+- [x] first PDF export with programmatically verified physical geometry
+- [ ] M1.8 measured real-printer output
 
 ## Month 1 — Physical truth foundation
+
+As of 4 October 2026, M1.8's PNG/JPEG import → explicit physical placement → preview → PDF export workflow is implemented with automated geometry and browser regression coverage. Native image/project/export acceptance and measured real-printer output remain open in `TESTING-PENDING.md`; Month 1 is not closed. M1.6/M1.7 manual gates are also deferred at the user's request. `DEVELOPMENT-PLAN.md` owns the detailed verification ledger.
 
 ### Goal
 Prove that the project can represent and export physical geometry correctly.

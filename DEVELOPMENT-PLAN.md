@@ -2,7 +2,7 @@
 
 > **Living engineering execution plan for Print Studio.**
 
-Last updated: 28 September 2026.
+Last updated: 4 October 2026.
 
 This file is the canonical day-to-day development tracker. It answers:
 
@@ -32,11 +32,11 @@ A task is not marked complete merely because code exists. Relevant tests, type c
 
 # Current milestone
 
-## M1.6 — Physical Sheet Canvas: native persistence gate
+## M1.8 — Month 1 Physical Truth Gate
 
-**Status:** Implemented; automated and agent-operated canvas checks passed. Exact edited geometry still needs a real native Save → app restart → Open roundtrip.
+**Status:** Image import → exact physical placement → preview → PDF export implemented. Automated verification is recorded below. Native user acceptance and real-printer measurements remain deferred and open.
 
-M1.5 live monitoring passed an agent-operated Windows runtime check. Do not start M1.7 until the remaining M1.6 native persistence gate passes and M1.6 is closed.
+M1.5 live monitoring passed an agent-operated Windows runtime check. Shahgul requested continued development while deferring manual testing on 3 October 2026, then requested M1.8 implementation on 4 October. M1.6/M1.7 native gates remain open. Pending checkpoints are tracked in [TESTING-PENDING.md](TESTING-PENDING.md). Automated checks remain required.
 
 The detailed checkpoints are below under **Milestone ledger and next work**.
 
@@ -391,29 +391,53 @@ GitHub Actions [CI run 36418387604](https://github.com/shahgul/print-studio/acti
 2. Save As a `.printstudio` file through the native dialog. Confirm the stored canonical geometry is x=25,000 µm, y=35,000 µm, width=60,000 µm, height=40,000 µm, and rotation=90°.
 3. Close the app, restart it, Open Project through the native dialog, and confirm all five inspector values return exactly.
 
-This checkpoint can be agent-operated when a reliable native automation path is available, or user-operated if necessary. Record its provenance and exact restored values before closing M1.6 or starting M1.7.
+This checkpoint can be agent-operated when a reliable native automation path is available, or user-operated if necessary. Record its provenance and exact restored values before closing M1.6. M1.7 development proceeds under the user-requested testing deferral recorded above.
 
 ## M1.7 — Undo/Redo + Project Editing Foundation
 
-- [ ] Define command/action model.
-- [ ] Undo placement changes.
-- [ ] Redo placement changes.
-- [ ] multi-action correctness.
-- [ ] no renderer/native state inside undo model.
+**Status:** Implemented; automated checks passed. Native save/reopen acceptance is deferred to `TESTING-PENDING.md`. M1.6 is not closed, and M1.7 is not yet fully verified.
+
+- [x] Define command/action model.
+- [x] Undo placement changes.
+- [x] Redo placement changes.
+- [x] multi-action correctness.
+- [x] no renderer/native state inside undo model.
 - [ ] save/reopen edited project.
-- [ ] crash-recovery groundwork.
+- [x] crash-recovery groundwork: retain the existing M1.4 atomic current-Project snapshot contract; history is session-only. Timed autosave and recovery UX remain scheduled later.
+
+### M1.7 verification record — 3 October 2026
+
+Headless geometry action history retains up to 100 actions. Drag/resize pointer updates share one gesture action; numeric edits, rotation, and nudges are distinct actions. No-op/rejected edits do not create actions. A new edit discards the redo branch. Undo/redo retains current Source metadata/availability, and a completed live-source check cannot overwrite newer geometry. Save keeps history; successful Open/import resets it.
+
+RED tests preceded implementation. Seven deterministic history tests cover exact micrometre geometry, multi-action ordering, serialization roundtrip, gesture grouping, branch invalidation, rejected/no-op edits, source availability, stale live-check geometry, history bounds/reset, and return-to-origin gestures. Local `pnpm check` passes formatting, lint, typecheck, all 143 tests, and build. `pnpm test:e2e:browser` passes all three workflows, including buttons, Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y after focus loss, grouped dragging, redo invalidation, overflow rejection, and mocked Save/Open after redo. E2E exposed a focus-loss shortcut bug, fixed by application-level keyboard handling and explicit canvas focus on pointer down.
+
+These are local automated results, not new CI, native runtime, user manual, crash-recovery, or physical-printer verification. Native Save → restart → Open after undo/redo remains unchecked above. Local dependencies required repair from a fresh pnpm cache before quality checks could run.
 
 ## M1.8 — Month 1 Physical Truth Gate
 
-- [ ] Import representative image.
-- [ ] Place at exact physical size.
-- [ ] Export through headless renderer.
-- [ ] Programmatically verify output.
+**Status:** Software workflow implemented and automatically verified; native acceptance and measured printer output pending. Month 1 is not closed.
+
+- [x] Import representative image.
+- [x] Place at exact physical size.
+- [x] Export through headless renderer.
+- [x] Programmatically verify output.
 - [ ] Print physical verification sheet on at least one real printer.
 - [ ] Record expected vs measured result.
-- [ ] Confirm zoom/UI did not influence output.
-- [ ] Review Month 1 architecture against docs.
-- [ ] Update roadmap and development plan.
+- [x] Confirm zoom/UI did not influence output.
+- [x] Review Month 1 architecture against docs.
+- [x] Update roadmap and development plan.
+
+### M1.8 software verification — 4 October 2026
+
+PNG/JPEG fixtures (`tests/fixtures/physical-truth.png` and `.jpg`) contain asymmetric 600×300 px artwork with a boundary for the 100×50 mm checkpoint. Desktop placement takes explicit millimetres, preserves image aspect, starts at 20,30 mm, and rejects overflow. Existing objects remain; placement is undoable. Source selection, verified local image preview, persisted source-backed geometry, and native-dialog PDF export are wired into the app.
+
+The headless renderer embeds actual image content, applies normalized crop and clockwise quarter-turn rotation, caches repeated image sources, and rechecks source fingerprint/dimensions under the existing import limits. Unavailable/changed/malformed/oversized sources, aspect distortion, placed PDF sources, and nontrivial JPEG EXIF orientation fail explicitly. No image selection border or ruler is exported. Source-less vector geometry fixtures retain their established behavior.
+
+RED tests preceded renderer, placement, and storage implementation. The full local TypeScript quality pipeline passes with 159 tests. All four browser E2E tests pass, including image import → placement → preview → Undo/Redo → mocked project Save/Open → PDF byte inspection and identical content geometry across zoom changes. Native `cargo fmt --check` and all 16 Rust tests pass. The new PDF store uses raw binary IPC, encoded Unicode paths, a 64 MiB output cap, extension/signature checks, and same-directory atomic replacement. Browser E2E intercepts native commands; it does not prove the real native dialog/IPC end-to-end.
+
+Architecture review: canonical Project/Item/Placement/Source remain the common model; physical dimensions and crop stay independent of React/viewport/native state; schema V2 needs no change; document import and PDF composition stay behind their packages; native output only stores generated bytes. No printer transport, calibration compensation, or cloud processing was added. Missing source recovery, placed PDF content, EXIF normalization, broader color management, and large-job performance remain later work.
+
+Native image/project/export acceptance, independent PDF viewer checks, and expected-versus-measured real-printer output remain in `TESTING-PENDING.md`. No new CI or measured physical correctness is claimed.
 
 ---
 

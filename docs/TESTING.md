@@ -50,13 +50,16 @@ Critical flows:
 ### Current desktop test commands and provenance
 
 - `pnpm test` runs deterministic Vitest domain, geometry, import, persistence, source monitoring, and viewport tests.
-- `pnpm test:e2e:browser` runs focused WebdriverIO tests in headless Chrome. The Tauri service starts Vite and mocks selected native commands. It checks canvas launch, exact numeric geometry, zoom/fit invariance, off-sheet rejection, and Save/Open UI serialization. It does **not** prove native disk persistence or the operating-system file picker.
+- `pnpm test:e2e:browser` runs focused WebdriverIO tests in headless Chrome. The Tauri service starts Vite and mocks selected native commands. It checks canvas launch, exact numeric geometry, undo/redo buttons and shortcuts, grouped dragging, redo invalidation, zoom/fit invariance, off-sheet rejection, and Save/Open UI serialization after redo. It does **not** prove native disk persistence or the operating-system file picker.
+- M1.8 adds image import → exact-size placement → verified preview → Undo/Redo → mocked project Save/Open → PDF export E2E. Exported PDF bytes are reopened and inspected for A4 dimensions, embedded raster metadata, and identical content geometry across zoom changes. Native binary read/write is intercepted to preserve the raw IPC shape. Deterministic renderer tests separately inspect PNG/JPEG resource streams, crop/rotation matrices, typed failures, source identity, and EXIF orientation rejection. Native Rust tests verify atomic PDF replacement, path decoding, output guards, and failure preservation.
 - On Windows, start `pnpm dev` in one terminal, then run `pnpm test:e2e:native` in another. The service uses external `tauri-driver` and WebView2 to launch the compiled `apps/desktop/src-tauri/target/debug/print-studio.exe` (build it first with `cargo build --manifest-path apps/desktop/src-tauri/Cargo.toml`). It currently checks launch and starter canvas geometry. Local WebView2 element commands timed out, so this is a smoke test rather than full native workflow coverage.
 - CI runs Vitest, the browser E2E suite, TypeScript quality/build checks, and Windows Rust tests. Native WebView2 E2E currently runs locally only; CI must not be described as covering native Save/Open or source watching.
 
 Agent-operated Windows runtime checks covered M1.5 live source transitions and M1.6 canvas interactions. M1.6 still requires an exact edited-geometry Save → app restart → Open roundtrip using the real native file store. Computer Use is reserved for this native gap, exploratory issues, and visual checks until reliable E2E coverage exists. User physical verification is reserved for real printer output, measurement, device-specific behavior, and subjective UX judgment. Record each result with its actual provenance.
 
 ## Golden geometry fixtures
+
+Deferred manual acceptance steps are kept in [TESTING-PENDING.md](../TESTING-PENDING.md). On 3 October 2026, Shahgul requested continuing M1.7 development while leaving the M1.6 native persistence gate open. Automated verification continues; a deferred checkpoint must never be reported as passed.
 
 Maintain human-readable fixtures for known layouts.
 

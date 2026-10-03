@@ -364,6 +364,33 @@ h1 {
   line-height: 1.5;
 }
 
+.image-placement-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.image-placement-form label,
+.source-picker {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.image-placement-form input,
+.source-picker select {
+  padding: 8px;
+  border: 1px solid #c4c4be;
+  border-radius: 6px;
+}
+
+.image-placement-form p {
+  flex-basis: 100%;
+  font-size: 13px;
+}
+
 .canvas-empty {
   margin-top: 40px;
   padding: 80px;
