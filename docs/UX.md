@@ -384,6 +384,10 @@ Professional mode may expose the technical detail in an expandable section.
 - reduced-motion support;
 - do not communicate orientation/side solely via animation.
 
+## React Bits (deferred)
+
+Candidate expressive controls (ElasticSlider, Stepper, Folder, optional Masonry / Noise / OptionWheel) are listed in `TODO.md` under **React Bits**. Do not vendor or wire them until that inbox item is promoted into `DEVELOPMENT-PLAN.md`. Keep exact mm number fields for Print Truth; any slider/stepper is additive. Require Playwright before ship.
+
 ## Onboarding philosophy
 
 Teach by producing a successful first job.

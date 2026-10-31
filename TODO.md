@@ -2,7 +2,7 @@
 
 > **Living inbox for Print Studio ideas, discoveries, follow-ups, and important unscheduled work.**
 
-Last updated: 4 October 2026.
+Last updated: 1 November 2026.
 
 This file is intentionally an **inbox**, not the execution plan.
 
@@ -52,6 +52,40 @@ Do not use TODO as a substitute for:
 ---
 
 # Open ideas / future considerations
+
+## React Bits (deferred — do not implement until scheduled)
+
+Copy/adapt from [reactbits.dev](https://reactbits.dev) only when a real control job exists. Prefer CSS/TS variants; no Hugeicons; keep number fields for exact mm (Print Truth). Playwright coverage required before any ship. License: MIT + Commons Clause — keep attribution in-tree; do not redistribute as a component pack.
+
+- [ ] **ElasticSlider** — image / placement size in mm (coarse drag + rubber ends); sync with existing width/height number inputs; range tied to sheet size.
+  - Why: tactile physical sizing without replacing precise typing.
+  - Trigger: after M1.8 image placement UX polish / next desktop interaction pass.
+  - Related: `apps/desktop/src/App.tsx` image-placement form; `docs/UX.md`.
+
+- [ ] **Stepper** — Simple → Studio → Production mode switch when modes ship.
+  - Why: progressive complexity pillar needs a clear mode control.
+  - Trigger: when Simple/Studio/Production modes leave docs and enter UI.
+  - Related: `docs/PRODUCT.md`, `docs/UX.md`.
+
+- [ ] **Folder** — saved recipes / jobs browser when recipes are first-class.
+  - Why: recipe storage is a product pillar; Folder matches “open a job pack.”
+  - Trigger: after project/recipe persistence UX beyond single `.printstudio` open/save.
+  - Related: `docs/FEATURES.md`.
+
+- [ ] **Masonry** (optional) — source thumbnail / contact-sheet strip if many imports need scan-friendly browsing.
+  - Why: only if a flat list becomes hard to scan; not for one-source M1 flows.
+  - Trigger: multi-source import gallery UX.
+  - Related: source import / preview work.
+
+- [ ] **Noise** (very light, optional) — paper-grain atmosphere on sheet chrome only; never on artwork preview or Print Truth readouts.
+  - Why: physical-paper metaphor without fake camera chrome.
+  - Trigger: only if Quiet Darkroom-style polish is requested for desktop shell.
+  - Related: anti-vibe rules in product docs — skip if it reads as decoration.
+
+- [ ] **OptionWheel** (optional) — paper-size picker if a long discrete list needs a playful but precise control; must remain keyboard-accessible and exact.
+  - Trigger: paper catalog UI, not before.
+
+**Skip for Print Studio:** 3D galleries, ImageTrail, Lanyard, holographic cards, hyped WebGL backgrounds — wrong metaphor for print truth.
 
 ## Printing and printer intelligence
 

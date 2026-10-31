@@ -124,6 +124,7 @@ When a decision changes, update the owning document in the same change.
 - strategic sequencing → `docs/ROADMAP.md`
 - live implementation/completion tracking → `DEVELOPMENT-PLAN.md`
 - new unscheduled ideas/follow-ups → `TODO.md`
+- deferred React Bits candidates (ElasticSlider, Stepper, Folder, …) → `TODO.md` § React Bits + `docs/UX.md`; do not implement until promoted to `DEVELOPMENT-PLAN.md`; Playwright before ship
 - accepted/deferred decisions → `docs/DECISIONS.md`
 - product/engineering risks → `docs/RISKS.md`
 - terminology → `docs/GLOSSARY.md`
